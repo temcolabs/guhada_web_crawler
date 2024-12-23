@@ -12,6 +12,7 @@ import Header from "./Header";
 import Rows from "./Rows";
 import Image from "next/image";
 import * as xlsx from "xlsx";
+import { exportJsonToExcel } from "util/JSONtoExcel";
 
 const DataTable = () => {
   const [data, setData] = useState<selectImageTableType[]>([]);
@@ -161,25 +162,6 @@ const DataTable = () => {
     setData([...copyData]);
   };
 
-  const exportJsonToExcel = (
-    jsonArray: exportExcelData[],
-    fileName = "output.xlsx",
-  ) => {
-    const worksheet = xlsx.utils.json_to_sheet(jsonArray);
-
-    const workbook = xlsx.utils.book_new();
-    xlsx.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-
-    const excelData = xlsx.write(workbook, { bookType: "xlsx", type: "array" });
-
-    const blob = new Blob([excelData], { type: "application/octet-stream" });
-
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = fileName;
-    link.click();
-  };
-
   const exportData = () => {
     const excelData: exportExcelData[] = [];
     data.forEach((item) => {
@@ -211,7 +193,7 @@ const DataTable = () => {
       });
     });
 
-    exportJsonToExcel(excelData);
+    exportJsonToExcel<exportExcelData>(excelData);
   };
 
   return (

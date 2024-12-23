@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ChangeEvent, DragEvent, useRef, useState } from "react";
 import { selectImageTableType } from "type/type";
 import { API } from "util/API";
+import { exportJsonToExcel } from "util/JSONtoExcel";
 
 const UploadFile = () => {
   const [file, setFile] = useState<File | undefined>(undefined);
@@ -108,6 +109,33 @@ const UploadFile = () => {
       }
     }
   };
+  const sampleFileDownLoad = () => {
+    exportJsonToExcel(
+      [
+        {
+          index: "",
+          date: "",
+          상품번호: "",
+          링크: "",
+          브랜드: "",
+          카테고리: "",
+          ["상품명(추정)"]: "",
+          ["모델명(추정)"]: "",
+          색상: "",
+          성별: "",
+          ["상품상세 이미지 1"]: "",
+          ["상품상세 이미지 2"]: "",
+          ["상품상세 이미지 3"]: "",
+          ["상품상세 이미지 4"]: "",
+          ["상품상세 이미지 5"]: "",
+          ["상품상세 이미지 6"]: "",
+          비고: "",
+          담당자: "",
+        },
+      ],
+      "sample.xlsx",
+    );
+  };
   if (isLoading) {
     return <div>로딩중......크롤링 양에 따라 10~20분 정도 걸릴수있습니다</div>;
   }
@@ -151,13 +179,12 @@ const UploadFile = () => {
         >
           클로링시작
         </button>
-        {/* <button
-          onClick={testButton}
-          disabled={!file}
+        <button
+          onClick={sampleFileDownLoad}
           className="h-[56px] rounded-[8px] border-[1px] border-black disabled:bg-slate-400"
         >
-          테스트
-        </button> */}
+          셈플파일 다운로드
+        </button>
       </form>
     </div>
   );
