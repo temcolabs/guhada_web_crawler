@@ -146,5 +146,9 @@ const whiteList = [
   "www.ilduomo.it",
   "global.ecco.com",
   "au.ecco.com",
+  "us.ecco.com",
+  "us.shein.com",
+  "my.ecco.com",
+  "ca.ecco.com",
 ];
 export default whiteList;

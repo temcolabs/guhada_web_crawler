@@ -41,8 +41,8 @@ const searchAndGrapHrefs = async (
       const searchUrl = `https://www.google.co.kr/search?q=${searchWord}&sca_esv=48a32a8a53a0fe13&sxsrf=ADLYWILkWAJ5zBsSlhWU0QraCMcHiSIGAQ:1734491139020&lr=lang_en&sa=X&ved=2ahUKEwjI_tOBq7CKAxWXk68BHU36BFAQuAF6BAgJEAE&biw=1297&bih=934&dpr=1&hl=en`;
 
       // await delay(4000);
-      await page.waitForTimeout(random(3000));
       await page.goto(searchUrl);
+      await page.waitForTimeout(random(3000));
       // 결색결과 의 모든 href가져오기
       const isCapChaPage = page.url().includes("sorry");
       if (!isCapChaPage) {
@@ -146,6 +146,7 @@ const parsingImageSrc = async (hrefs: (string | undefined)[], page: Page) => {
         });
 
         await page?.goto(url, { waitUntil: "networkidle" });
+        await page?.waitForTimeout(2000);
 
         const parsedUrl = new URL(url);
 

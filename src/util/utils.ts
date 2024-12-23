@@ -13,10 +13,9 @@ const fileGenerator = <T extends object>(fileName: string, paramData: T) => {
         console.log("File has been written successfully!");
       });
     } else {
-      console.log(data);
       const getData: object[] = JSON.parse(data);
       getData.push({ ...paramData });
-      console.log(getData);
+
       fs.writeFile(fileName, JSON.stringify(getData), (err: any) => {
         if (err) {
           console.error("Error writing file:", err);

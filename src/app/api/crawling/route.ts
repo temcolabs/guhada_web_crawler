@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { chromium, Page } from "playwright";
 import { excelType, selectImageTableType } from "type/type";
 import { getOkmallImage, getSearchImagesUrl } from "util/crawling";
+import { fileGenerator } from "util/utils";
 import * as xlsx from "xlsx";
 
 const crawlingStart = async (
@@ -15,7 +16,7 @@ const crawlingStart = async (
   if (imagesTarget === "okmall") {
     selector = "#thumbSmallView > li > a > img";
   }
-  let count = 0;
+
   for (const data of jsonData) {
     // ok몰 상품 이미지 긁어오기
     const getOkmallImges = await getOkmallImage(page, data, selector);
@@ -41,9 +42,9 @@ const crawlingStart = async (
     parsingData.push(pushData);
 
     // Write JSON string to a file
+    fileGenerator("output.json", pushData);
   }
-  count++;
-  console.log(jsonData.length, "/", count);
+
   return parsingData;
 };
 
@@ -73,7 +74,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
   const jsonData = await parsingExcelToJSON<excelType>(file);
 
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch({ headless: false });
   const context = await browser.newContext({
     userAgent:
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36",

@@ -21,7 +21,7 @@ const Header = () => {
         </div>
         <div className="w-[120px] border-r-[1px] border-solid border-black">
           <div className="border-b-[1px] border-solid border-black text-center">
-            모델명
+            모델명 / 브랜드 + 모델명
           </div>
         </div>
 
