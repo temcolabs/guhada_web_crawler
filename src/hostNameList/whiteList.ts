@@ -150,5 +150,6 @@ const whiteList = [
   "us.shein.com",
   "my.ecco.com",
   "ca.ecco.com",
+  "ecco",
 ];
 export default whiteList;

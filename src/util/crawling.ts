@@ -29,12 +29,6 @@ const searchAndGrapHrefs = async (
   target: "img" | "search" = "search",
   page: Page,
 ) => {
-  // const filterSearchWord = whiteList
-  //   .map((item) => {
-  //     return `site:${item} OR `;
-  //   })
-  //   .join("");
-
   if (target === "search") {
     try {
       // const searchUrl = `https://www.google.co.kr/search?q=${searchWord} ${filterSearchWord} &sca_esv=48a32a8a53a0fe13&sxsrf=ADLYWILkWAJ5zBsSlhWU0QraCMcHiSIGAQ:1734491139020&lr=lang_en&sa=X&ved=2ahUKEwjI_tOBq7CKAxWXk68BHU36BFAQuAF6BAgJEAE&biw=1297&bih=934&dpr=1`;
@@ -53,16 +47,23 @@ const searchAndGrapHrefs = async (
             .filter((item) => item.href !== "")
             .map((item) => item.href);
         });
-        console.log(getLinks);
 
         for (const item of getLinks) {
           try {
             const url = new URL(item);
-            if (whiteList.includes(url.hostname)) {
+
+            if (
+              whiteList.some((item) => {
+                return url.hostname.includes(item);
+              })
+            ) {
               finalFilterImagesHost.push(item);
             }
+            // if (whiteList.includes(url.hostname)) {
+            // }
           } catch (error) {}
         }
+
         // console.log({ finalFilterImagesHost });
         return finalFilterImagesHost;
       } else {
@@ -201,6 +202,7 @@ const getSearchImagesUrl = async (getData: excelType, page: Page) => {
     const getSearchUrl = await parsingImageSrc(uniqArray, page);
 
     let allImageSrc: searchImageObject[] = [];
+
     allImageSrc = allImageSrc.concat(getSearchUrl);
 
     return allImageSrc;
