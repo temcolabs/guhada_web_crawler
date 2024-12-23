@@ -180,7 +180,7 @@ const parsingImageSrc = async (hrefs: (string | undefined)[], page: Page) => {
 
 const getSearchImagesUrl = async (getData: excelType, page: Page) => {
   const searchlinks = await searchAndGrapHrefs(
-    getData["모델명(추정)"],
+    `${getData.브랜드} ${getData["모델명(추정)"]}`,
     "search",
     page,
   );

@@ -142,5 +142,9 @@ const whiteList = [
   "www.mysteryranchuk.com",
   "www.outlandusa.com",
   "rab.equipment",
+  "www.humphriesshoes.co.uk",
+  "www.ilduomo.it",
+  "global.ecco.com",
+  "au.ecco.com",
 ];
 export default whiteList;
