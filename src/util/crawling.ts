@@ -53,6 +53,7 @@ const searchAndGrapHrefs = async (
             .filter((item) => item.href !== "")
             .map((item) => item.href);
         });
+        console.log(getLinks);
 
         for (const item of getLinks) {
           try {
@@ -117,7 +118,7 @@ const parsingImageSrc = async (hrefs: (string | undefined)[], page: Page) => {
       try {
         // Attach an error listener
         page.on("pageerror", (error) => {
-          console.error(`Page error on ${url}:`, error.message);
+          // console.error(`Page error on ${url}:`, error.message);
         });
 
         page.on("response", async (response) => {
@@ -146,7 +147,7 @@ const parsingImageSrc = async (hrefs: (string | undefined)[], page: Page) => {
         });
 
         await page?.goto(url, { waitUntil: "networkidle" });
-        await page?.waitForTimeout(2000);
+        await page?.waitForTimeout(1000);
 
         const parsedUrl = new URL(url);
 
