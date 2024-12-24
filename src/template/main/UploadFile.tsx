@@ -139,7 +139,7 @@ const UploadFile = () => {
     );
   };
   if (isLoading) {
-    return <div>로딩중......크롤링 양에 따라 10~20분 정도 걸릴수있습니다</div>;
+    return <div>크롤링중.... 50개 기준 10~30분 정도 걸릴수있습니다</div>;
   }
   const teststring = "";
   return (

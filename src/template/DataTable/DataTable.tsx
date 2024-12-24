@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import {
   FormEvent,
   MouseEvent,
@@ -8,22 +9,27 @@ import {
 } from "react";
 import { exportExcelData, selectImageTableType } from "type/type";
 import { API } from "util/API";
+import { exportJsonToExcel } from "util/JSONtoExcel";
 import Header from "./Header";
 import Rows from "./Rows";
-import Image from "next/image";
-import * as xlsx from "xlsx";
-import { exportJsonToExcel } from "util/JSONtoExcel";
-import whiteUrlList from "hostNameList/whiteUrlList";
 
 const DataTable = () => {
   const [data, setData] = useState<selectImageTableType[]>([]);
   const [selectIndex, setSelectIndex] = useState(-1);
   const [testData, setTestData] = useState<string[]>([]);
   const [isChange, setIsChange] = useState(false);
-
-  // const copy = async (text: string) => {
-  //   await navigator.clipboard.writeText(text);
-  // };
+  const [widthObject, setWidthObject] = useState({
+    index: 2.5,
+    uniqueindex: 5.5,
+    브랜드: 6,
+    "모델명 / 브랜드 + 모델명": 11,
+    상품명: 5,
+    사진: 20,
+    크롤링한index: 2.5,
+    크롤링한사진: 25,
+    직접입력: 8,
+    "다른곳에서 찾기": 14.5,
+  });
 
   useLayoutEffect(() => {
     const data = localStorage.getItem("crawlingData");
@@ -220,10 +226,9 @@ const DataTable = () => {
           rowIndex={crawlingData.index}
           crawlingData={crawlingData}
           onClickSearchImages={onClickSearchImages}
-          key={crawlingData.productImageUrl[0] + index + 61}
+          key={index}
           addManualUrl={addManualUrl}
           deleteManualUrl={deleteManualUrl}
-          searchImpossible={searchImpossible}
         />
       ))}
       <button

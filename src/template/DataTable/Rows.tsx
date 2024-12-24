@@ -1,14 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import React, {
-  Dispatch,
-  FormEvent,
-  memo,
-  MouseEvent,
-  SetStateAction,
-  useRef,
-  useState,
-} from "react";
+import { FormEvent, memo, useRef, useState } from "react";
 import LazyLoad from "react-lazy-load";
 import { selectImageTableType } from "type/type";
 
@@ -22,10 +14,6 @@ interface RowsProps {
     url: string,
   ) => void;
   deleteManualUrl: (url: string, rowIndex: number) => void;
-  searchImpossible: (
-    e: MouseEvent<HTMLButtonElement>,
-    rowIndex: number,
-  ) => void;
   index: number;
 }
 const Rows = ({
@@ -75,15 +63,32 @@ const Rows = ({
       </div>
       <div className="w-[11%] border-r-[1px] border-solid border-black">
         <div className="flex h-[100%] items-center justify-evenly gap-3 pl-[2px] text-blue-300">
-          <Link
-            className="w-[45%] break-words text-[14px]"
-            href={`https://www.google.co.kr/search?q=${crawlingData.productInfo.modalName}&sca_esv=48a32a8a53a0fe13&sxsrf=ADLYWIJ3uYJX1CanmgT2nB9VAMPFiLO34w%3A1734423586966&source=hp&ei=IjRhZ6LVN6LS1e8Pi5GRgQw&iflsig=AL9hbdgAAAAAZ2FCMvyWWlfooNP991xDXeoTk_7av4-K&ved=0ahUKEwii7qaur66KAxUiafUHHYtIJMAQ4dUDCBo&uact=5&oq=XFPPU8554-21&gs_lp=Egdnd3Mtd2l6IgxYRlBQVTg1NTQtMjEyCBAAGIAEGKIESMEEUHxYfHABeACQAQCYAYwBoAGMAaoBAzAuMbgBA8gBAPgBAvgBAZgCAqAClgGoAgrCAgcQIxgnGOoCmAMJ8QV9IkCVHGMs2ZIHAzEuMaAHcg&sclient=gws-wiz`}
-            target="_blank"
-          >
-            {crawlingData.productInfo.modalName}
-          </Link>
+          <div>
+            <Link
+              className="w-[45%] break-words text-[14px]"
+              href={`https://www.google.co.kr/search?q=${crawlingData.productInfo.modalName}&sca_esv=48a32a8a53a0fe13&sxsrf=ADLYWIJ3uYJX1CanmgT2nB9VAMPFiLO34w%3A1734423586966&source=hp&ei=IjRhZ6LVN6LS1e8Pi5GRgQw&iflsig=AL9hbdgAAAAAZ2FCMvyWWlfooNP991xDXeoTk_7av4-K&ved=0ahUKEwii7qaur66KAxUiafUHHYtIJMAQ4dUDCBo&uact=5&oq=XFPPU8554-21&gs_lp=Egdnd3Mtd2l6IgxYRlBQVTg1NTQtMjEyCBAAGIAEGKIESMEEUHxYfHABeACQAQCYAYwBoAGMAaoBAzAuMbgBA8gBAPgBAvgBAZgCAqAClgGoAgrCAgcQIxgnGOoCmAMJ8QV9IkCVHGMs2ZIHAzEuMaAHcg&sclient=gws-wiz`}
+              target="_blank"
+            >
+              {crawlingData.productInfo.modalName}
+            </Link>
+            <div
+              className="cursor-pointer"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                navigator.clipboard.writeText(
+                  crawlingData.productInfo.modalName,
+                );
+              }}
+            >
+              모델명 복사
+            </div>
+          </div>
 
           <Link
+            onClick={() => {
+              navigator.clipboard.writeText(crawlingData.productInfo.modalName);
+            }}
             className="w-[45%] break-words text-[14px]"
             href={`https://www.google.co.kr/search?q=${crawlingData.productInfo.brand} ${crawlingData.productInfo.modalName}&sca_esv=48a32a8a53a0fe13&sxsrf=ADLYWIJ3uYJX1CanmgT2nB9VAMPFiLO34w%3A1734423586966&source=hp&ei=IjRhZ6LVN6LS1e8Pi5GRgQw&iflsig=AL9hbdgAAAAAZ2FCMvyWWlfooNP991xDXeoTk_7av4-K&ved=0ahUKEwii7qaur66KAxUiafUHHYtIJMAQ4dUDCBo&uact=5&oq=XFPPU8554-21&gs_lp=Egdnd3Mtd2l6IgxYRlBQVTg1NTQtMjEyCBAAGIAEGKIESMEEUHxYfHABeACQAQCYAYwBoAGMAaoBAzAuMbgBA8gBAPgBAvgBAZgCAqAClgGoAgrCAgcQIxgnGOoCmAMJ8QV9IkCVHGMs2ZIHAzEuMaAHcg&sclient=gws-wiz`}
             target="_blank"
@@ -119,7 +124,7 @@ const Rows = ({
                     width: "25%",
                     height: "100px",
                   }}
-                  key={item + index + 102102}
+                  key={item + index + "image"}
                 >
                   <Image
                     fill
@@ -154,7 +159,7 @@ const Rows = ({
                 return null;
               }
               return (
-                <LazyLoad key={searchlinks + index + 1}>
+                <LazyLoad key={index + "lazyLoad "}>
                   <div className="mt-2 overflow-auto">
                     <div className="overflow-hidden text-ellipsis">
                       <Link
@@ -166,10 +171,10 @@ const Rows = ({
                       </Link>
                     </div>
                     <div className="flex overflow-auto">
-                      {imageUrls.map(({ url, selected }) => {
+                      {imageUrls.map(({ url, selected }, index) => {
                         return (
                           <div
-                            key={url ? url + 1212121111 : url}
+                            key={url ? url + index + "url" : index}
                             className={`shrink-0 cursor-pointer ${selected ? "debug" : ""}`}
                             style={{
                               position: "relative",
@@ -229,7 +234,7 @@ const Rows = ({
         <div className="flex flex-col">
           {crawlingData?.manualUrl?.map((item, index) => {
             return (
-              <div key={item + "" + index}>
+              <div key={item + index}>
                 <Image
                   className="debug"
                   width={100}

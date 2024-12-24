@@ -36,11 +36,21 @@ const imageBlackList = [
   "https://cdn-img.poizon.com/node-common/a4e09d42-a139-478c-2b11-909698e4c3d3-4320-1068.png?x-oss-process=image/format,webp/resize,h_712",
   "https://www.gebnegozionline.com/static/version1726560558/frontend/Alpenite/gebnegozio/en_US//images/geb_logo.png",
   "https://www.gebnegozionline.com/static/version1726560558/frontend/Alpenite/gebnegozio/en_US/images/loader-1.gif",
+  "https://www.gucci.com/_ui/responsive/common/images/store-locator-maps/pin-retailer.png",
   "https://www.gebnegozionline.com/media/wysiwyg/3_18_1.png",
   "https://www.gebnegozionline.com/media/wysiwyg/2_18_1.png",
   "https://www.gebnegozionline.com/media/wysiwyg/4_18_1.png",
   "https://www.gebnegozionline.com/media/wysiwyg/6_10_1.png",
   "https://giraffehousevn.com/assets/f5dc882e/images/progress_bar.gif",
+  "https://m.media-amazon.com/images/S/sash/2KViI4b7ZZCNtr3.png",
+  "https://m.media-amazon.com/images/S/sash/Z8YwjOjqIHxqujG.png",
+  "https://m.media-amazon.com/images/I/31a3suMl0HL.jpg",
+  "https://m.media-amazon.com/images/S/sash/McBZv0ZvnbehkIx.png",
+  "https://m.media-amazon.com/images/S/sash/ZpbG74laklgnz-i.png",
+  "https://m.media-amazon.com/images/S/sash/2KViI4b7ZZCNtr3.png",
+  "https://m.media-amazon.com/images/G/15/personalization/ybh/loading-4x-gray._CB485916907_.gif",
+  "https://www.gucci.com/_ui/responsive/common/20241204062141/images/sprite-standard.png",
+  "https://www.gucci.com/_ui/responsive/common/images/store-locator-maps/pin-servicecenter-active.png",
 ];
 
 export default imageBlackList;

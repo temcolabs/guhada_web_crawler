@@ -9,9 +9,7 @@ const random = (ms: number) => Math.random() * ms;
 const fileGenerator = <T extends object>(fileName: string, paramData: T) => {
   fs.readFile(fileName, "utf8", async (err, data) => {
     if (err) {
-      fs.writeFile(fileName, JSON.stringify([paramData]), (err: any) => {
-        console.log("File has been written successfully!");
-      });
+      fs.writeFile(fileName, JSON.stringify([paramData]), (err: any) => {});
     } else {
       const getData: object[] = JSON.parse(data);
       getData.push({ ...paramData });
@@ -20,7 +18,6 @@ const fileGenerator = <T extends object>(fileName: string, paramData: T) => {
         if (err) {
           console.error("Error writing file:", err);
         } else {
-          console.log("File has been written successfully!");
         }
       });
     }
