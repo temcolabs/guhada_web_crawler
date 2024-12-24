@@ -1,5 +1,4 @@
 "use client";
-
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, DragEvent, useRef, useState } from "react";
@@ -13,6 +12,7 @@ const UploadFile = () => {
   const [isLoading, setIsLoading] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  const [isChromium, setIsChromium] = useState(true);
 
   const allowedTypes = [
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
@@ -61,6 +61,8 @@ const UploadFile = () => {
       setIsLoading(true);
       const formData = new FormData();
       formData.append("file", file);
+
+      formData.append("isChromium", isChromium ? "true" : "false");
       formData.append("target", "okmall");
       try {
         const getData = await API.post<{
@@ -137,9 +139,9 @@ const UploadFile = () => {
     );
   };
   if (isLoading) {
-    return <div>로딩중......크롤링 양에 따라 10~20분 정도 걸릴수있습니다</div>;
+    return <div>크롤링중.... 50개 기준 10~30분 정도 걸릴수있습니다</div>;
   }
-
+  const teststring = "";
   return (
     <div className="absolute left-[50%] w-[60%] translate-x-[-50%]">
       <div>엑셀파일을 올려주세요</div>
@@ -184,6 +186,14 @@ const UploadFile = () => {
           className="h-[56px] rounded-[8px] border-[1px] border-black disabled:bg-slate-400"
         >
           셈플파일 다운로드
+        </button>
+        <button
+          onClick={() => {
+            setIsChromium(!isChromium);
+          }}
+          className="h-[56px] rounded-[8px] border-[1px] border-black disabled:bg-slate-400"
+        >
+          크로니움 {isChromium ? "on" : "off"}
         </button>
       </form>
     </div>

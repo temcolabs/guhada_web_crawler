@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { chromium } from "@playwright/test";
-import { parsingExcelToJSON } from "app/api/crawling/route";
+
 import imageBlackList from "hostNameList/imageBlackList";
 import { NextRequest, NextResponse } from "next/server";
 import { Page } from "playwright";
 import { imagUrlType, whiteListType } from "type/type";
+import { parsingExcelToJSON } from "./ExcelToJson";
 
 //캡차박스 컨트롤
 const testssss = async () => {
@@ -64,7 +65,7 @@ const testssss = async () => {
 export const whiteListParsing = async (req: NextRequest) => {
   const data = await req.formData(); // Extract formData from request
 
-  const file = data.get("file") as File | null;
+  const file = data.get("file") as File;
 
   try {
     const jsonData = await parsingExcelToJSON<whiteListType>(file);

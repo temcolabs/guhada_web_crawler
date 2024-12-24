@@ -2,9 +2,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Page } from "@playwright/test";
 import imageBlackList from "hostNameList/imageBlackList";
-import whiteList from "hostNameList/whiteList";
+import whiteUrlList from "hostNameList/whiteUrlList";
 import { excelType, imagUrlType, searchImageObject } from "type/type";
-import { random } from "./utils";
+import { fileGenerator, random } from "./utils";
+import { Console } from "console";
 
 const getOkmallImage = async (
   page: Page,
@@ -28,17 +29,13 @@ const searchAndGrapHrefs = async (
   searchWord: string,
   target: "img" | "search" = "search",
   page: Page,
+  whiteListBrand: string[],
 ) => {
-  // const filterSearchWord = whiteList
-  //   .map((item) => {
-  //     return `site:${item} OR `;
-  //   })
-  //   .join("");
-
   if (target === "search") {
     try {
       // const searchUrl = `https://www.google.co.kr/search?q=${searchWord} ${filterSearchWord} &sca_esv=48a32a8a53a0fe13&sxsrf=ADLYWILkWAJ5zBsSlhWU0QraCMcHiSIGAQ:1734491139020&lr=lang_en&sa=X&ved=2ahUKEwjI_tOBq7CKAxWXk68BHU36BFAQuAF6BAgJEAE&biw=1297&bih=934&dpr=1`;
-      const searchUrl = `https://www.google.co.kr/search?q=${searchWord}&sca_esv=48a32a8a53a0fe13&sxsrf=ADLYWILkWAJ5zBsSlhWU0QraCMcHiSIGAQ:1734491139020&lr=lang_en&sa=X&ved=2ahUKEwjI_tOBq7CKAxWXk68BHU36BFAQuAF6BAgJEAE&biw=1297&bih=934&dpr=1&hl=en`;
+      // const searchUrl = `https://www.google.co.kr/search?q=${searchWord}&sca_esv=48a32a8a53a0fe13&sxsrf=ADLYWILkWAJ5zBsSlhWU0QraCMcHiSIGAQ:1734491139020&lr=lang_en&sa=X&ved=2ahUKEwjI_tOBq7CKAxWXk68BHU36BFAQuAF6BAgJEAE&biw=1297&bih=934&dpr=1`;
+      const searchUrl = `https://www.google.co.kr/search?q=${searchWord}&sca_esv=48a32a8a53a0fe13&sxsrf=ADLYWIJ3uYJX1CanmgT2nB9VAMPFiLO34w%3A1734423586966&source=hp&ei=IjRhZ6LVN6LS1e8Pi5GRgQw&iflsig=AL9hbdgAAAAAZ2FCMvyWWlfooNP991xDXeoTk_7av4-K&ved=0ahUKEwii7qaur66KAxUiafUHHYtIJMAQ4dUDCBo&uact=5&oq=XFPPU8554-21&gs_lp=Egdnd3Mtd2l6IgxYRlBQVTg1NTQtMjEyCBAAGIAEGKIESMEEUHxYfHABeACQAQCYAYwBoAGMAaoBAzAuMbgBA8gBAPgBAvgBAZgCAqAClgGoAgrCAgcQIxgnGOoCmAMJ8QV9IkCVHGMs2ZIHAzEuMaAHcg&sclient=gws-wiz&hl=en`;
 
       // await delay(4000);
       await page.goto(searchUrl);
@@ -54,21 +51,35 @@ const searchAndGrapHrefs = async (
             .map((item) => item.href);
         });
 
+        // fileGenerator("getLinks.json", [getLinks]);
         for (const item of getLinks) {
           try {
             const url = new URL(item);
-            if (whiteList.includes(url.hostname)) {
+
+            const setWhiteList = new Set(whiteListBrand.concat(whiteUrlList));
+
+            const includeWhiteList = Array.from(setWhiteList).some((item) => {
+              return url.hostname.includes(item);
+            });
+            if (includeWhiteList) {
               finalFilterImagesHost.push(item);
             }
+            // if (whiteList.includes(url.hostname)) {
+            // }
           } catch (error) {}
         }
-        // console.log({ finalFilterImagesHost });
+
         return finalFilterImagesHost;
       } else {
         console.log("퓨즈걸림?");
         await page.pause();
         console.log("퓨즈끝");
-        return await searchAndGrapHrefs(searchWord, target, page);
+        return await searchAndGrapHrefs(
+          searchWord,
+          target,
+          page,
+          whiteListBrand,
+        );
       }
     } catch (error) {
       console.log(error);
@@ -96,7 +107,7 @@ const searchAndGrapHrefs = async (
         if (url) {
           const hostname = new URL(url).hostname; // URL에서 hostname 추출
 
-          return whiteList.includes(hostname); // whiteList에 hostname이 포함되어 있는지 확인
+          return whiteUrlList.includes(hostname); // whiteList에 hostname이 포함되어 있는지 확인
         }
         return false;
       });
@@ -116,10 +127,28 @@ const parsingImageSrc = async (hrefs: (string | undefined)[], page: Page) => {
       const image: string[] = [];
       try {
         // Attach an error listener
-        page.on("pageerror", (error) => {
-          console.error(`Page error on ${url}:`, error.message);
+        page.on("pageerror", async (error) => {
+          // await page.screenshot({ path: "debug-screenshot.png" });
+          // console.error(`Page error on ${url}:`, error.message);
         });
 
+        // 패이지 안에서 필요없는 요청은 거른다.
+        await page.route("**/*", (route) => {
+          const url = route.request().url();
+
+          if (
+            url.includes("analytics") ||
+            url.includes("google-analytics") ||
+            url.includes("ads") ||
+            url.includes(".woff2") ||
+            url.includes("googletagmanager") ||
+            url.includes("clarity")
+          ) {
+            route.abort();
+          } else {
+            route.continue();
+          }
+        });
         page.on("response", async (response) => {
           const responseUrl = response.url();
 
@@ -127,6 +156,7 @@ const parsingImageSrc = async (hrefs: (string | undefined)[], page: Page) => {
             responseUrl.includes(".jpg") ||
             responseUrl.includes(".png") ||
             responseUrl.includes(".webp") ||
+            responseUrl.includes(".jpeg") ||
             responseUrl.includes(".gif")
           ) {
             const isBlackList = imageBlackList.some((item) =>
@@ -145,8 +175,10 @@ const parsingImageSrc = async (hrefs: (string | undefined)[], page: Page) => {
           }
         });
 
-        await page?.goto(url, { waitUntil: "networkidle" });
-        await page?.waitForTimeout(2000);
+        await page?.goto(url, {
+          waitUntil: "domcontentloaded",
+          timeout: 60000,
+        });
 
         const parsedUrl = new URL(url);
 
@@ -175,15 +207,20 @@ const parsingImageSrc = async (hrefs: (string | undefined)[], page: Page) => {
       }
     }
   }
-  // fileGenerator("searchLinkAndImageLink.json", allImageSrc);
+
   return allImageSrc;
 };
 
-const getSearchImagesUrl = async (getData: excelType, page: Page) => {
+const getSearchImagesUrl = async (
+  getData: excelType,
+  page: Page,
+  whiteListBrand: string[],
+) => {
   const searchlinks = await searchAndGrapHrefs(
     `${getData.브랜드} ${getData["모델명(추정)"]}`,
     "search",
     page,
+    whiteListBrand,
   );
 
   // const searchImagelinks = await searchAndGrapHrefs(
@@ -200,6 +237,7 @@ const getSearchImagesUrl = async (getData: excelType, page: Page) => {
     const getSearchUrl = await parsingImageSrc(uniqArray, page);
 
     let allImageSrc: searchImageObject[] = [];
+
     allImageSrc = allImageSrc.concat(getSearchUrl);
 
     return allImageSrc;
