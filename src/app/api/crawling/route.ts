@@ -50,7 +50,7 @@ const crawlingStart = async (
 
     parsingData.push(pushData);
 
-    fileGenerator("output.json", pushData);
+    // fileGenerator("output.json", pushData);
   }
 
   return parsingData;

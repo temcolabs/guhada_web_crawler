@@ -161,5 +161,7 @@ const whiteUrlList = [
   "item.rakuten",
   "flanella",
   "stylemyles",
+  "cncpts",
+  "ganni",
 ];
 export default whiteUrlList;
