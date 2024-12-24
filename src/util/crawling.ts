@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Page } from "@playwright/test";
 import imageBlackList from "hostNameList/imageBlackList";
-import whiteList from "hostNameList/whiteList";
+import whiteUrlList from "hostNameList/whiteUrlList";
 import { excelType, imagUrlType, searchImageObject } from "type/type";
 import { random } from "./utils";
 
@@ -53,7 +53,7 @@ const searchAndGrapHrefs = async (
             const url = new URL(item);
 
             if (
-              whiteList.some((item) => {
+              whiteUrlList.some((item) => {
                 return url.hostname.includes(item);
               })
             ) {
@@ -98,7 +98,7 @@ const searchAndGrapHrefs = async (
         if (url) {
           const hostname = new URL(url).hostname; // URL에서 hostname 추출
 
-          return whiteList.includes(hostname); // whiteList에 hostname이 포함되어 있는지 확인
+          return whiteUrlList.includes(hostname); // whiteList에 hostname이 포함되어 있는지 확인
         }
         return false;
       });
@@ -147,7 +147,7 @@ const parsingImageSrc = async (hrefs: (string | undefined)[], page: Page) => {
           }
         });
 
-        await page?.goto(url, { waitUntil: "networkidle" });
+        await page?.goto(url, { waitUntil: "networkidle", timeout: 3000 });
         await page?.waitForTimeout(1000);
 
         const parsedUrl = new URL(url);

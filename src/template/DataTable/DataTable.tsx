@@ -13,6 +13,7 @@ import Rows from "./Rows";
 import Image from "next/image";
 import * as xlsx from "xlsx";
 import { exportJsonToExcel } from "util/JSONtoExcel";
+import whiteUrlList from "hostNameList/whiteUrlList";
 
 const DataTable = () => {
   const [data, setData] = useState<selectImageTableType[]>([]);
@@ -219,8 +220,6 @@ const DataTable = () => {
           rowIndex={crawlingData.index}
           crawlingData={crawlingData}
           onClickSearchImages={onClickSearchImages}
-          selectIndex={selectIndex}
-          setSelectIndex={setSelectIndex}
           key={crawlingData.productImageUrl[0] + index + 61}
           addManualUrl={addManualUrl}
           deleteManualUrl={deleteManualUrl}
