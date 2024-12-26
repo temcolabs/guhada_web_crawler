@@ -4,25 +4,31 @@ import { Page } from "@playwright/test";
 import imageBlackList from "hostNameList/imageBlackList";
 import whiteUrlList from "hostNameList/whiteUrlList";
 import { excelType, imagUrlType, searchImageObject } from "type/type";
-import { fileGenerator, random } from "./utils";
-import { Console } from "console";
+import { random } from "./utils";
 
 const getOkmallImage = async (
   page: Page,
   data: excelType,
   imagesTarget: string,
 ) => {
-  await page.goto(data["링크"]);
-  const getThumbnail = page.locator(imagesTarget);
-  const count = await getThumbnail.count();
-  const imgSrcList: string[] = [];
-  for (let i = 0; i < count; i++) {
-    const imgSrc = await getThumbnail.nth(i).getAttribute("src");
-    if (imgSrc) {
-      imgSrcList.push(`https:${imgSrc}`);
+  try {
+    await page.goto(data["링크"], {
+      waitUntil: "domcontentloaded",
+      timeout: 60000,
+    });
+    const getThumbnail = page.locator(imagesTarget);
+    const count = await getThumbnail.count();
+    const imgSrcList: string[] = [];
+    for (let i = 0; i < count; i++) {
+      const imgSrc = await getThumbnail.nth(i).getAttribute("src");
+      if (imgSrc) {
+        imgSrcList.push(`https:${imgSrc}`);
+      }
     }
+    return imgSrcList;
+  } catch (error) {
+    return [];
   }
-  return imgSrcList;
 };
 
 const searchAndGrapHrefs = async (

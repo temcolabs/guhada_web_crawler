@@ -27,31 +27,23 @@ const Rows = ({
   const [addUrlVisible, setAddUrlVisible] = useState(false);
   const [url, setUrl] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
-  const addImageUrl = () => {
-    setAddUrlVisible(!addUrlVisible);
-    setTimeout(() => {
-      inputRef.current?.focus();
-    }, 0);
-  };
 
   return (
     <div
       className={`flex w-[100%] flex-row border-[1px] border-solid border-black`}
     >
       <div className="w-[2.5%] border-r-[1px] border-solid border-black">
-        <div className="flex h-[calc(100%-23px)] items-center justify-center">
-          {index + 1}
-        </div>
+        <div className="flex h-[100%] justify-center pt-3">{index + 1}</div>
       </div>
       <div className="w-[5.5%] border-r-[1px] border-solid border-black">
-        <div className="pl-[2px flex h-[calc(100%-23px)] items-center justify-center text-blue-300">
+        <div className="pl-[2px flex h-[calc(100%-23px)] justify-center pt-3 text-blue-300">
           <Link href={crawlingData?.originalLink} target="_blank">
             {crawlingData.index}
           </Link>
         </div>
       </div>
       <div className="w-[6%] border-r-[1px] border-solid border-black">
-        <div className="flex h-[calc(100%-23px)] items-center justify-center pl-[2px] text-blue-300">
+        <div className="flex h-[calc(100%-23px)] justify-center pl-[2px] pt-3 text-blue-300">
           <Link
             className="w-[100%] break-words text-center text-[12px]"
             href={`https://www.google.co.kr/search?q=${crawlingData.productInfo.brand}&sca_esv=48a32a8a53a0fe13&sxsrf=ADLYWIJ3uYJX1CanmgT2nB9VAMPFiLO34w%3A1734423586966&source=hp&ei=IjRhZ6LVN6LS1e8Pi5GRgQw&iflsig=AL9hbdgAAAAAZ2FCMvyWWlfooNP991xDXeoTk_7av4-K&ved=0ahUKEwii7qaur66KAxUiafUHHYtIJMAQ4dUDCBo&uact=5&oq=XFPPU8554-21&gs_lp=Egdnd3Mtd2l6IgxYRlBQVTg1NTQtMjEyCBAAGIAEGKIESMEEUHxYfHABeACQAQCYAYwBoAGMAaoBAzAuMbgBA8gBAPgBAvgBAZgCAqAClgGoAgrCAgcQIxgnGOoCmAMJ8QV9IkCVHGMs2ZIHAzEuMaAHcg&sclient=gws-wiz`}
@@ -62,7 +54,7 @@ const Rows = ({
         </div>
       </div>
       <div className="w-[11%] border-r-[1px] border-solid border-black">
-        <div className="flex h-[100%] items-center justify-evenly gap-3 pl-[2px] text-blue-300">
+        <div className="flex h-[100%] items-start justify-evenly gap-3 pl-[2px] pt-2 text-blue-300">
           <div>
             <Link
               className="w-[45%] break-words text-[14px]"
@@ -98,7 +90,7 @@ const Rows = ({
         </div>
       </div>
       <div className="w-[5%] border-r-[1px] border-solid border-black">
-        <div className="flex h-[100%] items-center justify-center pl-[2px] text-blue-300">
+        <div className="flex h-[100%] items-start justify-evenly gap-3 pl-[2px] pt-2 text-blue-300">
           <Link
             className="w-[100%] break-words text-center text-[14px]"
             href={`https://www.google.co.kr/search?q=${crawlingData.productInfo.name}&sca_esv=48a32a8a53a0fe13&sxsrf=ADLYWIJ3uYJX1CanmgT2nB9VAMPFiLO34w%3A1734423586966&source=hp&ei=IjRhZ6LVN6LS1e8Pi5GRgQw&iflsig=AL9hbdgAAAAAZ2FCMvyWWlfooNP991xDXeoTk_7av4-K&ved=0ahUKEwii7qaur66KAxUiafUHHYtIJMAQ4dUDCBo&uact=5&oq=XFPPU8554-21&gs_lp=Egdnd3Mtd2l6IgxYRlBQVTg1NTQtMjEyCBAAGIAEGKIESMEEUHxYfHABeACQAQCYAYwBoAGMAaoBAzAuMbgBA8gBAPgBAvgBAZgCAqAClgGoAgrCAgcQIxgnGOoCmAMJ8QV9IkCVHGMs2ZIHAzEuMaAHcg&sclient=gws-wiz`}
@@ -257,11 +249,16 @@ const Rows = ({
       </form>
       <div className="w-[14.5%]">
         <div className="flex flex-col items-center gap-4">
-          <button className="w-[50%] rounded-[8px] border-[1px] border-black text-[14px]">
-            buyma에서 찾기
-          </button>
-          <button className="w-[50%] rounded-[8px] border-[1px] border-black text-[14px]">
-            poizon에서 찾기
+          <button
+            onClick={() => {
+              window.open(
+                `https://www.poizon.com/search?keyword=${crawlingData.productInfo.modalName}&track_referer_source=m1`,
+                "_blank",
+              );
+            }}
+            className="w-[60%] rounded-[8px] border-[1px] border-black text-[14px]"
+          >
+            poizon에서 검색결과 보기
           </button>
         </div>
       </div>

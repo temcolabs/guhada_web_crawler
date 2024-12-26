@@ -5,7 +5,7 @@ const exportJsonToExcel = <T>(jsonArray: T[], fileName = "output.xlsx") => {
   const worksheet = xlsx.utils.json_to_sheet(jsonArray);
 
   const workbook = xlsx.utils.book_new();
-  xlsx.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+  xlsx.utils.book_append_sheet(workbook, worksheet, "crawlingData");
 
   const excelData = xlsx.write(workbook, { bookType: "xlsx", type: "array" });
 

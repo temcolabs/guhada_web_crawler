@@ -57,61 +57,6 @@ const UploadFile = () => {
     fileInput.current?.click();
   };
 
-  const onSubmit = async () => {
-    if (file) {
-      setIsLoading(true);
-      const formData = new FormData();
-      formData.append("file", file);
-
-      formData.append("isChromium", isChromium ? "true" : "false");
-      formData.append("target", "okmall");
-      try {
-        const getData = await API.post<{
-          message: string;
-          data: selectImageTableType[];
-        }>("/api/crawling", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          timeout: 300000000000000,
-        });
-
-        localStorage.setItem("crawlingData", JSON.stringify(getData.data.data));
-        router.push("/DataTable");
-      } catch (error) {
-        alert("에러남!");
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  };
-
-  const testButton = async () => {
-    if (file) {
-      setIsLoading(true);
-      const formData = new FormData();
-      formData.append("file", file);
-
-      try {
-        const getData = await API.post<{
-          message: string;
-          data: selectImageTableType[];
-        }>("/api/test", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          timeout: 300000000000000,
-        });
-        // console.log(getData.data.data);
-      } catch (error) {
-        alert("에러남!");
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  };
   const sampleFileDownLoad = () => {
     exportJsonToExcel(
       [
@@ -156,20 +101,16 @@ const UploadFile = () => {
       });
 
       if (!isError && getData.data.upload) {
-        router.push(`DataTable?author=${getExcelData[0].담당자}`);
+        localStorage.removeItem("crawlingItem");
+        localStorage.removeItem("progress");
+        router.push(
+          `DataTable?author=${getExcelData[0].담당자}&isChromium=${isChromium}`,
+        );
       }
     } catch (error: any) {
       alert(error?.message);
     }
   };
-
-  const crawlingStart = async () => {
-    const getExcelData = await parsingExcelToJSON<excelType>(file);
-  };
-
-  if (isLoading) {
-    return <div>크롤링중.... 50개 기준 10~30분 정도 걸릴수있습니다</div>;
-  }
 
   return (
     <div className="absolute left-[50%] w-[60%] translate-x-[-50%]">

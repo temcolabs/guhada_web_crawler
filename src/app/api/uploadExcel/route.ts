@@ -7,10 +7,10 @@ export async function POST(req: NextRequest, res: NextApiResponse) {
   try {
     const getBody: { json: excelType[] } = await req.json();
 
-    const getAhthor = getBody.json[0].담당자;
-    const object = { getAhthor, list: getBody.json };
-    const getData = await crawlingDataToFile(undefined, object);
-    console.log(getData);
+    const author = getBody.json[0].담당자;
+    const object = { author, list: getBody.json };
+    crawlingDataToFile(undefined, object);
+
     return NextResponse.json({ upload: true }, { status: 200 });
   } catch (error) {
     return NextResponse.json(

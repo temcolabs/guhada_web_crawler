@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import fs from "fs";
-import { crawlingDataType } from "type/type";
+import { crawlingDataType, excelType } from "type/type";
 
 const delay = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, Math.random() * ms));
@@ -38,7 +38,7 @@ const crawlingDataToFile = (
       }
       let getData: crawlingDataType[] = JSON.parse(data);
       const sameAuther = getData.find(
-        (item) => item.getAhthor === paramData.getAhthor,
+        (item) => item.author === paramData.author,
       );
       if (sameAuther) {
         sameAuther.list = paramData.list;
@@ -57,9 +57,9 @@ const crawlingDataToFile = (
 };
 
 const getFindItem = (
-  fileName: string,
-  paramData: crawlingDataType,
-): Promise<crawlingDataType | undefined> => {
+  fileName: string = "./crawlingData.json",
+  author: string,
+): Promise<excelType[] | undefined> => {
   return new Promise((resolve, reject) => {
     fs.readFile(fileName, "utf8", (err, data) => {
       if (err) {
@@ -68,11 +68,20 @@ const getFindItem = (
       }
 
       const getData: crawlingDataType[] = JSON.parse(data); // 파일 데이터 파싱
-      const findItem = getData.find(
-        (item) => item.getAhthor === paramData.getAhthor,
-      );
-      resolve(findItem); // 성공적으로 값을 찾으면 resolve
+      const findItem = getData.find((item) => item.author === author);
+      resolve(findItem?.list); // 성공적으로 값을 찾으면 resolve
     });
   });
 };
-export { delay, fileGenerator, random, crawlingDataToFile, getFindItem };
+
+const streamingDataParser = (getData: any) => {
+  return new TextEncoder().encode(`data: ${JSON.stringify(getData)}\n\n`);
+};
+export {
+  delay,
+  fileGenerator,
+  random,
+  crawlingDataToFile,
+  getFindItem,
+  streamingDataParser,
+};
