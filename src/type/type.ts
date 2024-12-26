@@ -57,3 +57,5 @@ export type exportExcelData = {
   ["상품상세 이미지 5"]: string;
   ["상품상세 이미지 6"]: string;
 };
+
+export type crawlingDataType = { getAhthor: string; list: excelType[] };

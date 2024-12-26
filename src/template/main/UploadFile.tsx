@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, DragEvent, useEffect, useRef, useState } from "react";
-import { selectImageTableType } from "type/type";
+import { excelType, selectImageTableType } from "type/type";
 import { API } from "util/API";
 import { parsingExcelToJSON } from "util/ExcelToJson";
 import { exportJsonToExcel } from "util/JSONtoExcel";
@@ -14,8 +14,7 @@ const UploadFile = () => {
   const fileInput = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const [isChromium, setIsChromium] = useState(true);
-  const [messages, setMessages] = useState<string[]>([]);
-  const [isStreamEnded, setIsStreamEnded] = useState(false);
+
   const allowedTypes = [
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
     "application/vnd.ms-excel", // .xls
@@ -140,27 +139,32 @@ const UploadFile = () => {
       "sample.xlsx",
     );
   };
-  const startStreaming = async () => {
-    const getExcelData = await parsingExcelToJSON(file);
-    localStorage.setItem("saveData", JSON.stringify(getExcelData));
-    const eventSource = new EventSource("/api/streaming");
 
-    eventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-
-      if (data.status === "end") {
-        console.log("끗");
-        setIsStreamEnded(true); // Mark the stream as ended
-        eventSource.close();
-      } else {
-        setMessages((prev) => [...prev, JSON.stringify(data)]);
+  const fileUpload = async () => {
+    const getExcelData = await parsingExcelToJSON<excelType>(file);
+    let isError = false;
+    getExcelData.forEach((item) => {
+      if (!item.담당자) {
+        isError = true;
+        alert("엑셀의 담당자이름을 모두 적어주세요!!!");
+        return;
       }
-    };
+    });
+    try {
+      const getData = await API.post<{ upload: boolean }>("/api/uploadExcel", {
+        json: getExcelData,
+      });
 
-    eventSource.onerror = () => {
-      console.error("Error in EventSource");
-      eventSource.close();
-    };
+      if (!isError && getData.data.upload) {
+        router.push(`DataTable?author=${getExcelData[0].담당자}`);
+      }
+    } catch (error: any) {
+      alert(error?.message);
+    }
+  };
+
+  const crawlingStart = async () => {
+    const getExcelData = await parsingExcelToJSON<excelType>(file);
   };
 
   if (isLoading) {
@@ -199,18 +203,13 @@ const UploadFile = () => {
             onChange={handleFileSelect}
           />
         </div>
+
         <button
-          onClick={startStreaming}
-          className="h-[56px] rounded-[8px] border-[1px] border-black disabled:bg-slate-400"
-        >
-          스트림 시작
-        </button>
-        <button
-          onClick={onSubmit}
+          onClick={fileUpload}
           disabled={!file}
           className="h-[56px] rounded-[8px] border-[1px] border-black disabled:bg-slate-400"
         >
-          클로링시작
+          엑셀파일 업로드
         </button>
         <button
           onClick={sampleFileDownLoad}

@@ -1,14 +1,9 @@
 "use client";
 import Image from "next/image";
-import {
-  FormEvent,
-  MouseEvent,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from "react";
-import { exportExcelData, selectImageTableType } from "type/type";
-import { API } from "util/API";
+import { FormEvent, useState } from "react";
+import { excelType, exportExcelData, selectImageTableType } from "type/type";
+
+import useStreming from "Hooks/useStreming";
 import { exportJsonToExcel } from "util/JSONtoExcel";
 import Header from "./Header";
 import Rows from "./Rows";
@@ -18,37 +13,15 @@ const DataTable = () => {
   const [selectIndex, setSelectIndex] = useState(-1);
   const [testData, setTestData] = useState<string[]>([]);
   const [isChange, setIsChange] = useState(false);
-  const [widthObject, setWidthObject] = useState({
-    index: 2.5,
-    uniqueindex: 5.5,
-    브랜드: 6,
-    "모델명 / 브랜드 + 모델명": 11,
-    상품명: 5,
-    사진: 20,
-    크롤링한index: 2.5,
-    크롤링한사진: 25,
-    직접입력: 8,
-    "다른곳에서 찾기": 14.5,
+
+  const excelData = JSON.parse(
+    localStorage.getItem("saveData") as string,
+  ) as excelType[];
+
+  const { data: streamData, isStreamEnded } = useStreming({
+    api: "/api/streaming",
+    excelData: excelData ? excelData : [],
   });
-
-  useLayoutEffect(() => {
-    const data = localStorage.getItem("crawlingData");
-    if (data) setData(JSON.parse(data));
-  }, []);
-  useEffect(() => {
-    if (isChange) {
-      localStorage.setItem("crawlingData", JSON.stringify(data));
-    }
-  }, [data, isChange]);
-
-  const test = async () => {
-    const getData = await API.post<{
-      message: string;
-      data: string[];
-    }>("/api/test");
-
-    // setTestData(getData.data.data);
-  };
 
   const findCrawlingItem = (rowIndex: number) => {
     const copyData = [...data];
@@ -61,10 +34,6 @@ const DataTable = () => {
     const copyData = [...data];
     const findItem = findCrawlingItem(rowIndex);
 
-    if (findItem?.searchImpossible) {
-      alert("못찾는 이미지 입니다.");
-      return;
-    }
     if (findItem && findItem.crawlingImageUrl) {
       if (findItem.selectedImageLength === undefined) {
         findItem.selectedImageLength = 0;
@@ -111,10 +80,6 @@ const DataTable = () => {
       const copyData = [...data];
       const findItem = findCrawlingItem(rowIndex);
 
-      if (findItem?.searchImpossible) {
-        alert("못찾는 이미지 입니다.");
-        return;
-      }
       if (findItem && findItem.crawlingImageUrl) {
         if (findItem.selectedImageLength === undefined) {
           findItem.selectedImageLength = 0;
@@ -139,10 +104,7 @@ const DataTable = () => {
   const deleteManualUrl = (url: string, rowIndex: number) => {
     const copyData = [...data];
     const findItem = findCrawlingItem(rowIndex);
-    if (findItem?.searchImpossible) {
-      alert("못찾는 이미지 입니다.");
-      return;
-    }
+
     if (findItem && findItem.manualUrl) {
       if (findItem.selectedImageLength >= 0) {
         findItem.selectedImageLength--;
@@ -150,21 +112,6 @@ const DataTable = () => {
         findItem.selectedImageLength = 0;
       }
       findItem.manualUrl = findItem?.manualUrl.filter((item) => item !== url);
-    }
-    setData([...copyData]);
-  };
-
-  const searchImpossible = (
-    e: MouseEvent<HTMLButtonElement>,
-    rowIndex: number,
-  ) => {
-    e.preventDefault();
-    const copyData = [...data];
-    const findItem = findCrawlingItem(rowIndex);
-    if (findItem && findItem.searchImpossible === undefined) {
-      findItem.searchImpossible = !findItem?.searchImpossible;
-    } else if (findItem) {
-      findItem.searchImpossible = !findItem?.searchImpossible;
     }
     setData([...copyData]);
   };

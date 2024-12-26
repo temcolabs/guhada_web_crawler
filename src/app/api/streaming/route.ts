@@ -14,15 +14,14 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
             new TextEncoder().encode(
               `data: ${JSON.stringify({ status: "end" })}\n\n`,
             ),
-          );
+          ); // Close the stream after 5 iterations
           controller.close();
-          return "end";
-        } else {
-          controller.enqueue(
-            new TextEncoder().encode(`data: ${JSON.stringify({ count })}\n\n`),
-          );
-          count++;
+          return;
         }
+        controller.enqueue(
+          new TextEncoder().encode(`data: ${JSON.stringify({ count })}\n\n`),
+        );
+        count++;
         setTimeout(push, 1000); // Stream data every second
       };
 
