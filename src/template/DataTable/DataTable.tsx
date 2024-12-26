@@ -233,7 +233,7 @@ const DataTable = () => {
           className="h-[50px] flex-[8] bg-slate-500 text-white"
           onClick={streamStart}
         >
-          크롤링 시작
+          스트림 시작
         </button>
         <button
           className="h-[50px] flex-[2] bg-stone-300 text-black"
