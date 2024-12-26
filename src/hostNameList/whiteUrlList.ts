@@ -163,5 +163,6 @@ const whiteUrlList = [
   "stylemyles",
   "cncpts",
   "ganni",
+  "www.taobao.com",
 ];
 export default whiteUrlList;

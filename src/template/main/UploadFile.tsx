@@ -1,9 +1,10 @@
 "use client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, DragEvent, useRef, useState } from "react";
-import { selectImageTableType } from "type/type";
+import { ChangeEvent, DragEvent, useEffect, useRef, useState } from "react";
+import { excelType, selectImageTableType } from "type/type";
 import { API } from "util/API";
+import { parsingExcelToJSON } from "util/ExcelToJson";
 import { exportJsonToExcel } from "util/JSONtoExcel";
 
 const UploadFile = () => {
@@ -56,61 +57,6 @@ const UploadFile = () => {
     fileInput.current?.click();
   };
 
-  const onSubmit = async () => {
-    if (file) {
-      setIsLoading(true);
-      const formData = new FormData();
-      formData.append("file", file);
-
-      formData.append("isChromium", isChromium ? "true" : "false");
-      formData.append("target", "okmall");
-      try {
-        const getData = await API.post<{
-          message: string;
-          data: selectImageTableType[];
-        }>("/api/crawling", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          timeout: 300000000000000,
-        });
-
-        localStorage.setItem("crawlingData", JSON.stringify(getData.data.data));
-        router.push("/DataTable");
-      } catch (error) {
-        alert("에러남!");
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  };
-
-  const testButton = async () => {
-    if (file) {
-      setIsLoading(true);
-      const formData = new FormData();
-      formData.append("file", file);
-
-      try {
-        const getData = await API.post<{
-          message: string;
-          data: selectImageTableType[];
-        }>("/api/test", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          timeout: 300000000000000,
-        });
-        // console.log(getData.data.data);
-      } catch (error) {
-        alert("에러남!");
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  };
   const sampleFileDownLoad = () => {
     exportJsonToExcel(
       [
@@ -138,10 +84,34 @@ const UploadFile = () => {
       "sample.xlsx",
     );
   };
-  if (isLoading) {
-    return <div>크롤링중.... 50개 기준 10~30분 정도 걸릴수있습니다</div>;
-  }
-  const teststring = "";
+
+  const fileUpload = async () => {
+    const getExcelData = await parsingExcelToJSON<excelType>(file);
+    let isError = false;
+    getExcelData.forEach((item) => {
+      if (!item.담당자) {
+        isError = true;
+        alert("엑셀의 담당자이름을 모두 적어주세요!!!");
+        return;
+      }
+    });
+    try {
+      const getData = await API.post<{ upload: boolean }>("/api/uploadExcel", {
+        json: getExcelData,
+      });
+
+      if (!isError && getData.data.upload) {
+        localStorage.removeItem("crawlingItem");
+        localStorage.removeItem("progress");
+        router.push(
+          `DataTable?author=${getExcelData[0].담당자}&isChromium=${isChromium}`,
+        );
+      }
+    } catch (error: any) {
+      alert(error?.message);
+    }
+  };
+
   return (
     <div className="absolute left-[50%] w-[60%] translate-x-[-50%]">
       <div>엑셀파일을 올려주세요</div>
@@ -174,12 +144,13 @@ const UploadFile = () => {
             onChange={handleFileSelect}
           />
         </div>
+
         <button
-          onClick={onSubmit}
+          onClick={fileUpload}
           disabled={!file}
           className="h-[56px] rounded-[8px] border-[1px] border-black disabled:bg-slate-400"
         >
-          클로링시작
+          엑셀파일 업로드
         </button>
         <button
           onClick={sampleFileDownLoad}

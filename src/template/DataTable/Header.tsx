@@ -3,7 +3,7 @@ import React from "react";
 interface HeaderProps {}
 const Header = ({}: HeaderProps) => {
   return (
-    <div className="sticky top-[0px] z-[100] flex w-[100%] border-[1px] border-solid border-black bg-white">
+    <div className="flex w-[100%] border-[1px] border-solid border-black">
       <div className="w-[2.5%] border-r-[1px] border-solid border-black">
         <div className="border-b-[1px] border-solid border-black text-center">
           index

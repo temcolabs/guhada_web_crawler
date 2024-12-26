@@ -1,53 +1,65 @@
 "use client";
-import Image from "next/image";
-import {
-  FormEvent,
-  MouseEvent,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { exportExcelData, selectImageTableType } from "type/type";
-import { API } from "util/API";
 import { exportJsonToExcel } from "util/JSONtoExcel";
 import Header from "./Header";
 import Rows from "./Rows";
 
 const DataTable = () => {
-  const [data, setData] = useState<selectImageTableType[]>([]);
-  const [selectIndex, setSelectIndex] = useState(-1);
-  const [testData, setTestData] = useState<string[]>([]);
   const [isChange, setIsChange] = useState(false);
-  const [widthObject, setWidthObject] = useState({
-    index: 2.5,
-    uniqueindex: 5.5,
-    브랜드: 6,
-    "모델명 / 브랜드 + 모델명": 11,
-    상품명: 5,
-    사진: 20,
-    크롤링한index: 2.5,
-    크롤링한사진: 25,
-    직접입력: 8,
-    "다른곳에서 찾기": 14.5,
-  });
+  const [data, setData] = useState<selectImageTableType[]>([]);
+  const [progress, setProgress] = useState<{
+    maxPage: number;
+    currentPage: number;
+  }>({ currentPage: 0, maxPage: 0 });
+  const [isStreamEnded, setIsStreamEnded] = useState<"ready" | "ing" | "end">(
+    "ready",
+  );
 
-  useLayoutEffect(() => {
-    const data = localStorage.getItem("crawlingData");
-    if (data) setData(JSON.parse(data));
-  }, []);
-  useEffect(() => {
-    if (isChange) {
-      localStorage.setItem("crawlingData", JSON.stringify(data));
+  const streamStart = () => {
+    if (progress.currentPage > 0 && progress.currentPage === progress.maxPage) {
+      alert("이미 완료되었습니다!");
+      return;
     }
-  }, [data, isChange]);
+    const urlSearch = new URLSearchParams(location.search);
+    const authorName = urlSearch.get("author");
+    const isChromium = urlSearch.get("isChromium");
+    const eventSource = new EventSource(
+      `/api/streaming?author=${authorName}&isChromium=${isChromium}`,
+    );
 
-  const test = async () => {
-    const getData = await API.post<{
-      message: string;
-      data: string[];
-    }>("/api/test");
+    eventSource.onmessage = (event) => {
+      const data: {
+        status: string;
+        data: selectImageTableType;
+        maxPage: number;
+        currentPage: number;
+      } = JSON.parse(event.data);
 
-    // setTestData(getData.data.data);
+      if (data.status === "end") {
+        eventSource.close();
+        setIsStreamEnded("end");
+        alert("크롤링이 끝났습니다!");
+      } else if (data.status === "ing") {
+        setIsStreamEnded("ing");
+        setProgress({ currentPage: data.currentPage, maxPage: data.maxPage });
+        setData((prev) => {
+          return prev.concat(data.data);
+        });
+      }
+    };
+
+    eventSource.onerror = () => {
+      alert("에러!");
+      eventSource.close();
+    };
+  };
+  const removeAllList = () => {
+    localStorage.removeItem("crawlingItem");
+    localStorage.removeItem("progress");
+    setIsStreamEnded("ready");
+    setData([]);
+    setProgress({ currentPage: 0, maxPage: 0 });
   };
 
   const findCrawlingItem = (rowIndex: number) => {
@@ -61,10 +73,6 @@ const DataTable = () => {
     const copyData = [...data];
     const findItem = findCrawlingItem(rowIndex);
 
-    if (findItem?.searchImpossible) {
-      alert("못찾는 이미지 입니다.");
-      return;
-    }
     if (findItem && findItem.crawlingImageUrl) {
       if (findItem.selectedImageLength === undefined) {
         findItem.selectedImageLength = 0;
@@ -111,10 +119,6 @@ const DataTable = () => {
       const copyData = [...data];
       const findItem = findCrawlingItem(rowIndex);
 
-      if (findItem?.searchImpossible) {
-        alert("못찾는 이미지 입니다.");
-        return;
-      }
       if (findItem && findItem.crawlingImageUrl) {
         if (findItem.selectedImageLength === undefined) {
           findItem.selectedImageLength = 0;
@@ -136,13 +140,11 @@ const DataTable = () => {
       alert("이미지 url을 입력해주세요!");
     }
   };
+
   const deleteManualUrl = (url: string, rowIndex: number) => {
     const copyData = [...data];
     const findItem = findCrawlingItem(rowIndex);
-    if (findItem?.searchImpossible) {
-      alert("못찾는 이미지 입니다.");
-      return;
-    }
+
     if (findItem && findItem.manualUrl) {
       if (findItem.selectedImageLength >= 0) {
         findItem.selectedImageLength--;
@@ -154,23 +156,9 @@ const DataTable = () => {
     setData([...copyData]);
   };
 
-  const searchImpossible = (
-    e: MouseEvent<HTMLButtonElement>,
-    rowIndex: number,
-  ) => {
-    e.preventDefault();
-    const copyData = [...data];
-    const findItem = findCrawlingItem(rowIndex);
-    if (findItem && findItem.searchImpossible === undefined) {
-      findItem.searchImpossible = !findItem?.searchImpossible;
-    } else if (findItem) {
-      findItem.searchImpossible = !findItem?.searchImpossible;
-    }
-    setData([...copyData]);
-  };
-
   const exportData = () => {
     const excelData: exportExcelData[] = [];
+    const unselectedUrl: string[] = [];
     data.forEach((item) => {
       const index = item.index;
       const selectedUrls: string[] = [];
@@ -183,9 +171,14 @@ const DataTable = () => {
         item.imageUrls.forEach((url, index) => {
           if (url.selected) {
             if (url.url) selectedUrls.push(url.url);
+          } else {
+            if (url.url) {
+              unselectedUrl.push(url.url);
+            }
           }
         });
       });
+      console.log(unselectedUrl);
       excelData.push({
         index,
         브랜드: item.productInfo.brand,
@@ -200,27 +193,82 @@ const DataTable = () => {
       });
     });
 
+    exportJsonToExcel<{ unselectedUrl: string }>(
+      unselectedUrl.map((item) => ({ unselectedUrl: item })),
+      "blackList.xlsx",
+    );
     exportJsonToExcel<exportExcelData>(excelData);
   };
 
+  useEffect(() => {
+    if (isStreamEnded !== "ready") {
+      localStorage.setItem("crawlingItem", JSON.stringify(data));
+      localStorage.setItem("progress", JSON.stringify(progress));
+    }
+  }, [data, isStreamEnded]);
+
+  useEffect(() => {
+    if (isStreamEnded === "ready") {
+      const getdata = localStorage.getItem("crawlingItem");
+      const getProgress = localStorage.getItem("progress");
+      const parsingProgress = JSON.parse(getProgress || "{}");
+      if (parsingProgress.maxPage) {
+        setProgress(parsingProgress);
+      }
+      const parsingData = JSON.parse(getdata || "[]");
+      if (parsingData.length > 0) {
+        setData(parsingData);
+      }
+    }
+  }, [isStreamEnded]);
+
+  const progressPer =
+    progress.currentPage / progress.maxPage
+      ? (progress.currentPage / progress.maxPage) * 100
+      : 0;
   return (
     <div className="flex flex-col gap-[12px]">
-      <div>okmall비교 {data.length}개</div>
-      {/* <button className="fixed bottom-10 right-2 z-40" onClick={test}>
-        테스트하기
-      </button> */}
-      <button className="fixed bottom-20 right-2 z-40" onClick={exportData}>
-        내보내기
-      </button>
-      <div className="flex overflow-auto">
-        {testData.map((item) => {
-          return (
-            <Image key={item} src={item} alt="" width={100} height={100} />
-          );
-        })}
+      <div className="flex w-[100%]">
+        <button
+          className="h-[50px] flex-[8] bg-slate-500 text-white"
+          onClick={streamStart}
+        >
+          크롤링 시작
+        </button>
+        <button
+          className="h-[50px] flex-[2] bg-stone-300 text-black"
+          onClick={removeAllList}
+        >
+          모두지우기
+        </button>
       </div>
-      <Header />
-      {data.map((crawlingData, index) => (
+      <div className="sticky top-[0px] z-[100] bg-white">
+        <div className="pl-2">
+          {isStreamEnded ? (
+            <div>
+              완료 {progress.currentPage} / {progress.maxPage}
+            </div>
+          ) : (
+            <div>
+              크롤링중....
+              {progress.currentPage} / {progress.maxPage}
+            </div>
+          )}
+        </div>
+        <div className="w-[100%] bg-white">
+          <div
+            className="bg-yellow-400"
+            style={{
+              width: `${progressPer}%`,
+            }}
+          >
+            {Math.floor(progressPer)}%
+          </div>
+        </div>
+
+        <Header />
+      </div>
+      {data?.map((crawlingData, index) => (
         <Rows
           index={index}
           rowIndex={crawlingData.index}
@@ -231,14 +279,16 @@ const DataTable = () => {
           deleteManualUrl={deleteManualUrl}
         />
       ))}
-      <button
-        onClick={() => {
-          window.scrollTo({ top: 0 });
-        }}
-        className="fixed bottom-5 right-2"
-      >
-        위로
-      </button>
+      <div className="fixed bottom-5 right-2 z-40 flex flex-col items-end gap-5 bg-white p-2">
+        <button onClick={exportData}>내보내기</button>
+        <button
+          onClick={() => {
+            window.scrollTo({ top: 0 });
+          }}
+        >
+          위로
+        </button>
+      </div>
     </div>
   );
 };
