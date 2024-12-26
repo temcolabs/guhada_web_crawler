@@ -1,9 +1,10 @@
 "use client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, DragEvent, useRef, useState } from "react";
+import { ChangeEvent, DragEvent, useEffect, useRef, useState } from "react";
 import { selectImageTableType } from "type/type";
 import { API } from "util/API";
+import { parsingExcelToJSON } from "util/ExcelToJson";
 import { exportJsonToExcel } from "util/JSONtoExcel";
 
 const UploadFile = () => {
@@ -13,7 +14,8 @@ const UploadFile = () => {
   const fileInput = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const [isChromium, setIsChromium] = useState(true);
-
+  const [messages, setMessages] = useState<string[]>([]);
+  const [isStreamEnded, setIsStreamEnded] = useState(false);
   const allowedTypes = [
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
     "application/vnd.ms-excel", // .xls
@@ -138,10 +140,33 @@ const UploadFile = () => {
       "sample.xlsx",
     );
   };
+  const startStreaming = async () => {
+    const getExcelData = await parsingExcelToJSON(file);
+    localStorage.setItem("saveData", JSON.stringify(getExcelData));
+    const eventSource = new EventSource("/api/streaming");
+
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+
+      if (data.status === "end") {
+        console.log("끗");
+        setIsStreamEnded(true); // Mark the stream as ended
+        eventSource.close();
+      } else {
+        setMessages((prev) => [...prev, JSON.stringify(data)]);
+      }
+    };
+
+    eventSource.onerror = () => {
+      console.error("Error in EventSource");
+      eventSource.close();
+    };
+  };
+
   if (isLoading) {
     return <div>크롤링중.... 50개 기준 10~30분 정도 걸릴수있습니다</div>;
   }
-  const teststring = "";
+
   return (
     <div className="absolute left-[50%] w-[60%] translate-x-[-50%]">
       <div>엑셀파일을 올려주세요</div>
@@ -174,6 +199,12 @@ const UploadFile = () => {
             onChange={handleFileSelect}
           />
         </div>
+        <button
+          onClick={startStreaming}
+          className="h-[56px] rounded-[8px] border-[1px] border-black disabled:bg-slate-400"
+        >
+          스트림 시작
+        </button>
         <button
           onClick={onSubmit}
           disabled={!file}
