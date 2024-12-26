@@ -244,7 +244,7 @@ const DataTable = () => {
       </div>
       <div className="sticky top-[0px] z-[100] bg-white">
         <div className="pl-2">
-          {isStreamEnded ? (
+          {isStreamEnded === "end" ? (
             <div>
               완료 {progress.currentPage} / {progress.maxPage}
             </div>
