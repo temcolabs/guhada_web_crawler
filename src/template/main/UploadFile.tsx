@@ -120,6 +120,7 @@ const UploadFile = () => {
   // };
   return (
     <div className="absolute left-[50%] w-[60%] translate-x-[-50%]">
+      0.9ver
       <div>엑셀파일을 올려주세요</div>
       <form
         className="flex h-[100%] flex-col gap-[20px]"
