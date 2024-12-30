@@ -1,6 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
-import { FormEvent, memo, useRef, useState } from "react";
+import {
+  Dispatch,
+  FormEvent,
+  memo,
+  SetStateAction,
+  useRef,
+  useState,
+} from "react";
 import LazyLoad from "react-lazy-load";
 import { selectImageTableType } from "type/type";
 import { HiOutlineArrowsExpand } from "react-icons/hi";
@@ -27,6 +34,7 @@ interface RowsProps {
   blackListImage: (url: string) => void;
   blackList: string[];
   selectedList: string[];
+  setClassificationCount: Dispatch<SetStateAction<number>>;
 }
 const Rows = ({
   crawlingData,
@@ -39,6 +47,7 @@ const Rows = ({
   blackListImage,
   blackList,
   selectedList,
+  setClassificationCount,
 }: RowsProps) => {
   const [isAllFind, setIsAllFind] = useState(false);
   const [url, setUrl] = useState("");
@@ -54,6 +63,7 @@ const Rows = ({
     return (
       <button
         onClick={() => {
+          setClassificationCount((prev) => prev - 1);
           setIsAllFind(!isAllFind);
         }}
         className="flex w-[100%] flex-col border-[1px] border-black"
@@ -418,6 +428,7 @@ const Rows = ({
           </button>
           <button
             onClick={() => {
+              setClassificationCount((prev) => prev + 1);
               setIsAllFind(!isAllFind);
             }}
             className="w-[60%] rounded-[8px] border-[1px] border-black text-[14px]"

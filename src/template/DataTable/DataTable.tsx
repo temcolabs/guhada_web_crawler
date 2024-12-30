@@ -17,7 +17,7 @@ const DataTable = () => {
   const [isStreamEnded, setIsStreamEnded] = useState<"ready" | "ing" | "end">(
     "ready",
   );
-
+  const [classificationCount, setClassificationCount] = useState(0);
   const streamStart = () => {
     if (progress.currentPage > 0 && progress.currentPage === progress.maxPage) {
       alert("이미 완료되었습니다!");
@@ -226,12 +226,12 @@ const DataTable = () => {
     });
 
     const uniqueBlackList = [...new Set(blackList)];
-    console.log(uniqueBlackList);
+
     exportJsonToExcel<{ unselectedUrl: string }>(
       uniqueBlackList.map((item) => ({ unselectedUrl: item })),
       "blackList.xlsx",
     );
-    exportJsonToExcel<exportExcelData>(excelData);
+    exportJsonToExcel<exportExcelData>(excelData, "selectedList.xlsx");
   };
 
   useEffect(() => {
@@ -260,6 +260,7 @@ const DataTable = () => {
     progress.currentPage / progress.maxPage
       ? (progress.currentPage / progress.maxPage) * 100
       : 0;
+  const classificationPer = (classificationCount / progress.maxPage) * 100;
   return (
     <div className="flex flex-col gap-[12px]">
       <div className="flex w-[100%]">
@@ -280,7 +281,7 @@ const DataTable = () => {
         <div className="pl-2">
           {progress.currentPage === progress.maxPage ? (
             <div>
-              완료 {progress.currentPage} / {progress.maxPage}
+              크롤링 완료 {progress.currentPage} / {progress.maxPage}
             </div>
           ) : (
             <div>
@@ -299,11 +300,25 @@ const DataTable = () => {
             {Math.floor(progressPer)}%
           </div>
         </div>
-
+        <div>
+          분류 진행중
+          {classificationCount} / {progress.maxPage}
+        </div>
+        <div className="w-[100%] bg-white">
+          <div
+            className="bg-yellow-400"
+            style={{
+              width: `${classificationPer}%`,
+            }}
+          >
+            {Math.floor(classificationPer)}%
+          </div>
+        </div>
         <Header />
       </div>
       {data?.map((crawlingData, index) => (
         <Rows
+          setClassificationCount={setClassificationCount}
           blackList={blackList}
           selectedList={selectedList}
           hideCrawlingImageList={hideCrawlingImageList}
