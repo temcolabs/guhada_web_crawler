@@ -50,7 +50,6 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
               whiteList,
             );
 
-            count++;
             controller.enqueue(
               streamingDataParser({
                 status: "ing",
@@ -59,6 +58,7 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
                 maxPage: getList.length - 1,
               }),
             );
+            count++;
           }
         } catch (error) {
           console.log(error);
