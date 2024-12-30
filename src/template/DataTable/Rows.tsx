@@ -149,6 +149,16 @@ const Rows = ({
             target="_blank"
           >
             {crawlingData.productInfo.name}
+            <div
+              className="cursor-pointer"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                navigator.clipboard.writeText(crawlingData.productInfo.name);
+              }}
+            >
+              <FaRegCopy />
+            </div>
           </Link>
         </div>
       </div>
