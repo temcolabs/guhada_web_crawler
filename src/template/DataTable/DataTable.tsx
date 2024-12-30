@@ -6,6 +6,7 @@ import Header from "./Header";
 import Rows from "./Rows";
 import { FaFileExport } from "react-icons/fa";
 import { FaArrowAltCircleUp } from "react-icons/fa";
+
 const DataTable = () => {
   const [isChange, setIsChange] = useState(false);
   const [data, setData] = useState<selectImageTableType[]>([]);
@@ -58,6 +59,7 @@ const DataTable = () => {
     };
   };
   const removeAllList = () => {
+    setClassificationCount(0);
     localStorage.removeItem("crawlingItem");
     localStorage.removeItem("progress");
     setIsStreamEnded("ready");
@@ -261,7 +263,9 @@ const DataTable = () => {
     progress.currentPage / progress.maxPage
       ? (progress.currentPage / progress.maxPage) * 100
       : 0;
-  const classificationPer = (classificationCount / progress.maxPage) * 100;
+  const classificationPer = progress.maxPage
+    ? (classificationCount / progress.maxPage) * 100
+    : 0;
   return (
     <div className="flex flex-col gap-[12px]">
       <div className="flex w-[100%]">
@@ -279,40 +283,44 @@ const DataTable = () => {
         </button>
       </div>
       <div className="sticky top-[0px] z-[100] bg-white">
-        <div className="pl-2">
-          {progress.currentPage === progress.maxPage ? (
-            <div>
-              크롤링 완료 {progress.currentPage} / {progress.maxPage}
+        <div className="flex gap-2 pl-2">
+          <div className="mr-2 flex-shrink-0">
+            {progress.currentPage === progress.maxPage ? (
+              <div>
+                크롤링 완료 {progress.currentPage} / {progress.maxPage}
+              </div>
+            ) : (
+              <div>
+                크롤링중....
+                {progress.currentPage} / {progress.maxPage}
+              </div>
+            )}
+          </div>
+          <div className="w-[100%] bg-white">
+            <div
+              className="bg-yellow-400"
+              style={{
+                width: `${progressPer}%`,
+              }}
+            >
+              {Math.floor(progressPer)}%
             </div>
-          ) : (
-            <div>
-              크롤링중....
-              {progress.currentPage} / {progress.maxPage}
-            </div>
-          )}
-        </div>
-        <div className="w-[100%] bg-white">
-          <div
-            className="bg-yellow-400"
-            style={{
-              width: `${progressPer}%`,
-            }}
-          >
-            {Math.floor(progressPer)}%
           </div>
         </div>
-        <div>
-          분류 진행중
-          {classificationCount} / {progress.maxPage}
-        </div>
-        <div className="w-[100%] bg-white">
-          <div
-            className="bg-yellow-400"
-            style={{
-              width: `${classificationPer}%`,
-            }}
-          >
-            {Math.floor(classificationPer)}%
+        <div className="flex gap-2 pl-2">
+          <div className="flex flex-shrink-0 gap-2">
+            <div>분류 진행중</div>
+            {classificationCount} / {progress.maxPage}
+          </div>
+          <div className="w-[100%] bg-white">
+            <div
+              className="bg-yellow-400"
+              style={{
+                width: `${classificationPer}%`,
+              }}
+            >
+              {Math.floor(classificationPer)}%
+            </div>
           </div>
         </div>
         <Header />
