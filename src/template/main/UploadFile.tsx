@@ -112,12 +112,12 @@ const UploadFile = () => {
     }
   };
 
-  const test = async () => {
-    const getdata = await parsingExcelToJSON<{ unselectedUrl: string }>(file);
-    console.log(
-      getDuplicatedBlackList(getdata.map((item) => item.unselectedUrl)),
-    );
-  };
+  // const test = async () => {
+  //   const getdata = await parsingExcelToJSON<{ unselectedUrl: string }>(file);
+  //   console.log(
+  //     getDuplicatedBlackList(getdata.map((item) => item.unselectedUrl)),
+  //   );
+  // };
   return (
     <div className="absolute left-[50%] w-[60%] translate-x-[-50%]">
       <div>엑셀파일을 올려주세요</div>
@@ -151,12 +151,12 @@ const UploadFile = () => {
           />
         </div>
 
-        <button
+        {/* <button
           onClick={test}
           className="h-[56px] rounded-[8px] border-[1px] border-black disabled:bg-slate-400"
         >
           테스트
-        </button>
+        </button> */}
         <button
           onClick={fileUpload}
           disabled={!file}
