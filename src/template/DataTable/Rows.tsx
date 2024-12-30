@@ -167,26 +167,33 @@ const Rows = ({
                         return (
                           <div
                             key={url ? url + index + "url" : index}
-                            className={`shrink-0 cursor-pointer ${selected ? "debug" : ""}`}
-                            style={{
-                              position: "relative",
-                              width: "22%",
-                              height: 110,
-                            }}
+                            className={`w-[25%] shrink-0 cursor-pointer ${selected ? "debug" : ""} `}
                           >
-                            <Image
-                              onClick={() => {
-                                if (url) {
-                                  onClickSearchImages(url, crawlingData.index);
-                                }
+                            <div
+                              style={{
+                                position: "relative",
+                                width: "100%",
+                                height: 150,
                               }}
-                              fill
-                              loading="lazy"
-                              sizes="150px"
-                              alt="item"
-                              src={url ? url : ""}
-                              style={{ objectFit: "contain" }}
-                            />
+                            >
+                              <Image
+                                onClick={() => {
+                                  if (url) {
+                                    onClickSearchImages(
+                                      url,
+                                      crawlingData.index,
+                                    );
+                                  }
+                                }}
+                                fill
+                                loading="lazy"
+                                sizes="150px"
+                                alt="item"
+                                src={url ? url : ""}
+                                style={{ objectFit: "contain" }}
+                              />
+                            </div>
+                            <div>크개보기</div>
                           </div>
                         );
                       })}
@@ -229,8 +236,8 @@ const Rows = ({
               <div key={item + index}>
                 <Image
                   className="debug"
-                  width={100}
-                  height={100}
+                  width={150}
+                  height={150}
                   alt="이미지"
                   src={item}
                 />
