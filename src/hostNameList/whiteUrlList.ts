@@ -171,5 +171,6 @@ const whiteUrlList = [
   "hualienhappyoutdoor.com",
   "jomashop.com",
   "backpackinglight",
+  "sneakersnstuff",
 ];
 export default whiteUrlList;
