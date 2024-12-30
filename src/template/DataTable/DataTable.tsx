@@ -4,7 +4,8 @@ import { exportExcelData, selectImageTableType } from "type/type";
 import { exportJsonToExcel } from "util/JSONtoExcel";
 import Header from "./Header";
 import Rows from "./Rows";
-
+import { FaFileExport } from "react-icons/fa";
+import { FaArrowAltCircleUp } from "react-icons/fa";
 const DataTable = () => {
   const [isChange, setIsChange] = useState(false);
   const [data, setData] = useState<selectImageTableType[]>([]);
@@ -332,14 +333,16 @@ const DataTable = () => {
           blackListImage={blackListImage}
         />
       ))}
-      <div className="fixed bottom-5 right-2 z-40 flex flex-col items-end gap-5 bg-white p-2">
-        <button onClick={exportData}>내보내기</button>
+      <div className="fixed bottom-5 right-2 z-40 flex flex-col items-end gap-5 p-2">
+        <button onClick={exportData}>
+          <FaFileExport color="green" size={35} />
+        </button>
         <button
           onClick={() => {
             window.scrollTo({ top: 0 });
           }}
         >
-          위로
+          <FaArrowAltCircleUp color="lightblue" size={35} />
         </button>
       </div>
     </div>
