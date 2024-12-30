@@ -1,11 +1,10 @@
 "use client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, DragEvent, useEffect, useRef, useState } from "react";
-import { excelType, selectImageTableType } from "type/type";
+import { ChangeEvent, DragEvent, useRef, useState } from "react";
+import { excelType } from "type/type";
 import { API } from "util/API";
 import { parsingExcelToJSON } from "util/ExcelToJson";
-import { getDuplicatedBlackList } from "util/getDuplicatedImageBlackList";
 import { exportJsonToExcel } from "util/JSONtoExcel";
 
 const UploadFile = () => {
@@ -120,7 +119,7 @@ const UploadFile = () => {
   // };
   return (
     <div className="absolute left-[50%] w-[60%] translate-x-[-50%]">
-      0.9ver
+      0.95ver
       <div>엑셀파일을 올려주세요</div>
       <form
         className="flex h-[100%] flex-col gap-[20px]"

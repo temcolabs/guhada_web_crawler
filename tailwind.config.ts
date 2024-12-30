@@ -19,6 +19,8 @@ export default {
   plugins: [
     plugin(({ addUtilities }) => {
       addUtilities({ ".debug": { border: "1px solid red" } });
+      addUtilities({ ".selected": { border: "3px solid green" } });
+      addUtilities({ ".blackList": { border: "3px solid red" } });
     }),
   ],
 } satisfies Config;

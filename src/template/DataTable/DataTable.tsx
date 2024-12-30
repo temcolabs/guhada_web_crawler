@@ -8,6 +8,8 @@ import Rows from "./Rows";
 const DataTable = () => {
   const [isChange, setIsChange] = useState(false);
   const [data, setData] = useState<selectImageTableType[]>([]);
+  const [blackList, setBlackList] = useState<string[]>([]);
+  const [selectedList, setSelectedList] = useState<string[]>([]);
   const [progress, setProgress] = useState<{
     maxPage: number;
     currentPage: number;
@@ -72,7 +74,13 @@ const DataTable = () => {
   const onClickSearchImages = (url: string | null, rowIndex: number) => {
     const copyData = [...data];
     const findItem = findCrawlingItem(rowIndex);
-
+    if (url) {
+      if (selectedList.includes(url)) {
+        setSelectedList((prev) => prev.filter((item) => item !== url));
+      } else {
+        setSelectedList((prev) => prev.concat(url));
+      }
+    }
     if (findItem && findItem.crawlingImageUrl) {
       if (findItem.selectedImageLength === undefined) {
         findItem.selectedImageLength = 0;
@@ -106,6 +114,36 @@ const DataTable = () => {
         setData(copyData);
       }
     }
+  };
+
+  const blackListImage = (url: string) => {
+    if (url) {
+      const isInclude = blackList.includes(url);
+      if (isInclude) {
+        setBlackList((prev) => {
+          return prev.filter((item) => item !== url);
+        });
+      } else {
+        setBlackList((prev) => {
+          return prev.concat(url);
+        });
+      }
+    }
+  };
+
+  const hideCrawlingImageList = (rowIndex: number, searchlinks: string) => {
+    const copyData = [...data];
+    const getitem = findCrawlingItem(rowIndex);
+    if (getitem) {
+      const getImageListObject = getitem.crawlingImageUrl.find(
+        (item) => item.searchlinks === searchlinks,
+      );
+      if (getImageListObject) {
+        getImageListObject.isCrawlinImageUrlHide =
+          !getImageListObject?.isCrawlinImageUrlHide;
+      }
+    }
+    setData(copyData);
   };
 
   const addManualUrl = (
@@ -158,7 +196,7 @@ const DataTable = () => {
 
   const exportData = () => {
     const excelData: exportExcelData[] = [];
-    const unselectedUrl: string[] = [];
+
     data.forEach((item) => {
       const index = item.index;
       const selectedUrls: string[] = [];
@@ -168,17 +206,11 @@ const DataTable = () => {
         }
       });
       item.crawlingImageUrl.forEach((item) => {
-        item.imageUrls.forEach((url, index) => {
-          if (url.selected) {
-            if (url.url) selectedUrls.push(url.url);
-          } else {
-            if (url.url) {
-              unselectedUrl.push(url.url);
-            }
-          }
+        item.imageUrls.forEach((url) => {
+          if (url.url) selectedUrls.push(url.url);
         });
       });
-      console.log(unselectedUrl);
+
       excelData.push({
         index,
         브랜드: item.productInfo.brand,
@@ -193,8 +225,10 @@ const DataTable = () => {
       });
     });
 
+    const uniqueBlackList = [...new Set(blackList)];
+    console.log(uniqueBlackList);
     exportJsonToExcel<{ unselectedUrl: string }>(
-      unselectedUrl.map((item) => ({ unselectedUrl: item })),
+      uniqueBlackList.map((item) => ({ unselectedUrl: item })),
       "blackList.xlsx",
     );
     exportJsonToExcel<exportExcelData>(excelData);
@@ -205,7 +239,7 @@ const DataTable = () => {
       localStorage.setItem("crawlingItem", JSON.stringify(data));
       localStorage.setItem("progress", JSON.stringify(progress));
     }
-  }, [data, isStreamEnded]);
+  }, [data, isStreamEnded, progress]);
 
   useEffect(() => {
     if (isStreamEnded === "ready") {
@@ -244,7 +278,7 @@ const DataTable = () => {
       </div>
       <div className="sticky top-[0px] z-[100] bg-white">
         <div className="pl-2">
-          {isStreamEnded === "end" ? (
+          {progress.currentPage === progress.maxPage ? (
             <div>
               완료 {progress.currentPage} / {progress.maxPage}
             </div>
@@ -270,6 +304,9 @@ const DataTable = () => {
       </div>
       {data?.map((crawlingData, index) => (
         <Rows
+          blackList={blackList}
+          selectedList={selectedList}
+          hideCrawlingImageList={hideCrawlingImageList}
           index={index}
           rowIndex={crawlingData.index}
           crawlingData={crawlingData}
@@ -277,6 +314,7 @@ const DataTable = () => {
           key={index}
           addManualUrl={addManualUrl}
           deleteManualUrl={deleteManualUrl}
+          blackListImage={blackListImage}
         />
       ))}
       <div className="fixed bottom-5 right-2 z-40 flex flex-col items-end gap-5 bg-white p-2">

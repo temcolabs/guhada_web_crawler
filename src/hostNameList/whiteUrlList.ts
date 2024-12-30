@@ -164,5 +164,12 @@ const whiteUrlList = [
   "cncpts",
   "ganni",
   "www.taobao.com",
+  "stuartslondon.com",
+  "yodobashi.com",
+  "goat.com",
+  "levi",
+  "hualienhappyoutdoor.com",
+  "jomashop.com",
+  "backpackinglight",
 ];
 export default whiteUrlList;

@@ -3,11 +3,19 @@ import Link from "next/link";
 import { FormEvent, memo, useRef, useState } from "react";
 import LazyLoad from "react-lazy-load";
 import { selectImageTableType } from "type/type";
+import { HiOutlineArrowsExpand } from "react-icons/hi";
+import { IoMdClose } from "react-icons/io";
+import { FaRegCopy } from "react-icons/fa";
+import { MdHideImage } from "react-icons/md";
+import { TbSlideshow } from "react-icons/tb";
+import { MdOutlinePlaylistRemove } from "react-icons/md";
+
+import { MdOutlinePlaylistAdd } from "react-icons/md";
 
 interface RowsProps {
   rowIndex: number;
   crawlingData: selectImageTableType;
-  onClickSearchImages: (url: string | null, index: number) => void;
+  onClickSearchImages: (url: string | null, rowIndex: number) => void;
   addManualUrl: (
     e: FormEvent<HTMLFormElement>,
     rowIndex: number,
@@ -15,6 +23,10 @@ interface RowsProps {
   ) => void;
   deleteManualUrl: (url: string, rowIndex: number) => void;
   index: number;
+  hideCrawlingImageList: (rowIndex: number, searchlinks: string) => void;
+  blackListImage: (url: string) => void;
+  blackList: string[];
+  selectedList: string[];
 }
 const Rows = ({
   crawlingData,
@@ -23,11 +35,36 @@ const Rows = ({
   rowIndex,
   deleteManualUrl,
   index,
+  hideCrawlingImageList,
+  blackListImage,
+  blackList,
+  selectedList,
 }: RowsProps) => {
-  const [addUrlVisible, setAddUrlVisible] = useState(false);
+  const [isAllFind, setIsAllFind] = useState(false);
   const [url, setUrl] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const isBlackList = (url: string) => {
+    return blackList?.includes(url);
+  };
+  const isSelectedList = (url: string) => {
+    return selectedList.includes(url);
+  };
 
+  if (isAllFind) {
+    return (
+      <button
+        onClick={() => {
+          setIsAllFind(!isAllFind);
+        }}
+        className="flex w-[100%] flex-col border-[1px] border-black"
+      >
+        <div className="w-[100%] text-[14px]">다시 찾을래요</div>
+        <div className="w-[100%] text-center text-[14px]">
+          총 선택한 갯수 :{crawlingData.selectedImageLength}
+        </div>
+      </button>
+    );
+  }
   return (
     <div
       className={`flex w-[100%] flex-row border-[1px] border-solid border-black`}
@@ -73,20 +110,35 @@ const Rows = ({
                 );
               }}
             >
-              모델명 복사
+              <FaRegCopy />
             </div>
           </div>
 
-          <Link
-            onClick={() => {
-              navigator.clipboard.writeText(crawlingData.productInfo.modalName);
-            }}
-            className="w-[45%] break-words text-[14px]"
-            href={`https://www.google.co.kr/search?q=${crawlingData.productInfo.brand} ${crawlingData.productInfo.modalName}&sca_esv=48a32a8a53a0fe13&sxsrf=ADLYWIJ3uYJX1CanmgT2nB9VAMPFiLO34w%3A1734423586966&source=hp&ei=IjRhZ6LVN6LS1e8Pi5GRgQw&iflsig=AL9hbdgAAAAAZ2FCMvyWWlfooNP991xDXeoTk_7av4-K&ved=0ahUKEwii7qaur66KAxUiafUHHYtIJMAQ4dUDCBo&uact=5&oq=XFPPU8554-21&gs_lp=Egdnd3Mtd2l6IgxYRlBQVTg1NTQtMjEyCBAAGIAEGKIESMEEUHxYfHABeACQAQCYAYwBoAGMAaoBAzAuMbgBA8gBAPgBAvgBAZgCAqAClgGoAgrCAgcQIxgnGOoCmAMJ8QV9IkCVHGMs2ZIHAzEuMaAHcg&sclient=gws-wiz`}
-            target="_blank"
-          >
-            {`${crawlingData.productInfo.brand} ${crawlingData.productInfo.modalName}`}
-          </Link>
+          <div className="w-[45%] break-words text-[14px]">
+            <Link
+              className="break-words"
+              onClick={() => {
+                navigator.clipboard.writeText(
+                  crawlingData.productInfo.modalName,
+                );
+              }}
+              href={`https://www.google.co.kr/search?q=${crawlingData.productInfo.brand} ${crawlingData.productInfo.modalName}&sca_esv=48a32a8a53a0fe13&sxsrf=ADLYWIJ3uYJX1CanmgT2nB9VAMPFiLO34w%3A1734423586966&source=hp&ei=IjRhZ6LVN6LS1e8Pi5GRgQw&iflsig=AL9hbdgAAAAAZ2FCMvyWWlfooNP991xDXeoTk_7av4-K&ved=0ahUKEwii7qaur66KAxUiafUHHYtIJMAQ4dUDCBo&uact=5&oq=XFPPU8554-21&gs_lp=Egdnd3Mtd2l6IgxYRlBQVTg1NTQtMjEyCBAAGIAEGKIESMEEUHxYfHABeACQAQCYAYwBoAGMAaoBAzAuMbgBA8gBAPgBAvgBAZgCAqAClgGoAgrCAgcQIxgnGOoCmAMJ8QV9IkCVHGMs2ZIHAzEuMaAHcg&sclient=gws-wiz`}
+              target="_blank"
+            >
+              {`${crawlingData.productInfo.brand} ${crawlingData.productInfo.modalName}`}
+            </Link>
+            <div
+              className="cursor-pointer"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                navigator.clipboard.writeText(`
+                  ${crawlingData.productInfo.brand} ${crawlingData.productInfo.modalName}`);
+              }}
+            >
+              <FaRegCopy />
+            </div>
+          </div>
         </div>
       </div>
       <div className="w-[5%] border-r-[1px] border-solid border-black">
@@ -138,22 +190,45 @@ const Rows = ({
           {crawlingData.index}
         </div>
       </div>
-      <div className="w-[25%] border-r-[1px] border-solid border-black pl-2">
+      <div className="w-[25%] border-r-[1px] border-solid border-black pl-2 pr-2">
         <div className="flex-wrap overflow-auto">
           <div className="mt-1 flex text-[14px]">
             <div>총 선택한 갯수 : </div> {crawlingData.selectedImageLength}
           </div>
 
           {crawlingData.crawlingImageUrl.map(
-            ({ imageUrls, searchlinks }, index) => {
+            ({ imageUrls, searchlinks, isCrawlinImageUrlHide }, index) => {
               const urlpars = new URL(searchlinks);
-              if (searchlinks.length === 0) {
-                return null;
+
+              if (isCrawlinImageUrlHide) {
+                return (
+                  <div
+                    className="flex justify-between"
+                    key={index + "lazyLoad "}
+                  >
+                    <Link
+                      target="_blank"
+                      className="text-blue-500"
+                      href={searchlinks}
+                    >
+                      {urlpars.hostname}
+                    </Link>
+
+                    <button
+                      onClick={() => {
+                        hideCrawlingImageList(rowIndex, searchlinks);
+                      }}
+                    >
+                      <TbSlideshow size={25} />
+                    </button>
+                  </div>
+                );
               }
+
               return (
                 <LazyLoad key={index + "lazyLoad "}>
                   <div className="mt-2 overflow-auto">
-                    <div className="overflow-hidden text-ellipsis">
+                    <div className="mb-2 flex items-center justify-between overflow-hidden text-ellipsis">
                       <Link
                         target="_blank"
                         className="text-blue-500"
@@ -161,13 +236,23 @@ const Rows = ({
                       >
                         {urlpars.hostname}
                       </Link>
+
+                      {imageUrls.length > 0 && (
+                        <button
+                          onClick={() => {
+                            hideCrawlingImageList(rowIndex, searchlinks);
+                          }}
+                        >
+                          <MdHideImage size={25} />
+                        </button>
+                      )}
                     </div>
-                    <div className="flex overflow-auto">
+                    <div className="flex gap-2 overflow-auto">
                       {imageUrls.map(({ url, selected }, index) => {
                         return (
                           <div
                             key={url ? url + index + "url" : index}
-                            className={`w-[25%] shrink-0 cursor-pointer ${selected ? "debug" : ""} `}
+                            className={`relative w-[25%] shrink-0 cursor-pointer ${selected ? "selected" : ""} ${isBlackList(url as string) ? "blackList" : ""} `}
                           >
                             <div
                               style={{
@@ -177,7 +262,14 @@ const Rows = ({
                               }}
                             >
                               <Image
-                                onClick={() => {
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  if (isBlackList(url as string)) {
+                                    return alert(
+                                      "블랙리스트에 있는 아이템입니다.",
+                                    );
+                                  }
                                   if (url) {
                                     onClickSearchImages(
                                       url,
@@ -193,7 +285,53 @@ const Rows = ({
                                 style={{ objectFit: "contain" }}
                               />
                             </div>
-                            <div>크개보기</div>
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+
+                                if (url) {
+                                  window.open(url, "_blank");
+                                }
+                              }}
+                              className="absolute right-0 top-0"
+                            >
+                              <HiOutlineArrowsExpand size={20} />
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                if (isBlackList(url as string)) {
+                                  return alert(
+                                    "블랙리스트에 있는 아이템입니다.",
+                                  );
+                                }
+                                if (url) {
+                                  onClickSearchImages(url, crawlingData.index);
+                                }
+                              }}
+                              className="absolute bottom-0 left-0"
+                            >
+                              <MdOutlinePlaylistAdd color="green" size={25} />
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                if (isSelectedList(url as string)) {
+                                  return alert(
+                                    "선택된 리스트에 있는 아이템입니다",
+                                  );
+                                }
+                                if (url) {
+                                  blackListImage(url);
+                                }
+                              }}
+                              className="absolute bottom-0 right-0"
+                            >
+                              <MdOutlinePlaylistRemove color="red" size={25} />
+                            </button>
                           </div>
                         );
                       })}
@@ -233,21 +371,22 @@ const Rows = ({
         <div className="flex flex-col">
           {crawlingData?.manualUrl?.map((item, index) => {
             return (
-              <div key={item + index}>
+              <div className="relative" key={item + index}>
                 <Image
-                  className="debug"
+                  className="selected"
                   width={150}
                   height={150}
                   alt="이미지"
                   src={item}
                 />
+
                 <button
                   onClick={() => {
                     deleteManualUrl(item, rowIndex);
                   }}
-                  type="button"
+                  className="absolute right-0 top-0"
                 >
-                  지우기
+                  <IoMdClose size={20} />
                 </button>
               </div>
             );
@@ -266,6 +405,14 @@ const Rows = ({
             className="w-[60%] rounded-[8px] border-[1px] border-black text-[14px]"
           >
             poizon에서 검색결과 보기
+          </button>
+          <button
+            onClick={() => {
+              setIsAllFind(!isAllFind);
+            }}
+            className="w-[60%] rounded-[8px] border-[1px] border-black text-[14px]"
+          >
+            다찾았어요
           </button>
         </div>
       </div>
