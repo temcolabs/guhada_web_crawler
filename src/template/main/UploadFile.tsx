@@ -5,12 +5,12 @@ import { ChangeEvent, DragEvent, useEffect, useRef, useState } from "react";
 import { excelType, selectImageTableType } from "type/type";
 import { API } from "util/API";
 import { parsingExcelToJSON } from "util/ExcelToJson";
+import { getDuplicatedBlackList } from "util/getDuplicatedBlackList";
 import { exportJsonToExcel } from "util/JSONtoExcel";
 
 const UploadFile = () => {
   const [file, setFile] = useState<File | undefined>(undefined);
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const [isChromium, setIsChromium] = useState(true);
@@ -112,6 +112,12 @@ const UploadFile = () => {
     }
   };
 
+  const test = async () => {
+    const getdata = await parsingExcelToJSON<{ unselectedUrl: string }>(file);
+    console.log(
+      getDuplicatedBlackList(getdata.map((item) => item.unselectedUrl)),
+    );
+  };
   return (
     <div className="absolute left-[50%] w-[60%] translate-x-[-50%]">
       <div>엑셀파일을 올려주세요</div>
@@ -145,6 +151,12 @@ const UploadFile = () => {
           />
         </div>
 
+        <button
+          onClick={test}
+          className="h-[56px] rounded-[8px] border-[1px] border-black disabled:bg-slate-400"
+        >
+          테스트
+        </button>
         <button
           onClick={fileUpload}
           disabled={!file}
