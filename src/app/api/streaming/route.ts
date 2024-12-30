@@ -19,6 +19,7 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
       getList = getData;
     }
   }
+
   const whiteList = getList.map((item) =>
     item.브랜드.replace(/\s+/g, "").toLowerCase(),
   );
@@ -55,7 +56,7 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
                 status: "ing",
                 data: getData,
                 currentPage: count,
-                maxPage: getList.length,
+                maxPage: getList.length - 1,
               }),
             );
           }

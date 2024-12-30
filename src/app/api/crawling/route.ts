@@ -4,7 +4,6 @@ import { chromium, Page } from "playwright";
 import { excelType, selectImageTableType } from "type/type";
 import { getOkmallImage, getSearchImagesUrl } from "util/crawling";
 import { parsingExcelToJSON } from "util/ExcelToJson";
-import { fileGenerator } from "util/utils";
 
 const crawlingStart = async (
   jsonData: excelType[],
