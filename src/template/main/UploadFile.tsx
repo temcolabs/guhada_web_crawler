@@ -5,7 +5,7 @@ import { ChangeEvent, DragEvent, useEffect, useRef, useState } from "react";
 import { excelType, selectImageTableType } from "type/type";
 import { API } from "util/API";
 import { parsingExcelToJSON } from "util/ExcelToJson";
-import { getDuplicatedBlackList } from "util/getDuplicatedBlackList";
+import { getDuplicatedBlackList } from "util/getDuplicatedImageBlackList";
 import { exportJsonToExcel } from "util/JSONtoExcel";
 
 const UploadFile = () => {

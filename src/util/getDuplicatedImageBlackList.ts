@@ -7,7 +7,6 @@ const getDuplicatedBlackList = (array: string[]): string[] => {
     {} as Record<string, number>,
   );
 
-  // Filter keys with more than two occurrences
   const duplicateArray = Object.keys(counts).filter(
     (key) => counts[key as string] > 2,
   ) as string[];
