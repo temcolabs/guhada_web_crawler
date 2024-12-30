@@ -26,6 +26,7 @@ export type testAPIType = {
 export type imagUrlType = { url: string | null; selected?: boolean };
 
 export type searchImageObject = {
+  isCrawlinImageUrlHide?: boolean;
   searchlinks: string;
   imageUrls: imagUrlType[];
 };

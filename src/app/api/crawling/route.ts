@@ -71,7 +71,12 @@ export async function POST(req: NextRequest, res: NextResponse) {
     ignoreHTTPSErrors: true,
     userAgent:
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36",
+    locale: "en-US",
+    extraHTTPHeaders: {
+      "Accept-Language": "en-US,en;q=0.9",
+    },
   });
+  await context.clearCookies();
   const page = await context.newPage();
 
   await page.setViewportSize({ width: 2000, height: 1000 });
