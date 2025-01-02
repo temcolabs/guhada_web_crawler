@@ -209,8 +209,10 @@ const DataTable = () => {
         }
       });
       item.crawlingImageUrl.forEach((item) => {
-        item.imageUrls.forEach((url) => {
-          if (url.url) selectedUrls.push(url.url);
+        item.imageUrls.forEach(({ url, selected }) => {
+          if (url && selected) {
+            selectedUrls.push(url);
+          }
         });
       });
 
@@ -234,6 +236,7 @@ const DataTable = () => {
       uniqueBlackList.map((item) => ({ unselectedUrl: item })),
       "blackList.xlsx",
     );
+    console.log(excelData);
     exportJsonToExcel<exportExcelData>(excelData, "selectedList.xlsx");
   };
 
