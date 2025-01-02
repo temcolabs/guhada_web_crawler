@@ -172,5 +172,9 @@ const whiteUrlList = [
   "jomashop.com",
   "backpackinglight",
   "sneakersnstuff",
+  "mountainhardwear",
+  "joinparallel",
+  "shop-msgm.",
+  "maisonkitsune",
 ];
 export default whiteUrlList;
