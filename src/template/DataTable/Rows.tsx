@@ -102,9 +102,9 @@ const Rows = ({
       </div>
       <div className="w-[11%] border-r-[1px] border-solid border-black">
         <div className="flex h-[100%] items-start justify-evenly gap-3 pl-[2px] pt-2 text-blue-300">
-          <div>
+          <div className="w-[45%] break-words text-[14px]">
             <Link
-              className="w-[45%] break-words text-[14px]"
+              className="w-max-[45% break-words text-[14px]"
               href={`https://www.google.co.kr/search?q=${crawlingData.productInfo.modalName}&sca_esv=48a32a8a53a0fe13&sxsrf=ADLYWIJ3uYJX1CanmgT2nB9VAMPFiLO34w%3A1734423586966&source=hp&ei=IjRhZ6LVN6LS1e8Pi5GRgQw&iflsig=AL9hbdgAAAAAZ2FCMvyWWlfooNP991xDXeoTk_7av4-K&ved=0ahUKEwii7qaur66KAxUiafUHHYtIJMAQ4dUDCBo&uact=5&oq=XFPPU8554-21&gs_lp=Egdnd3Mtd2l6IgxYRlBQVTg1NTQtMjEyCBAAGIAEGKIESMEEUHxYfHABeACQAQCYAYwBoAGMAaoBAzAuMbgBA8gBAPgBAvgBAZgCAqAClgGoAgrCAgcQIxgnGOoCmAMJ8QV9IkCVHGMs2ZIHAzEuMaAHcg&sclient=gws-wiz`}
               target="_blank"
             >
@@ -174,7 +174,7 @@ const Rows = ({
       </div>
       <div className="w-[20%] border-r-[1px] border-solid border-black">
         <LazyLoad>
-          <div className="sticky flex flex-wrap">
+          <div className="sticky flex flex-wrap gap-1">
             {crawlingData.productImageUrl.map((item, index) => {
               return (
                 <div
@@ -185,7 +185,7 @@ const Rows = ({
                   }}
                   style={{
                     position: "relative",
-                    width: "25%",
+                    width: "24.21%",
                     height: "100px",
                   }}
                   key={item + index + "image"}
@@ -196,7 +196,7 @@ const Rows = ({
                     sizes="150px"
                     alt="item"
                     src={item}
-                    style={{ objectFit: "cover" }}
+                    style={{ objectFit: "contain" }}
                     quality={100}
                   />
                 </div>
