@@ -5,7 +5,7 @@
 
 
 
-*.json
+crawlingData.json
 !important.json
 
 /build
