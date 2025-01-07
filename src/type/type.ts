@@ -60,3 +60,4 @@ export type exportExcelData = {
 };
 
 export type crawlingDataType = { author: string; list: excelType[] };
+export type targetSiteType = "okmall" | "musinsa";

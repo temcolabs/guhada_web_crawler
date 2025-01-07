@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { chromium, Page } from "playwright";
 import { excelType, selectImageTableType } from "type/type";
-import { getOkmallImage, getSearchImagesUrl } from "util/crawling";
+import { getTargetImages, getSearchImagesUrl } from "util/crawling";
 import { parsingExcelToJSON } from "util/ExcelToJson";
 
 const crawlingStart = async (
@@ -23,7 +23,7 @@ const crawlingStart = async (
 
   for (const data of jsonData) {
     // ok몰 상품 이미지 긁어오기
-    const getOkmallImges = await getOkmallImage(page, data, selector);
+    // const getOkmallImges = await getTargetImages(page, data, selector,imagesTarget);
 
     // ok 몰 상품품 비교 이미지 긁어오기
     const getSearchImages = await getSearchImagesUrl(
@@ -32,22 +32,22 @@ const crawlingStart = async (
       whiteListBrand,
     );
 
-    const pushData: selectImageTableType = {
-      originalLink: data.링크,
-      index: data.index,
-      productImageUrl: getOkmallImges,
-      productInfo: {
-        brand: data.브랜드,
-        name: data["상품명(추정)"],
-        modalName: data["모델명(추정)"],
-      },
-      crawlingImageUrl: getSearchImages,
-      selectedImageLength: 0,
-      searchImpossible: false,
-      manualUrl: [],
-    };
+    // const pushData: selectImageTableType = {
+    //   originalLink: data.링크,
+    //   index: data.index,
+    //   // productImageUrl: getOkmallImges,
+    //   productInfo: {
+    //     brand: data.브랜드,
+    //     name: data["상품명(추정)"],
+    //     modalName: data["모델명(추정)"],
+    //   },
+    //   crawlingImageUrl: getSearchImages,
+    //   selectedImageLength: 0,
+    //   searchImpossible: false,
+    //   manualUrl: [],
+    // };
 
-    parsingData.push(pushData);
+    // parsingData.push(pushData);
 
     // fileGenerator("output.json", pushData);
   }

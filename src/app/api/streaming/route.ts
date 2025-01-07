@@ -20,6 +20,7 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
     }
   }
 
+  //브랜드명이 들어간 화이트 리스트..
   const whiteList = getList.map((item) =>
     item.브랜드.replace(/\s+/g, "").toLowerCase(),
   );
@@ -42,11 +43,21 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
 
         try {
           let count = 0;
+          const parsingTarGetList: ["musinsa", "okmall"] = [
+            "musinsa",
+            "okmall",
+          ];
+
           for (const item of getList) {
+            const getIndex = parsingTarGetList.findIndex(
+              (parsingTarGetListItem) =>
+                item.링크.includes(parsingTarGetListItem),
+            );
+
             const getData = await getOneByOneCrawlingData(
               item,
               page,
-              "okmall",
+              parsingTarGetList[getIndex],
               whiteList,
             );
 

@@ -3,27 +3,76 @@
 import { Page } from "@playwright/test";
 import imageBlackList from "hostNameList/imageBlackList";
 import whiteUrlList from "hostNameList/whiteUrlList";
-import { excelType, imagUrlType, searchImageObject } from "type/type";
+import {
+  excelType,
+  imagUrlType,
+  searchImageObject,
+  targetSiteType,
+} from "type/type";
 import { random } from "./utils";
 
-const getOkmallImage = async (
+const getTargetImages = async (
   page: Page,
   data: excelType,
-  imagesTarget: string,
+  target: targetSiteType,
 ) => {
   try {
-    await page.goto(data["링크"], {
-      waitUntil: "domcontentloaded",
-      timeout: 60000,
-    });
-    const getThumbnail = page.locator(imagesTarget);
-    const count = await getThumbnail.count();
     const imgSrcList: string[] = [];
-    for (let i = 0; i < count; i++) {
-      const imgSrc = await getThumbnail.nth(i).getAttribute("src");
-      if (imgSrc) {
-        imgSrcList.push(`https:${imgSrc}`);
+    if (target === "okmall") {
+      await page.goto(data["링크"], {
+        waitUntil: "domcontentloaded",
+        timeout: 60000,
+      });
+      const getThumbnail = page.locator("#thumbSmallView > li > a > img");
+      const count = await getThumbnail.count();
+      for (let i = 0; i < count; i++) {
+        const imgSrc = await getThumbnail.nth(i).getAttribute("src");
+        if (imgSrc) {
+          imgSrcList.push(`https:${imgSrc}`);
+        }
       }
+    }
+    if (target === "musinsa") {
+      await page.route("**/*", (route) => {
+        const url = route.request().url();
+
+        if (
+          url.includes("analytics") ||
+          url.includes("google-analytics") ||
+          url.includes("ads") ||
+          url.includes(".woff2") ||
+          url.includes("googletagmanager") ||
+          url.includes("clarity")
+        ) {
+          route.abort();
+        } else {
+          route.continue();
+        }
+      });
+
+      page.on("response", async (response) => {
+        const responseUrl = response.url();
+
+        if (
+          responseUrl.includes(".jpg") &&
+          !responseUrl.includes("image.msscdn.net") &&
+          !responseUrl.includes("cdn-images.buyma.com")
+        ) {
+          const isBlackList = imageBlackList.some((item) =>
+            responseUrl.includes(item),
+          );
+          // Add an event listener to get dimensions when the image loads
+
+          if (!isBlackList) {
+            imgSrcList.push(responseUrl);
+          }
+        }
+      });
+
+      await page?.goto(data.링크, {
+        waitUntil: "networkidle",
+        timeout: 60000,
+      });
     }
     return imgSrcList;
   } catch (error) {
@@ -254,7 +303,7 @@ const getSearchImagesUrl = async (
 };
 
 export {
-  getOkmallImage,
+  getTargetImages,
   getSearchImagesUrl,
   parsingImageSrc,
   searchAndGrapHrefs,

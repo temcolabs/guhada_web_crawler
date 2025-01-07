@@ -236,7 +236,7 @@ const DataTable = () => {
       uniqueBlackList.map((item) => ({ unselectedUrl: item })),
       "blackList.xlsx",
     );
-    console.log(excelData);
+
     exportJsonToExcel<exportExcelData>(excelData, "selectedList.xlsx");
   };
 
@@ -269,6 +269,7 @@ const DataTable = () => {
   const classificationPer = progress.maxPage
     ? (classificationCount / progress.maxPage) * 100
     : 0;
+
   return (
     <div className="flex flex-col gap-[12px]">
       <div className="flex w-[100%]">
