@@ -48,7 +48,7 @@ const Header = ({}: HeaderProps) => {
       </div>
       <div className="w-[8%] border-r-[1px] border-solid border-black">
         <div className="border-b-[1px] border-solid border-black text-center">
-          직접입력
+          선택한 이미지들
         </div>
       </div>
       <div className="w-[14.5%] border-r-[1px] border-solid border-black">

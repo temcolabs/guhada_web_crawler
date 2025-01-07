@@ -31,9 +31,8 @@ interface RowsProps {
   deleteManualUrl: (url: string, rowIndex: number) => void;
   index: number;
   hideCrawlingImageList: (rowIndex: number, searchlinks: string) => void;
-  blackListImage: (url: string) => void;
-  blackList: string[];
-  selectedList: string[];
+  blackListImage: (url: string, rowIndex: number) => void;
+
   setClassificationCount: Dispatch<SetStateAction<number>>;
 }
 const Rows = ({
@@ -45,18 +44,15 @@ const Rows = ({
   index,
   hideCrawlingImageList,
   blackListImage,
-  blackList,
-  selectedList,
+
   setClassificationCount,
 }: RowsProps) => {
   const [isAllFind, setIsAllFind] = useState(false);
   const [url, setUrl] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
-  const isBlackList = (url: string) => {
-    return blackList?.includes(url);
-  };
+
   const isSelectedList = (url: string) => {
-    return selectedList.includes(url);
+    return crawlingData.selectedImages.includes(url);
   };
 
   if (isAllFind) {
@@ -70,7 +66,7 @@ const Rows = ({
       >
         <div className="w-[100%] text-[14px]">다시 찾을래요</div>
         <div className="w-[100%] text-center text-[14px]">
-          총 선택한 갯수 :{crawlingData.selectedImageLength}
+          총 선택한 갯수 :{crawlingData.selectedImages.length}
         </div>
       </button>
     );
@@ -213,7 +209,7 @@ const Rows = ({
       <div className="w-[25%] border-r-[1px] border-solid border-black pl-2 pr-2">
         <div className="flex-wrap overflow-auto">
           <div className="mt-1 flex text-[14px]">
-            <div>총 선택한 갯수 : </div> {crawlingData.selectedImageLength}
+            <div>총 선택한 갯수 : </div> {crawlingData.selectedImages.length}
           </div>
 
           {crawlingData.crawlingImageUrl.map(
@@ -268,11 +264,13 @@ const Rows = ({
                       )}
                     </div>
                     <div className="flex gap-2 overflow-auto">
-                      {imageUrls.map(({ url, selected }, index) => {
+                      {imageUrls.map(({ url }, index) => {
+                        const isSelected =
+                          url && crawlingData.selectedImages.includes(url);
                         return (
                           <div
                             key={url ? url + index + "url" : index}
-                            className={`relative w-[25%] shrink-0 cursor-pointer ${selected ? "selected" : ""} ${isBlackList(url as string) ? "blackList" : ""} `}
+                            className={`relative w-[25%] shrink-0 cursor-pointer ${isSelected ? "selected" : ""} ${url ? "blackList" : ""} `}
                           >
                             <div
                               style={{
@@ -285,11 +283,7 @@ const Rows = ({
                                 onClick={(e) => {
                                   e.preventDefault();
                                   e.stopPropagation();
-                                  if (isBlackList(url as string)) {
-                                    return alert(
-                                      "블랙리스트에 있는 아이템입니다.",
-                                    );
-                                  }
+
                                   if (url) {
                                     onClickSearchImages(
                                       url,
@@ -322,11 +316,7 @@ const Rows = ({
                               onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
-                                if (isBlackList(url as string)) {
-                                  return alert(
-                                    "블랙리스트에 있는 아이템입니다.",
-                                  );
-                                }
+
                                 if (url) {
                                   onClickSearchImages(url, crawlingData.index);
                                 }
@@ -345,7 +335,7 @@ const Rows = ({
                                   );
                                 }
                                 if (url) {
-                                  blackListImage(url);
+                                  blackListImage(url, rowIndex);
                                 }
                               }}
                               className="absolute bottom-0 right-0"
@@ -371,6 +361,31 @@ const Rows = ({
         }}
         className="flex w-[8%] flex-col border-r-[1px] border-solid border-black"
       >
+        <div className="flex flex-col">
+          {crawlingData?.selectedImages?.map((item, index) => {
+            return (
+              <div className="relative" key={item + index}>
+                <Image
+                  className="selected"
+                  width={150}
+                  height={150}
+                  alt="이미지"
+                  src={item}
+                />
+
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    deleteManualUrl(item, rowIndex);
+                  }}
+                  className="absolute right-0 top-0"
+                >
+                  <IoMdClose size={20} />
+                </button>
+              </div>
+            );
+          })}
+        </div>
         <input
           ref={inputRef}
           onChange={(e) => {
@@ -387,31 +402,6 @@ const Rows = ({
         >
           추가
         </button>
-
-        <div className="flex flex-col">
-          {crawlingData?.manualUrl?.map((item, index) => {
-            return (
-              <div className="relative" key={item + index}>
-                <Image
-                  className="selected"
-                  width={150}
-                  height={150}
-                  alt="이미지"
-                  src={item}
-                />
-
-                <button
-                  onClick={() => {
-                    deleteManualUrl(item, rowIndex);
-                  }}
-                  className="absolute right-0 top-0"
-                >
-                  <IoMdClose size={20} />
-                </button>
-              </div>
-            );
-          })}
-        </div>
       </form>
       <div className="w-[14.5%]">
         <div className="flex flex-col items-center gap-4">

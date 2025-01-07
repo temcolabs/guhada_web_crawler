@@ -8,10 +8,8 @@ import { FaFileExport } from "react-icons/fa";
 import { FaArrowAltCircleUp } from "react-icons/fa";
 
 const DataTable = () => {
-  const [isChange, setIsChange] = useState(false);
   const [data, setData] = useState<selectImageTableType[]>([]);
-  const [blackList, setBlackList] = useState<string[]>([]);
-  const [selectedList, setSelectedList] = useState<string[]>([]);
+
   const [progress, setProgress] = useState<{
     maxPage: number;
     currentPage: number;
@@ -20,6 +18,15 @@ const DataTable = () => {
     "ready",
   );
   const [classificationCount, setClassificationCount] = useState(0);
+
+  const progressPer =
+    progress.currentPage / progress.maxPage
+      ? (progress.currentPage / progress.maxPage) * 100
+      : 0;
+  const classificationPer = progress.maxPage
+    ? (classificationCount / progress.maxPage) * 100
+    : 0;
+
   const streamStart = () => {
     if (progress.currentPage > 0 && progress.currentPage === progress.maxPage) {
       alert("이미 완료되었습니다!");
@@ -70,67 +77,44 @@ const DataTable = () => {
   const findCrawlingItem = (rowIndex: number) => {
     const copyData = [...data];
     const findItem = copyData.find((item) => item.index === rowIndex);
-    setIsChange(true);
+
     return findItem;
   };
 
   const onClickSearchImages = (url: string | null, rowIndex: number) => {
     const copyData = [...data];
     const findItem = findCrawlingItem(rowIndex);
-    if (url) {
-      if (selectedList.includes(url)) {
-        setSelectedList((prev) => prev.filter((item) => item !== url));
-      } else {
-        setSelectedList((prev) => prev.concat(url));
-      }
-    }
-    if (findItem && findItem.crawlingImageUrl) {
-      if (findItem.selectedImageLength === undefined) {
-        findItem.selectedImageLength = 0;
-      }
-      const getSamUrlObject = findItem.crawlingImageUrl.find((item) =>
-        item.imageUrls.find((item) => item.url === url),
-      );
-      const getSameUrl = getSamUrlObject?.imageUrls.find(
-        (item) => item.url === url,
-      );
-      if (findItem.selectedImageLength === undefined) {
-        findItem.selectedImageLength = 0;
-      }
-      if (getSamUrlObject) {
-        if (getSameUrl && getSameUrl.selected) {
-          if (findItem.selectedImageLength > 0) {
-            findItem.selectedImageLength--;
-          } else {
-            findItem.selectedImageLength = 0;
-          }
-          getSameUrl.selected = false;
-        } else if (getSameUrl && !getSameUrl.selected) {
-          if (findItem.selectedImageLength <= 5) {
-            getSameUrl.selected = true;
-            findItem.selectedImageLength++;
-          } else {
-            alert("6개를 초과할수 없습니다.");
-          }
-        }
 
-        setData(copyData);
+    if (url) {
+      if (findItem?.selectedImages.includes(url)) {
+        findItem.selectedImages = findItem?.selectedImages.filter(
+          (item) => item !== url,
+        );
+      } else {
+        findItem?.selectedImages.push(url);
       }
+      if (findItem?.selectedImages.length === 6) {
+        alert("6개를 초과할수 없습니다.");
+      }
+
+      setData(copyData);
     }
   };
 
-  const blackListImage = (url: string) => {
-    if (url) {
-      const isInclude = blackList.includes(url);
+  const blackListImage = (url: string, rowIndex: number) => {
+    const copyData = [...data];
+    const findItem = findCrawlingItem(rowIndex);
+
+    if (url && findItem) {
+      const isInclude = findItem?.blackListImages.includes(url);
       if (isInclude) {
-        setBlackList((prev) => {
-          return prev.filter((item) => item !== url);
-        });
+        findItem.blackListImages = findItem?.blackListImages.filter(
+          (item) => item !== url,
+        );
       } else {
-        setBlackList((prev) => {
-          return prev.concat(url);
-        });
+        findItem.blackListImages.push(url);
       }
+      setData(copyData);
     }
   };
 
@@ -155,26 +139,14 @@ const DataTable = () => {
     url: string,
   ) => {
     e.preventDefault();
-
     if (url) {
       const copyData = [...data];
       const findItem = findCrawlingItem(rowIndex);
 
-      if (findItem && findItem.crawlingImageUrl) {
-        if (findItem.selectedImageLength === undefined) {
-          findItem.selectedImageLength = 0;
-        }
-        if (findItem?.manualUrl?.includes(url)) {
-          return alert("이미있는 이미지 주소입니다.");
-        }
-        if (findItem.manualUrl === undefined) {
-          findItem.manualUrl = [];
-          findItem.manualUrl.push(url);
-        } else {
-          findItem.manualUrl.push(url);
-
-          findItem.selectedImageLength++;
-        }
+      if (findItem?.selectedImages.includes(url)) {
+        alert("이미 선택한 목록에 있어요!");
+      } else {
+        findItem?.selectedImages.push(url);
       }
       setData([...copyData]);
     } else {
@@ -186,13 +158,10 @@ const DataTable = () => {
     const copyData = [...data];
     const findItem = findCrawlingItem(rowIndex);
 
-    if (findItem && findItem.manualUrl) {
-      if (findItem.selectedImageLength >= 0) {
-        findItem.selectedImageLength--;
-      } else {
-        findItem.selectedImageLength = 0;
-      }
-      findItem.manualUrl = findItem?.manualUrl.filter((item) => item !== url);
+    if (findItem?.selectedImages.includes(url)) {
+      findItem.selectedImages = findItem?.selectedImages.filter(
+        (item) => item !== url,
+      );
     }
     setData([...copyData]);
   };
@@ -203,17 +172,9 @@ const DataTable = () => {
     data.forEach((item) => {
       const index = item.index;
       const selectedUrls: string[] = [];
-      item.manualUrl.forEach((item) => {
-        if (typeof item === "string") {
-          selectedUrls.push(item);
-        }
-      });
-      item.crawlingImageUrl.forEach((item) => {
-        item.imageUrls.forEach(({ url, selected }) => {
-          if (url && selected) {
-            selectedUrls.push(url);
-          }
-        });
+
+      item.selectedImages.forEach((item) => {
+        selectedUrls.push(item);
       });
 
       excelData.push({
@@ -230,22 +191,28 @@ const DataTable = () => {
       });
     });
 
-    const uniqueBlackList = [...new Set(blackList)];
+    // const uniqueBlackList = [...new Set(blackList)];
 
-    exportJsonToExcel<{ unselectedUrl: string }>(
-      uniqueBlackList.map((item) => ({ unselectedUrl: item })),
-      "blackList.xlsx",
-    );
+    // exportJsonToExcel<{ unselectedUrl: string }>(
+    //   uniqueBlackList.map((item) => ({ unselectedUrl: item })),
+    //   "blackList.xlsx",
+    // );
 
     exportJsonToExcel<exportExcelData>(excelData, "selectedList.xlsx");
   };
 
   useEffect(() => {
-    if (isStreamEnded !== "ready") {
+    if (isStreamEnded !== "ready" || progressPer === 100) {
       localStorage.setItem("crawlingItem", JSON.stringify(data));
       localStorage.setItem("progress", JSON.stringify(progress));
     }
-  }, [data, isStreamEnded, progress]);
+  }, [data, isStreamEnded, progress, progressPer]);
+
+  useEffect(() => {
+    if (progressPer === 100) {
+      setIsStreamEnded("end");
+    }
+  }, [progressPer]);
 
   useEffect(() => {
     if (isStreamEnded === "ready") {
@@ -261,14 +228,6 @@ const DataTable = () => {
       }
     }
   }, [isStreamEnded]);
-
-  const progressPer =
-    progress.currentPage / progress.maxPage
-      ? (progress.currentPage / progress.maxPage) * 100
-      : 0;
-  const classificationPer = progress.maxPage
-    ? (classificationCount / progress.maxPage) * 100
-    : 0;
 
   return (
     <div className="flex flex-col gap-[12px]">
@@ -331,15 +290,13 @@ const DataTable = () => {
       </div>
       {data?.map((crawlingData, index) => (
         <Rows
-          setClassificationCount={setClassificationCount}
-          blackList={blackList}
-          selectedList={selectedList}
-          hideCrawlingImageList={hideCrawlingImageList}
           index={index}
           rowIndex={crawlingData.index}
           crawlingData={crawlingData}
-          onClickSearchImages={onClickSearchImages}
           key={index}
+          setClassificationCount={setClassificationCount}
+          hideCrawlingImageList={hideCrawlingImageList}
+          onClickSearchImages={onClickSearchImages}
           addManualUrl={addManualUrl}
           deleteManualUrl={deleteManualUrl}
           blackListImage={blackListImage}
