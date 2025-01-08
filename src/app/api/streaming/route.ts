@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { chromium } from "@playwright/test";
-import whiteUrlList from "hostNameList/whiteUrlList";
 import { NextApiRequest, NextApiResponse } from "next";
 import { NextResponse } from "next/server";
-import { crawlingDataType, excelType } from "type/type";
+import { excelType } from "type/type";
 import { getOneByOneCrawlingData } from "util/streamingFunc";
 import { getFindItem, streamingDataParser } from "util/utils";
 
@@ -73,6 +72,9 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
           }
         } catch (error) {
           console.log(error);
+          controller.error(error);
+          controller.close();
+          browser.close();
         } finally {
           controller.enqueue(streamingDataParser({ status: "end" }));
           controller.close();
