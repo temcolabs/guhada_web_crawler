@@ -53,7 +53,7 @@ const Header = ({}: HeaderProps) => {
       </div>
       <div className="w-[8%] border-r-[1px] border-solid border-black">
         <div className="border-b-[1px] border-solid border-black text-center">
-          다른곳에서 찾기
+          Site검색
         </div>
       </div>
     </div>

@@ -167,7 +167,7 @@ const UploadFile = () => {
         <button
           onClick={fileUpload}
           disabled={!file}
-          className="h-[56px] rounded-[8px] border-[1px] border-black disabled:bg-slate-700 disabled:text-white"
+          className="h-[56px] rounded-[8px] border-[1px] border-black disabled:bg-red-700 disabled:text-white"
         >
           엑셀파일 업로드 (크롤링 스트림 페이지로 넘어갑니다)
         </button>

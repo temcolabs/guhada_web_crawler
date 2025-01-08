@@ -8,17 +8,18 @@ import {
   useRef,
   useState,
 } from "react";
-import LazyLoad from "react-lazy-load";
-import { selectImageTableType } from "type/type";
+import { FaRegCopy } from "react-icons/fa";
+import { GoTriangleDown, GoTriangleUp } from "react-icons/go";
 import { HiOutlineArrowsExpand } from "react-icons/hi";
 import { IoMdClose } from "react-icons/io";
-import { FaRegCopy } from "react-icons/fa";
-import { MdHideImage } from "react-icons/md";
+import {
+  MdHideImage,
+  MdOutlinePlaylistAdd,
+  MdOutlinePlaylistRemove,
+} from "react-icons/md";
 import { TbSlideshow } from "react-icons/tb";
-import { MdOutlinePlaylistRemove } from "react-icons/md";
-import { CiLock } from "react-icons/ci";
-import { CiUnlock } from "react-icons/ci";
-import { MdOutlinePlaylistAdd } from "react-icons/md";
+import LazyLoad from "react-lazy-load";
+import { selectImageTableType } from "type/type";
 
 interface RowsProps {
   rowIndex: number;
@@ -63,13 +64,14 @@ const Rows = ({
           setClassificationCount((prev) => prev - 1);
           setIsAllFind(!isAllFind);
         }}
-        className="flex w-[100%] flex-col border-[1px] border-black"
+        className="flex w-[100%] justify-end border-[1px] border-black pr-1"
       >
-        <div className="flex w-[100%] justify-center">
-          <CiUnlock size={25} />
-        </div>
-        <div className="w-[100%] text-center text-[14px]">
-          총 선택한 갯수 :{crawlingData.selectedImages.length}
+        <div className="flex w-[8%] items-center justify-between pl-[8.2px] text-[14px]">
+          <div className="">
+            Total : {" " + crawlingData.selectedImages.length}
+          </div>
+
+          <GoTriangleDown size={30} />
         </div>
       </button>
     );
@@ -362,17 +364,11 @@ const Rows = ({
         }}
         className="flex w-[15%] flex-col justify-between border-r-[1px] border-solid border-black"
       >
-        <div className="flex flex-wrap">
+        <div className="flex flex-wrap gap-1 p-2">
           {crawlingData?.selectedImages?.map((item, index) => {
             return (
-              <div className="relative w-[50%]" key={item + index}>
-                <Image
-                  className="selected"
-                  width={150}
-                  height={150}
-                  alt="이미지"
-                  src={item}
-                />
+              <div className="relative w-[32%]" key={item + index}>
+                <Image width={150} height={150} alt="이미지" src={item} />
 
                 <button
                   type="button"
@@ -389,9 +385,6 @@ const Rows = ({
           })}
         </div>
         <div className="p-1">
-          <div className="flex text-[14px]">
-            <div>총 선택한 갯수 : </div> {crawlingData.selectedImages.length}
-          </div>
           <div className="flex gap-1">
             <input
               ref={inputRef}
@@ -418,9 +411,14 @@ const Rows = ({
             setClassificationCount((prev) => prev + 1);
             setIsAllFind(!isAllFind);
           }}
-          className="mb-1 mt-1 flex w-[100%] justify-end border-black pr-1"
+          className="mb-2 flex w-[100%] items-center justify-between pl-1"
         >
-          <CiLock size={25} />
+          <div className="w-[100%] text-start text-[14px]">
+            Total : {crawlingData.selectedImages.length}
+          </div>
+          <div className="flex border-black pr-1">
+            <GoTriangleUp size={30} />
+          </div>
         </button>
         <div className="flex flex-col items-center gap-4">
           <button
@@ -433,6 +431,17 @@ const Rows = ({
             className="w-[60%] rounded-[8px] border-[1px] border-black text-[14px]"
           >
             poizon
+          </button>
+          <button
+            onClick={() => {
+              window.open(
+                `https://www.buyma.com/r/${crawlingData.productInfo.modalName}/`,
+                "_blank",
+              );
+            }}
+            className="w-[60%] rounded-[8px] border-[1px] border-black text-[14px]"
+          >
+            buyma
           </button>
         </div>
       </div>

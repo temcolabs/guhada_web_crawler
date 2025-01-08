@@ -95,10 +95,11 @@ const DataTable = () => {
           (item) => item !== url,
         );
       } else {
-        findItem?.selectedImages.push(url);
-      }
-      if (findItem?.selectedImages.length === 6) {
-        return alert("6개를 초과할수 없습니다.");
+        if (findItem?.selectedImages.length >= 6) {
+          alert("6개를 초과할수 없습니다.");
+        } else {
+          findItem?.selectedImages.push(url);
+        }
       }
 
       setData(copyData);
@@ -242,10 +243,10 @@ const DataTable = () => {
     <div className="flex flex-col gap-[12px]">
       <div className="flex w-[100%]">
         <button
-          className="h-[50px] flex-[8] bg-slate-500 text-white"
+          className="h-[50px] flex-[8] bg-blue-400 text-white"
           onClick={streamStart}
         >
-          스트림 시작
+          크롤링 스트림 시작
         </button>
         <button
           className="h-[50px] flex-[2] bg-stone-300 text-black"
