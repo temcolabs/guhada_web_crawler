@@ -240,7 +240,7 @@ const DataTable = () => {
   }, [streamState]);
 
   return (
-    <div className="flex flex-col gap-[12px]">
+    <div className="flex flex-col gap-[12px] pb-10">
       <div className="flex w-[100%]">
         <button
           className="h-[50px] flex-[8] bg-blue-400 text-white"
