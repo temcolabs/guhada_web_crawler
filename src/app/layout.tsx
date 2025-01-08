@@ -23,7 +23,6 @@ export default function RootLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
-  console.log(geistSans.variable);
   return (
     <html lang="en">
       <body

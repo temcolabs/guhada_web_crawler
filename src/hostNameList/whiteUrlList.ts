@@ -156,6 +156,7 @@ const whiteUrlList = [
   "fifthelement",
   "sun-house.shop",
   "stockx",
+  "thebs",
   "bernardellistores",
   "preisvergleich.heise.de",
   "item.rakuten",
@@ -176,5 +177,15 @@ const whiteUrlList = [
   "joinparallel",
   "shop-msgm.",
   "maisonkitsune",
+  "italist",
+  "vipstation",
+  "intermixonline",
+  "bdgastore",
+  "jomashop",
+  "modesens",
+  "realry.com",
+  "valextra",
+  "xmaibu",
+  "karenwalker",
 ];
 export default whiteUrlList;
