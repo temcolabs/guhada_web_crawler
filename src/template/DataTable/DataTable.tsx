@@ -212,7 +212,6 @@ const DataTable = () => {
   };
 
   useEffect(() => {
-    console.log("asda?", streamState, progressPer);
     if (streamState !== "ready" || progressPer === 100) {
       localStorage.setItem("crawlingItem", JSON.stringify(data));
       localStorage.setItem("progress", JSON.stringify(progress));
