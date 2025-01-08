@@ -16,7 +16,8 @@ import { FaRegCopy } from "react-icons/fa";
 import { MdHideImage } from "react-icons/md";
 import { TbSlideshow } from "react-icons/tb";
 import { MdOutlinePlaylistRemove } from "react-icons/md";
-
+import { CiLock } from "react-icons/ci";
+import { CiUnlock } from "react-icons/ci";
 import { MdOutlinePlaylistAdd } from "react-icons/md";
 
 interface RowsProps {
@@ -64,7 +65,9 @@ const Rows = ({
         }}
         className="flex w-[100%] flex-col border-[1px] border-black"
       >
-        <div className="w-[100%] text-[14px]">다시 찾을래요</div>
+        <div className="flex w-[100%] justify-center">
+          <CiUnlock size={25} />
+        </div>
         <div className="w-[100%] text-center text-[14px]">
           총 선택한 갯수 :{crawlingData.selectedImages.length}
         </div>
@@ -208,10 +211,6 @@ const Rows = ({
       </div>
       <div className="w-[25%] border-r-[1px] border-solid border-black pl-2 pr-2">
         <div className="flex-wrap overflow-auto">
-          <div className="mt-1 flex text-[14px]">
-            <div>총 선택한 갯수 : </div> {crawlingData.selectedImages.length}
-          </div>
-
           {crawlingData.crawlingImageUrl.map(
             ({ imageUrls, searchlinks, isCrawlinImageUrlHide }, index) => {
               const urlpars = new URL(searchlinks);
@@ -267,10 +266,12 @@ const Rows = ({
                       {imageUrls.map(({ url }, index) => {
                         const isSelected =
                           url && crawlingData.selectedImages.includes(url);
+                        const isBlackList =
+                          url && crawlingData.blackListImages.includes(url);
                         return (
                           <div
                             key={url ? url + index + "url" : index}
-                            className={`relative w-[25%] shrink-0 cursor-pointer ${isSelected ? "selected" : ""} ${url ? "blackList" : ""} `}
+                            className={`relative w-[25%] shrink-0 cursor-pointer ${isSelected ? "selected" : ""} ${isBlackList ? "blackList" : ""} `}
                           >
                             <div
                               style={{
@@ -359,12 +360,12 @@ const Rows = ({
           addManualUrl(e, rowIndex, url);
           inputRef.current?.focus();
         }}
-        className="flex w-[8%] flex-col border-r-[1px] border-solid border-black"
+        className="flex w-[15%] flex-col justify-between border-r-[1px] border-solid border-black"
       >
-        <div className="flex flex-col">
+        <div className="flex flex-wrap">
           {crawlingData?.selectedImages?.map((item, index) => {
             return (
-              <div className="relative" key={item + index}>
+              <div className="relative w-[50%]" key={item + index}>
                 <Image
                   className="selected"
                   width={150}
@@ -374,6 +375,7 @@ const Rows = ({
                 />
 
                 <button
+                  type="button"
                   onClick={(e) => {
                     e.preventDefault();
                     deleteManualUrl(item, rowIndex);
@@ -386,24 +388,40 @@ const Rows = ({
             );
           })}
         </div>
-        <input
-          ref={inputRef}
-          onChange={(e) => {
-            setUrl(e.target.value);
-          }}
-          placeholder="이미지 주소 입력"
-          value={url}
-          type="text"
-          className="mt-3 w-[100%] border-[1px] border-solid border-black placeholder:text-[14px]"
-        />
-        <button
-          className="mt-2 rounded-[8px] border-[1px] border-black text-[14px]"
-          type="submit"
-        >
-          추가
-        </button>
+        <div className="p-1">
+          <div className="flex text-[14px]">
+            <div>총 선택한 갯수 : </div> {crawlingData.selectedImages.length}
+          </div>
+          <div className="flex gap-1">
+            <input
+              ref={inputRef}
+              onChange={(e) => {
+                setUrl(e.target.value);
+              }}
+              placeholder="이미지 주소 입력"
+              value={url}
+              type="text"
+              className="w-[85%] border-[1px] border-solid border-black placeholder:text-[14px]"
+            />
+            <button
+              className="w-[15%] rounded-[8px] border-[1px] border-black text-[14px]"
+              type="submit"
+            >
+              추가
+            </button>
+          </div>
+        </div>
       </form>
-      <div className="w-[14.5%]">
+      <div className="w-[8%]">
+        <button
+          onClick={() => {
+            setClassificationCount((prev) => prev + 1);
+            setIsAllFind(!isAllFind);
+          }}
+          className="mb-1 mt-1 flex w-[100%] justify-end border-black pr-1"
+        >
+          <CiLock size={25} />
+        </button>
         <div className="flex flex-col items-center gap-4">
           <button
             onClick={() => {
@@ -414,16 +432,7 @@ const Rows = ({
             }}
             className="w-[60%] rounded-[8px] border-[1px] border-black text-[14px]"
           >
-            poizon에서 검색결과 보기
-          </button>
-          <button
-            onClick={() => {
-              setClassificationCount((prev) => prev + 1);
-              setIsAllFind(!isAllFind);
-            }}
-            className="w-[60%] rounded-[8px] border-[1px] border-black text-[14px]"
-          >
-            다찾았어요
+            poizon
           </button>
         </div>
       </div>

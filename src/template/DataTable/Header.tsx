@@ -46,12 +46,12 @@ const Header = ({}: HeaderProps) => {
           사진
         </div>
       </div>
-      <div className="w-[8%] border-r-[1px] border-solid border-black">
+      <div className="w-[15%] border-r-[1px] border-solid border-black">
         <div className="border-b-[1px] border-solid border-black text-center">
           선택한 이미지들
         </div>
       </div>
-      <div className="w-[14.5%] border-r-[1px] border-solid border-black">
+      <div className="w-[8%] border-r-[1px] border-solid border-black">
         <div className="border-b-[1px] border-solid border-black text-center">
           다른곳에서 찾기
         </div>

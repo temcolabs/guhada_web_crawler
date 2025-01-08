@@ -222,7 +222,7 @@ const parsingImageSrc = async (hrefs: (string | undefined)[], page: Page) => {
             const contentsSize = response.headers()["content-length"];
 
             if (!isNaN(Number(contentsSize))) {
-              if (Number(contentsSize) > 7000) {
+              if (Number(contentsSize) > 6000) {
                 if (!isBlackList) {
                   image.push(responseUrl);
                 }
@@ -232,7 +232,7 @@ const parsingImageSrc = async (hrefs: (string | undefined)[], page: Page) => {
         });
 
         await page?.goto(url, {
-          waitUntil: "domcontentloaded",
+          waitUntil: "networkidle",
           timeout: 60000,
         });
 

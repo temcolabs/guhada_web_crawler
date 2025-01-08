@@ -118,11 +118,9 @@ const UploadFile = () => {
   //   );
   // };
   return (
-    <div className="absolute left-[50%] w-[60%] translate-x-[-50%]">
-      0.95ver
-      <div>엑셀파일을 올려주세요</div>
+    <div className="absolute left-[50%] flex h-[100%] w-[600px] translate-x-[-50%] flex-col justify-between">
       <form
-        className="flex h-[100%] flex-col gap-[20px]"
+        className="flex w-[100%] flex-col gap-[20px]"
         onSubmit={(e) => e.preventDefault()}
       >
         <div
@@ -132,13 +130,22 @@ const UploadFile = () => {
           onDrop={handleDrop}
           onClick={handleClick}
         >
-          <p>클릭해서 파일을 등록하거나, 파일을 드래그 드롭 해주세요</p>
           {error ? (
             <p className="text-red-500">{error}</p>
           ) : file?.name ? (
-            file?.name
+            <div className="flex h-[100%] gap-1 p-3">
+              <div>파일명 :</div>
+              <div>{file?.name}</div>
+            </div>
           ) : (
-            <Image alt="upload" fill src={"/upload.png"} />
+            <div className="relative h-[100%]">
+              <Image alt="upload" fill src={"/upload.png"} />
+              <div className="absolute bottom-4 left-[50%] flex translate-x-[-50%] flex-col items-center whitespace-pre-wrap break-words">
+                <div>클릭해서 엑셀 파일을 등록하거나</div>
+                <div>파일을 드래그 드롭 해주세요</div>
+                <div>엑셀파일 업로드를 해주세요</div>
+              </div>
+            </div>
           )}
 
           <input
@@ -160,9 +167,9 @@ const UploadFile = () => {
         <button
           onClick={fileUpload}
           disabled={!file}
-          className="h-[56px] rounded-[8px] border-[1px] border-black disabled:bg-slate-400"
+          className="h-[56px] rounded-[8px] border-[1px] border-black disabled:bg-slate-700 disabled:text-white"
         >
-          엑셀파일 업로드
+          엑셀파일 업로드 (크롤링 스트림 페이지로 넘어갑니다)
         </button>
         <button
           onClick={sampleFileDownLoad}
@@ -179,6 +186,7 @@ const UploadFile = () => {
           크로니움 {isChromium ? "on" : "off"}
         </button>
       </form>
+      <div className="text-end font-bold">0.955ver</div>
     </div>
   );
 };
