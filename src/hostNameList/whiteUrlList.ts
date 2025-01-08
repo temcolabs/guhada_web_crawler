@@ -187,5 +187,6 @@ const whiteUrlList = [
   "valextra",
   "xmaibu",
   "karenwalker",
+  "guhada",
 ];
 export default whiteUrlList;
