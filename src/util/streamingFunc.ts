@@ -23,9 +23,8 @@ const getOneByOneCrawlingData = async (
       modalName: data["모델명(추정)"],
     },
     crawlingImageUrl: getSearchImages,
-    selectedImageLength: 0,
-    searchImpossible: false,
-    manualUrl: [],
+    selectedImages: [],
+    blackListImages: [],
   };
 
   return pushData;

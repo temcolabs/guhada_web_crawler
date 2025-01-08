@@ -8,18 +8,25 @@ import { FaFileExport } from "react-icons/fa";
 import { FaArrowAltCircleUp } from "react-icons/fa";
 
 const DataTable = () => {
-  const [isChange, setIsChange] = useState(false);
   const [data, setData] = useState<selectImageTableType[]>([]);
-  const [blackList, setBlackList] = useState<string[]>([]);
-  const [selectedList, setSelectedList] = useState<string[]>([]);
+
   const [progress, setProgress] = useState<{
     maxPage: number;
     currentPage: number;
   }>({ currentPage: 0, maxPage: 0 });
-  const [isStreamEnded, setIsStreamEnded] = useState<"ready" | "ing" | "end">(
+  const [streamState, setStreamState] = useState<"ready" | "ing" | "end">(
     "ready",
   );
   const [classificationCount, setClassificationCount] = useState(0);
+
+  const progressPer =
+    progress.currentPage / progress.maxPage
+      ? (progress.currentPage / progress.maxPage) * 100
+      : 0;
+  const classificationPer = progress.maxPage
+    ? (classificationCount / progress.maxPage) * 100
+    : 0;
+
   const streamStart = () => {
     if (progress.currentPage > 0 && progress.currentPage === progress.maxPage) {
       alert("이미 완료되었습니다!");
@@ -42,10 +49,10 @@ const DataTable = () => {
 
       if (data.status === "end") {
         eventSource.close();
-        setIsStreamEnded("end");
+        setStreamState("end");
         alert("크롤링이 끝났습니다!");
       } else if (data.status === "ing") {
-        setIsStreamEnded("ing");
+        setStreamState("ing");
         setProgress({ currentPage: data.currentPage, maxPage: data.maxPage });
         setData((prev) => {
           return prev.concat(data.data);
@@ -58,11 +65,12 @@ const DataTable = () => {
       eventSource.close();
     };
   };
+
   const removeAllList = () => {
     setClassificationCount(0);
     localStorage.removeItem("crawlingItem");
     localStorage.removeItem("progress");
-    setIsStreamEnded("ready");
+    setStreamState("ready");
     setData([]);
     setProgress({ currentPage: 0, maxPage: 0 });
   };
@@ -70,67 +78,48 @@ const DataTable = () => {
   const findCrawlingItem = (rowIndex: number) => {
     const copyData = [...data];
     const findItem = copyData.find((item) => item.index === rowIndex);
-    setIsChange(true);
+
     return findItem;
   };
 
   const onClickSearchImages = (url: string | null, rowIndex: number) => {
     const copyData = [...data];
     const findItem = findCrawlingItem(rowIndex);
-    if (url) {
-      if (selectedList.includes(url)) {
-        setSelectedList((prev) => prev.filter((item) => item !== url));
-      } else {
-        setSelectedList((prev) => prev.concat(url));
-      }
-    }
-    if (findItem && findItem.crawlingImageUrl) {
-      if (findItem.selectedImageLength === undefined) {
-        findItem.selectedImageLength = 0;
-      }
-      const getSamUrlObject = findItem.crawlingImageUrl.find((item) =>
-        item.imageUrls.find((item) => item.url === url),
-      );
-      const getSameUrl = getSamUrlObject?.imageUrls.find(
-        (item) => item.url === url,
-      );
-      if (findItem.selectedImageLength === undefined) {
-        findItem.selectedImageLength = 0;
-      }
-      if (getSamUrlObject) {
-        if (getSameUrl && getSameUrl.selected) {
-          if (findItem.selectedImageLength > 0) {
-            findItem.selectedImageLength--;
-          } else {
-            findItem.selectedImageLength = 0;
-          }
-          getSameUrl.selected = false;
-        } else if (getSameUrl && !getSameUrl.selected) {
-          if (findItem.selectedImageLength <= 5) {
-            getSameUrl.selected = true;
-            findItem.selectedImageLength++;
-          } else {
-            alert("6개를 초과할수 없습니다.");
-          }
-        }
 
-        setData(copyData);
+    if (url && findItem) {
+      if (findItem.blackListImages.includes(url)) {
+        return alert("블랙리스트에 있는 목록입니다!");
       }
+      if (findItem.selectedImages.includes(url)) {
+        findItem.selectedImages = findItem?.selectedImages.filter(
+          (item) => item !== url,
+        );
+      } else {
+        if (findItem?.selectedImages.length >= 6) {
+          alert("6개를 초과할수 없습니다.");
+        } else {
+          findItem?.selectedImages.push(url);
+        }
+      }
+
+      setData(copyData);
     }
   };
 
-  const blackListImage = (url: string) => {
-    if (url) {
-      const isInclude = blackList.includes(url);
+  const blackListImage = (url: string, rowIndex: number) => {
+    const copyData = [...data];
+    const findItem = findCrawlingItem(rowIndex);
+
+    if (url && findItem) {
+      const isInclude = findItem?.blackListImages.includes(url);
       if (isInclude) {
-        setBlackList((prev) => {
-          return prev.filter((item) => item !== url);
-        });
+        findItem.blackListImages = findItem?.blackListImages.filter(
+          (item) => item !== url,
+        );
       } else {
-        setBlackList((prev) => {
-          return prev.concat(url);
-        });
+        findItem.blackListImages.push(url);
       }
+      setData(copyData);
     }
   };
 
@@ -155,26 +144,17 @@ const DataTable = () => {
     url: string,
   ) => {
     e.preventDefault();
+    const copyData = [...data];
+    const findItem = findCrawlingItem(rowIndex);
+    if (url && findItem) {
+      if (findItem.selectedImages.length === 6) {
+        return alert("6개이상 등록할수 없습니다!");
+      }
 
-    if (url) {
-      const copyData = [...data];
-      const findItem = findCrawlingItem(rowIndex);
-
-      if (findItem && findItem.crawlingImageUrl) {
-        if (findItem.selectedImageLength === undefined) {
-          findItem.selectedImageLength = 0;
-        }
-        if (findItem?.manualUrl?.includes(url)) {
-          return alert("이미있는 이미지 주소입니다.");
-        }
-        if (findItem.manualUrl === undefined) {
-          findItem.manualUrl = [];
-          findItem.manualUrl.push(url);
-        } else {
-          findItem.manualUrl.push(url);
-
-          findItem.selectedImageLength++;
-        }
+      if (findItem.selectedImages.includes(url)) {
+        alert("이미 선택한 목록에 있어요!");
+      } else {
+        findItem.selectedImages.push(url);
       }
       setData([...copyData]);
     } else {
@@ -186,36 +166,27 @@ const DataTable = () => {
     const copyData = [...data];
     const findItem = findCrawlingItem(rowIndex);
 
-    if (findItem && findItem.manualUrl) {
-      if (findItem.selectedImageLength >= 0) {
-        findItem.selectedImageLength--;
-      } else {
-        findItem.selectedImageLength = 0;
-      }
-      findItem.manualUrl = findItem?.manualUrl.filter((item) => item !== url);
+    if (findItem?.selectedImages.includes(url)) {
+      findItem.selectedImages = findItem?.selectedImages.filter(
+        (item) => item !== url,
+      );
     }
     setData([...copyData]);
   };
 
   const exportData = () => {
     const excelData: exportExcelData[] = [];
-
+    const blackList: string[] = [];
     data.forEach((item) => {
       const index = item.index;
       const selectedUrls: string[] = [];
-      item.manualUrl.forEach((item) => {
-        if (typeof item === "string") {
-          selectedUrls.push(item);
-        }
-      });
-      item.crawlingImageUrl.forEach((item) => {
-        item.imageUrls.forEach(({ url, selected }) => {
-          if (url && selected) {
-            selectedUrls.push(url);
-          }
-        });
-      });
 
+      item.selectedImages.forEach((item) => {
+        selectedUrls.push(item);
+      });
+      item.blackListImages.forEach((item) => {
+        blackList.push(item);
+      });
       excelData.push({
         index,
         브랜드: item.productInfo.brand,
@@ -241,14 +212,20 @@ const DataTable = () => {
   };
 
   useEffect(() => {
-    if (isStreamEnded !== "ready") {
+    if (streamState !== "ready" || progressPer === 100) {
       localStorage.setItem("crawlingItem", JSON.stringify(data));
       localStorage.setItem("progress", JSON.stringify(progress));
     }
-  }, [data, isStreamEnded, progress]);
+  }, [data, streamState, progress, progressPer]);
 
   useEffect(() => {
-    if (isStreamEnded === "ready") {
+    if (progressPer === 100) {
+      setStreamState("end");
+    }
+  }, [progressPer]);
+
+  useEffect(() => {
+    if (streamState === "ready") {
       const getdata = localStorage.getItem("crawlingItem");
       const getProgress = localStorage.getItem("progress");
       const parsingProgress = JSON.parse(getProgress || "{}");
@@ -260,24 +237,16 @@ const DataTable = () => {
         setData(parsingData);
       }
     }
-  }, [isStreamEnded]);
-
-  const progressPer =
-    progress.currentPage / progress.maxPage
-      ? (progress.currentPage / progress.maxPage) * 100
-      : 0;
-  const classificationPer = progress.maxPage
-    ? (classificationCount / progress.maxPage) * 100
-    : 0;
+  }, [streamState]);
 
   return (
-    <div className="flex flex-col gap-[12px]">
+    <div className="flex flex-col gap-[12px] pb-10">
       <div className="flex w-[100%]">
         <button
-          className="h-[50px] flex-[8] bg-slate-500 text-white"
+          className="h-[50px] flex-[8] bg-blue-400 text-white"
           onClick={streamStart}
         >
-          스트림 시작
+          크롤링 스트림 시작
         </button>
         <button
           className="h-[50px] flex-[2] bg-stone-300 text-black"
@@ -331,15 +300,13 @@ const DataTable = () => {
       </div>
       {data?.map((crawlingData, index) => (
         <Rows
-          setClassificationCount={setClassificationCount}
-          blackList={blackList}
-          selectedList={selectedList}
-          hideCrawlingImageList={hideCrawlingImageList}
           index={index}
           rowIndex={crawlingData.index}
           crawlingData={crawlingData}
-          onClickSearchImages={onClickSearchImages}
           key={index}
+          setClassificationCount={setClassificationCount}
+          hideCrawlingImageList={hideCrawlingImageList}
+          onClickSearchImages={onClickSearchImages}
           addManualUrl={addManualUrl}
           deleteManualUrl={deleteManualUrl}
           blackListImage={blackListImage}

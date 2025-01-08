@@ -63,7 +63,7 @@ const getTargetImages = async (
           );
           // Add an event listener to get dimensions when the image loads
 
-          if (!isBlackList) {
+          if (!isBlackList && responseUrl.includes(target)) {
             imgSrcList.push(responseUrl);
           }
         }
@@ -88,14 +88,11 @@ const searchAndGrapHrefs = async (
 ) => {
   if (target === "search") {
     try {
-      // const searchUrl = `https://www.google.co.kr/search?q=${searchWord} ${filterSearchWord} &sca_esv=48a32a8a53a0fe13&sxsrf=ADLYWILkWAJ5zBsSlhWU0QraCMcHiSIGAQ:1734491139020&lr=lang_en&sa=X&ved=2ahUKEwjI_tOBq7CKAxWXk68BHU36BFAQuAF6BAgJEAE&biw=1297&bih=934&dpr=1`;
-      // const searchUrl = `https://www.google.co.kr/search?q=${searchWord}&sca_esv=48a32a8a53a0fe13&sxsrf=ADLYWILkWAJ5zBsSlhWU0QraCMcHiSIGAQ:1734491139020&lr=lang_en&sa=X&ved=2ahUKEwjI_tOBq7CKAxWXk68BHU36BFAQuAF6BAgJEAE&biw=1297&bih=934&dpr=1`;
-      // const searchUrl = `https://www.google.co.kr/search?q=${searchWord}&sca_esv=48a32a8a53a0fe13&sxsrf=ADLYWIJ3uYJX1CanmgT2nB9VAMPFiLO34w%3A1734423586966&source=hp&ei=IjRhZ6LVN6LS1e8Pi5GRgQw&iflsig=AL9hbdgAAAAAZ2FCMvyWWlfooNP991xDXeoTk_7av4-K&ved=0ahUKEwii7qaur66KAxUiafUHHYtIJMAQ4dUDCBo&uact=5&oq=XFPPU8554-21&gs_lp=Egdnd3Mtd2l6IgxYRlBQVTg1NTQtMjEyCBAAGIAEGKIESMEEUHxYfHABeACQAQCYAYwBoAGMAaoBAzAuMbgBA8gBAPgBAvgBAZgCAqAClgGoAgrCAgcQIxgnGOoCmAMJ8QV9IkCVHGMs2ZIHAzEuMaAHcg&sclient=gws-wiz&hl=en`;
       const searchUrl = `https://www.google.co.kr/search?q=${searchWord}&sca_esv=48a32a8a53a0fe13&sxsrf=ADLYWIKP6wBfj2ZcPKNujDXmeaWICOpKIg:1735540086660&lr=lang_en&sa=X&ved=2ahUKEwjnlO_S7s6KAxV1UfUHHbkoOHcQuAF6BAgNEAE&biw=1918&bih=931`;
 
-      // await delay(4000);
       await page.goto(searchUrl);
       await page.waitForTimeout(random(3000));
+
       // 결색결과 의 모든 href가져오기
       const isCapChaPage = page.url().includes("sorry");
       if (!isCapChaPage) {
@@ -222,7 +219,7 @@ const parsingImageSrc = async (hrefs: (string | undefined)[], page: Page) => {
             const contentsSize = response.headers()["content-length"];
 
             if (!isNaN(Number(contentsSize))) {
-              if (Number(contentsSize) > 7000) {
+              if (Number(contentsSize) > 6000) {
                 if (!isBlackList) {
                   image.push(responseUrl);
                 }
@@ -232,7 +229,7 @@ const parsingImageSrc = async (hrefs: (string | undefined)[], page: Page) => {
         });
 
         await page?.goto(url, {
-          waitUntil: "domcontentloaded",
+          waitUntil: "networkidle",
           timeout: 60000,
         });
 

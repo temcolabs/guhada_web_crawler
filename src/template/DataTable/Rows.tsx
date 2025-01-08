@@ -8,16 +8,18 @@ import {
   useRef,
   useState,
 } from "react";
-import LazyLoad from "react-lazy-load";
-import { selectImageTableType } from "type/type";
+import { FaRegCopy } from "react-icons/fa";
+import { GoTriangleDown, GoTriangleUp } from "react-icons/go";
 import { HiOutlineArrowsExpand } from "react-icons/hi";
 import { IoMdClose } from "react-icons/io";
-import { FaRegCopy } from "react-icons/fa";
-import { MdHideImage } from "react-icons/md";
+import {
+  MdHideImage,
+  MdOutlinePlaylistAdd,
+  MdOutlinePlaylistRemove,
+} from "react-icons/md";
 import { TbSlideshow } from "react-icons/tb";
-import { MdOutlinePlaylistRemove } from "react-icons/md";
-
-import { MdOutlinePlaylistAdd } from "react-icons/md";
+import LazyLoad from "react-lazy-load";
+import { selectImageTableType } from "type/type";
 
 interface RowsProps {
   rowIndex: number;
@@ -31,9 +33,8 @@ interface RowsProps {
   deleteManualUrl: (url: string, rowIndex: number) => void;
   index: number;
   hideCrawlingImageList: (rowIndex: number, searchlinks: string) => void;
-  blackListImage: (url: string) => void;
-  blackList: string[];
-  selectedList: string[];
+  blackListImage: (url: string, rowIndex: number) => void;
+
   setClassificationCount: Dispatch<SetStateAction<number>>;
 }
 const Rows = ({
@@ -45,18 +46,15 @@ const Rows = ({
   index,
   hideCrawlingImageList,
   blackListImage,
-  blackList,
-  selectedList,
+
   setClassificationCount,
 }: RowsProps) => {
   const [isAllFind, setIsAllFind] = useState(false);
   const [url, setUrl] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
-  const isBlackList = (url: string) => {
-    return blackList?.includes(url);
-  };
+
   const isSelectedList = (url: string) => {
-    return selectedList.includes(url);
+    return crawlingData.selectedImages.includes(url);
   };
 
   if (isAllFind) {
@@ -66,11 +64,14 @@ const Rows = ({
           setClassificationCount((prev) => prev - 1);
           setIsAllFind(!isAllFind);
         }}
-        className="flex w-[100%] flex-col border-[1px] border-black"
+        className="flex w-[100%] justify-end border-[1px] border-black pr-1"
       >
-        <div className="w-[100%] text-[14px]">다시 찾을래요</div>
-        <div className="w-[100%] text-center text-[14px]">
-          총 선택한 갯수 :{crawlingData.selectedImageLength}
+        <div className="flex w-[8%] items-center justify-between pl-[8.2px] text-[14px]">
+          <div className="">
+            Total : {" " + crawlingData.selectedImages.length}
+          </div>
+
+          <GoTriangleDown size={30} />
         </div>
       </button>
     );
@@ -212,10 +213,6 @@ const Rows = ({
       </div>
       <div className="w-[25%] border-r-[1px] border-solid border-black pl-2 pr-2">
         <div className="flex-wrap overflow-auto">
-          <div className="mt-1 flex text-[14px]">
-            <div>총 선택한 갯수 : </div> {crawlingData.selectedImageLength}
-          </div>
-
           {crawlingData.crawlingImageUrl.map(
             ({ imageUrls, searchlinks, isCrawlinImageUrlHide }, index) => {
               const urlpars = new URL(searchlinks);
@@ -268,11 +265,15 @@ const Rows = ({
                       )}
                     </div>
                     <div className="flex gap-2 overflow-auto">
-                      {imageUrls.map(({ url, selected }, index) => {
+                      {imageUrls.map(({ url }, index) => {
+                        const isSelected =
+                          url && crawlingData.selectedImages.includes(url);
+                        const isBlackList =
+                          url && crawlingData.blackListImages.includes(url);
                         return (
                           <div
                             key={url ? url + index + "url" : index}
-                            className={`relative w-[25%] shrink-0 cursor-pointer ${selected ? "selected" : ""} ${isBlackList(url as string) ? "blackList" : ""} `}
+                            className={`relative w-[25%] shrink-0 cursor-pointer ${isSelected ? "selected" : ""} ${isBlackList ? "blackList" : ""} `}
                           >
                             <div
                               style={{
@@ -285,11 +286,7 @@ const Rows = ({
                                 onClick={(e) => {
                                   e.preventDefault();
                                   e.stopPropagation();
-                                  if (isBlackList(url as string)) {
-                                    return alert(
-                                      "블랙리스트에 있는 아이템입니다.",
-                                    );
-                                  }
+
                                   if (url) {
                                     onClickSearchImages(
                                       url,
@@ -322,11 +319,7 @@ const Rows = ({
                               onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
-                                if (isBlackList(url as string)) {
-                                  return alert(
-                                    "블랙리스트에 있는 아이템입니다.",
-                                  );
-                                }
+
                                 if (url) {
                                   onClickSearchImages(url, crawlingData.index);
                                 }
@@ -345,7 +338,7 @@ const Rows = ({
                                   );
                                 }
                                 if (url) {
-                                  blackListImage(url);
+                                  blackListImage(url, rowIndex);
                                 }
                               }}
                               className="absolute bottom-0 right-0"
@@ -369,39 +362,18 @@ const Rows = ({
           addManualUrl(e, rowIndex, url);
           inputRef.current?.focus();
         }}
-        className="flex w-[8%] flex-col border-r-[1px] border-solid border-black"
+        className="flex w-[15%] flex-col justify-between border-r-[1px] border-solid border-black"
       >
-        <input
-          ref={inputRef}
-          onChange={(e) => {
-            setUrl(e.target.value);
-          }}
-          placeholder="이미지 주소 입력"
-          value={url}
-          type="text"
-          className="mt-3 w-[100%] border-[1px] border-solid border-black placeholder:text-[14px]"
-        />
-        <button
-          className="mt-2 rounded-[8px] border-[1px] border-black text-[14px]"
-          type="submit"
-        >
-          추가
-        </button>
-
-        <div className="flex flex-col">
-          {crawlingData?.manualUrl?.map((item, index) => {
+        <div className="flex flex-wrap gap-1 p-2">
+          {crawlingData?.selectedImages?.map((item, index) => {
             return (
-              <div className="relative" key={item + index}>
-                <Image
-                  className="selected"
-                  width={150}
-                  height={150}
-                  alt="이미지"
-                  src={item}
-                />
+              <div className="relative w-[32%]" key={item + index}>
+                <Image width={150} height={150} alt="이미지" src={item} />
 
                 <button
-                  onClick={() => {
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
                     deleteManualUrl(item, rowIndex);
                   }}
                   className="absolute right-0 top-0"
@@ -412,8 +384,42 @@ const Rows = ({
             );
           })}
         </div>
+        <div className="p-1">
+          <div className="flex gap-1">
+            <input
+              ref={inputRef}
+              onChange={(e) => {
+                setUrl(e.target.value);
+              }}
+              placeholder="이미지 주소 입력"
+              value={url}
+              type="text"
+              className="w-[85%] border-[1px] border-solid border-black placeholder:text-[14px]"
+            />
+            <button
+              className="w-[15%] rounded-[8px] border-[1px] border-black text-[14px]"
+              type="submit"
+            >
+              추가
+            </button>
+          </div>
+        </div>
       </form>
-      <div className="w-[14.5%]">
+      <div className="w-[8%]">
+        <button
+          onClick={() => {
+            setClassificationCount((prev) => prev + 1);
+            setIsAllFind(!isAllFind);
+          }}
+          className="mb-2 flex w-[100%] items-center justify-between pl-1"
+        >
+          <div className="w-[100%] text-start text-[14px]">
+            Total : {crawlingData.selectedImages.length}
+          </div>
+          <div className="flex border-black pr-1">
+            <GoTriangleUp size={30} />
+          </div>
+        </button>
         <div className="flex flex-col items-center gap-4">
           <button
             onClick={() => {
@@ -424,16 +430,18 @@ const Rows = ({
             }}
             className="w-[60%] rounded-[8px] border-[1px] border-black text-[14px]"
           >
-            poizon에서 검색결과 보기
+            poizon
           </button>
           <button
             onClick={() => {
-              setClassificationCount((prev) => prev + 1);
-              setIsAllFind(!isAllFind);
+              window.open(
+                `https://www.buyma.com/r/${crawlingData.productInfo.modalName}/`,
+                "_blank",
+              );
             }}
             className="w-[60%] rounded-[8px] border-[1px] border-black text-[14px]"
           >
-            다찾았어요
+            buyma
           </button>
         </div>
       </div>

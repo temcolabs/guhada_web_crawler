@@ -23,7 +23,7 @@ export type testAPIType = {
   modelName: string;
 };
 
-export type imagUrlType = { url: string | null; selected?: boolean };
+export type imagUrlType = { url: string | null };
 
 export type searchImageObject = {
   isCrawlinImageUrlHide?: boolean;
@@ -35,12 +35,10 @@ export type selectImageTableType = {
   index: number;
   productImageUrl: string[];
   productInfo: { brand: string; name: string; modalName: string };
-  크롤링데이터?: { url: string; info: object }[];
   originalLink: string;
-  selectedImageLength: number;
   crawlingImageUrl: searchImageObject[];
-  searchImpossible: boolean;
-  manualUrl: string[];
+  selectedImages: string[];
+  blackListImages: string[];
 };
 
 export interface CustomHTMLElement extends HTMLElement {
