@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import Head from "next/head";
 import UploadFile from "template/main/UploadFile";
 
 export const metadata: Metadata = {
