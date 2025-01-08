@@ -72,9 +72,9 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
           }
         } catch (error) {
           console.log(error);
-          controller.error(error);
-          controller.close();
           browser.close();
+          controller.close();
+          controller.error(error);
         } finally {
           controller.enqueue(streamingDataParser({ status: "end" }));
           controller.close();
