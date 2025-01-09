@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -111,12 +112,6 @@ const UploadFile = () => {
     }
   };
 
-  // const test = async () => {
-  //   const getdata = await parsingExcelToJSON<{ unselectedUrl: string }>(file);
-  //   console.log(
-  //     getDuplicatedBlackList(getdata.map((item) => item.unselectedUrl)),
-  //   );
-  // };
   return (
     <div className="absolute left-[50%] flex h-[100%] w-[600px] translate-x-[-50%] flex-col justify-between">
       <form

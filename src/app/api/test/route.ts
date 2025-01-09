@@ -12,10 +12,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
   const page = await context.newPage();
 
   await page.setViewportSize({ width: 2000, height: 1000 });
-  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+
   try {
     const getData = await getOnPage(
-      "https://www.mysteryranchuk.com/products/forager-hip-pack?srsltid=AfmBOoqIeIoGfM74qafqKZpZifn8qD6IOLMDrKH2bJgQZ75Ll7EJLR6S&variant=51751194689914",
+      "https://www.thebs.com/en/wide-herringbone-blazer-maison-mihara-yasuhiro-332276",
       page,
     );
     return NextResponse.json({ data: getData }, { status: 200 });

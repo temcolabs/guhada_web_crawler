@@ -21,7 +21,7 @@ const getTargetImages = async (
     if (target === "okmall") {
       await page.goto(data["링크"], {
         waitUntil: "domcontentloaded",
-        timeout: 60000,
+        timeout: 6000,
       });
       const getThumbnail = page.locator("#thumbSmallView > li > a > img");
       const count = await getThumbnail.count();
@@ -49,21 +49,19 @@ const getTargetImages = async (
           route.continue();
         }
       });
-
       page.on("response", async (response) => {
         const responseUrl = response.url();
-
         if (
-          responseUrl.includes(".jpg") &&
-          !responseUrl.includes("image.msscdn.net") &&
+          (responseUrl.includes(".jpg") || responseUrl.includes(".jpeg")) &&
+          (responseUrl.includes("image.msscdn.net/images/prd_img") ||
+            responseUrl.includes("image.musinsa.com/images/prd_img")) &&
           !responseUrl.includes("cdn-images.buyma.com")
         ) {
           const isBlackList = imageBlackList.some((item) =>
             responseUrl.includes(item),
           );
-          // Add an event listener to get dimensions when the image loads
 
-          if (!isBlackList && responseUrl.includes(target)) {
+          if (!isBlackList) {
             imgSrcList.push(responseUrl);
           }
         }
@@ -71,9 +69,28 @@ const getTargetImages = async (
 
       await page?.goto(data.링크, {
         waitUntil: "networkidle",
-        timeout: 60000,
+        timeout: 4000,
       });
+      await page.waitForTimeout(4000);
     }
+    if (target === "premiummultishop") {
+      page.on("response", async (response) => {
+        const responseUrl = response.url();
+        if (
+          responseUrl.endsWith(".jpg") &&
+          responseUrl.includes("https://blue3200.openhost.cafe24.com/") &&
+          !imageBlackList.includes(responseUrl)
+        ) {
+          imgSrcList.push(responseUrl);
+        }
+      });
+      await page?.goto(data.링크, {
+        waitUntil: "networkidle",
+        timeout: 3000,
+      });
+      await page.waitForTimeout(3000);
+    }
+
     return imgSrcList;
   } catch (error) {
     return [];
@@ -176,81 +193,82 @@ const searchAndGrapHrefs = async (
 const parsingImageSrc = async (hrefs: (string | undefined)[], page: Page) => {
   const allImageSrc: searchImageObject[] = [];
   for (const url of hrefs) {
+    const image: string[] = [];
     if (url) {
-      const image: string[] = [];
       try {
-        // Attach an error listener
-        page.on("pageerror", async (error) => {
-          // await page.screenshot({ path: "debug-screenshot.png" });
-          // console.error(`Page error on ${url}:`, error.message);
-        });
+        if (url.includes("thebs.com")) {
+          // 더베이스는 따로 이미지를 긁어오자
+          await page?.goto(url, { waitUntil: "domcontentloaded" });
 
-        // 패이지 안에서 필요없는 요청은 거른다.
-        await page.route("**/*", (route) => {
-          const url = route.request().url();
+          await page.mouse.wheel(0, 1500);
+          await page.waitForTimeout(2000);
+          await page.waitForSelector(".lazyloading");
+          const srcList = await page.$$eval(
+            ".lazyloading",
+            (elements) =>
+              elements
+                .map((element) => element.getAttribute("src")) // 각 엘리먼트의 src 추출
+                .filter((src) => src !== null), // null인 src 제거
+          );
 
-          if (
-            url.includes("analytics") ||
-            url.includes("google-analytics") ||
-            url.includes("ads") ||
-            url.includes(".woff2") ||
-            url.includes("googletagmanager") ||
-            url.includes("clarity")
-          ) {
-            route.abort();
-          } else {
-            route.continue();
-          }
-        });
-        page.on("response", async (response) => {
-          const responseUrl = response.url();
+          srcList.forEach((item) => {
+            image.push(item);
+          });
+        } else {
+          page.on("response", async (response) => {
+            const responseUrl = response.url();
 
-          if (
-            responseUrl.includes(".jpg") ||
-            responseUrl.includes(".png") ||
-            responseUrl.includes(".webp") ||
-            responseUrl.includes(".jpeg") ||
-            responseUrl.includes(".gif")
-          ) {
-            const isBlackList = imageBlackList.some((item) =>
-              responseUrl.includes(item),
-            );
-            // Add an event listener to get dimensions when the image loads
-            const contentsSize = response.headers()["content-length"];
+            if (
+              responseUrl.includes(".jpg") ||
+              responseUrl.includes(".png") ||
+              responseUrl.includes(".webp") ||
+              responseUrl.includes(".jpeg") ||
+              responseUrl.includes(".gif") ||
+              responseUrl.includes(".avif")
+            ) {
+              const isBlackList = imageBlackList.some((item) =>
+                responseUrl.includes(item),
+              );
+              // Add an event listener to get dimensions when the image loads
+              const contentsSize = response.headers()["content-length"];
 
-            if (!isNaN(Number(contentsSize))) {
-              if (Number(contentsSize) > 6000) {
-                if (!isBlackList) {
-                  image.push(responseUrl);
+              if (!isNaN(Number(contentsSize))) {
+                if (Number(contentsSize) > 6000) {
+                  if (!isBlackList) {
+                    image.push(responseUrl);
+                  }
                 }
               }
             }
-          }
-        });
+          });
 
-        await page?.goto(url, {
-          waitUntil: "networkidle",
-          timeout: 60000,
-        });
+          await page
+            ?.goto(url, {
+              waitUntil: "networkidle",
+              timeout: 4000,
+            })
+            .catch((error) => {});
 
+          await page.waitForTimeout(4000);
+        }
         const parsedUrl = new URL(url);
 
         const result: imagUrlType[] = image.map((item) => {
-          let object = "";
+          let newUrl = "";
           if (parsedUrl.hostname === "balaan.com") {
-            object = `https:${item}`;
+            newUrl = `https:${item}`;
           } else if (parsedUrl.hostname === "giraffehousevn.com") {
-            object = `${parsedUrl.origin}${item}`;
+            newUrl = `${parsedUrl.origin}${item}`;
           }
 
           if (item?.startsWith("https://")) {
-            object = item;
+            newUrl = item;
           } else if (item?.startsWith("//")) {
-            object = `https:${item}`;
+            newUrl = `https:${item}`;
           } else if (item?.startsWith("/")) {
-            object = `${parsedUrl.origin}${item}`;
+            newUrl = `${parsedUrl.origin}${item}`;
           }
-          return { url: object, selected: false };
+          return { url: newUrl };
         });
 
         allImageSrc.push({ imageUrls: result, searchlinks: url });
