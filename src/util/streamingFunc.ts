@@ -1,16 +1,16 @@
 import { Page } from "@playwright/test";
-import { excelType, selectImageTableType } from "type/type";
+import { excelType, selectImageTableType, targetSiteType } from "type/type";
 import { getSearchImagesUrl, getTargetImages } from "./crawling";
 
 const getOneByOneCrawlingData = async (
   data: excelType,
   page: Page,
-  target: "okmall" | "musinsa" = "okmall",
+  target: targetSiteType = "okmall",
   whiteListBrand: string[],
 ) => {
   const targetImages = await getTargetImages(page, data, target);
 
-  // ok 몰 상품품 비교 이미지 긁어오기
+  //상품품 비교 이미지 긁어오기
   const getSearchImages = await getSearchImagesUrl(data, page, whiteListBrand);
 
   const pushData: selectImageTableType = {

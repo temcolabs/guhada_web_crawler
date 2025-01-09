@@ -13,7 +13,7 @@ const fileGenerator = <T extends object>(fileName: string, paramData: T) => {
       fs.writeFile(fileName, JSON.stringify([paramData]), (err: any) => {});
     } else {
       const getData: object[] = JSON.parse(data);
-      getData.push({ ...paramData });
+      getData.push(paramData);
 
       fs.writeFile(fileName, JSON.stringify(getData), (err: any) => {
         if (err) {
@@ -36,7 +36,7 @@ const crawlingDataToFile = (
       if (!data) {
         data = "[]";
       }
-      let getData: crawlingDataType[] = JSON.parse(data);
+      const getData: crawlingDataType[] = JSON.parse(data);
       const sameAuther = getData.find(
         (item) => item.author === paramData.author,
       );

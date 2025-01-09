@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Page } from "playwright";
 import { imagUrlType, whiteListType } from "type/type";
 import { parsingExcelToJSON } from "./ExcelToJson";
+import { crawlingDataToFile, fileGenerator } from "./utils";
 
 //캡차박스 컨트롤
 const testssss = async () => {
@@ -121,61 +122,26 @@ export const whiteListParsing = async (req: NextRequest) => {
 };
 
 export const getOnPage = async (url: string, page: Page) => {
+  const image: string[] = [];
   try {
-    const image: string[] = [];
+    await page?.goto(url, { waitUntil: "domcontentloaded" });
 
-    const respostData: string[] = [];
-    page.on("response", async (response) => {
-      const responseUrl = response.url();
-      respostData.push(responseUrl);
-      if (
-        responseUrl.includes(".jpg") ||
-        responseUrl.includes(".png") ||
-        responseUrl.includes(".webp") ||
-        responseUrl.includes(".gif")
-      ) {
-        const isBlackList = imageBlackList.some((item) =>
-          responseUrl.includes(item),
-        );
-        // Add an event listener to get dimensions when the image loads
-        const contentsSize = response.headers()["content-length"];
+    await page.mouse.wheel(0, 1500);
+    await page.waitForTimeout(2000);
+    await page.waitForSelector(".lazyloading");
+    const srcList = await page.$$eval(
+      ".lazyloading",
+      (elements) =>
+        elements
+          .map((element) => element.getAttribute("src")) // 각 엘리먼트의 src 추출
+          .filter((src) => src !== null), // null인 src 제거
+    );
 
-        if (!isNaN(Number(contentsSize))) {
-          if (Number(contentsSize) > 7000) {
-            if (!isBlackList) {
-              image.push(responseUrl);
-            }
-          }
-        }
-      }
-    });
-
-    await page?.goto(url, { waitUntil: "networkidle" });
-    // Scroll to trigger lazy loading
-
-    // fileGenerator("whatResponse.json", { respostData });
-    const parsedUrl = new URL(url);
-
-    const result: imagUrlType[] = image.map((item) => {
-      let url = "";
-      if (parsedUrl.hostname === "balaan.com") {
-        url = `https:${item}`;
-      } else if (parsedUrl.hostname === "giraffehousevn.com") {
-        url = `${parsedUrl.origin}${item}`;
-      }
-
-      if (item?.startsWith("https://")) {
-        url = item;
-      } else if (item?.startsWith("//")) {
-        url = `https:${item}`;
-      } else if (item?.startsWith("/")) {
-        url = `${parsedUrl.origin}${item}`;
-      }
-      return { url };
-    });
-    return result;
+    console.log(srcList);
+    return srcList;
   } catch (error) {
-    return [];
+    console.log("에러남?", error);
+    return image;
   } finally {
     await page.close();
   }

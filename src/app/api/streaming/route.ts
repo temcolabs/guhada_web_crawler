@@ -2,7 +2,7 @@
 import { chromium } from "@playwright/test";
 import { NextApiRequest, NextApiResponse } from "next";
 import { NextResponse } from "next/server";
-import { excelType } from "type/type";
+import { excelType, targetSiteType } from "type/type";
 import { getOneByOneCrawlingData } from "util/streamingFunc";
 import { getFindItem, streamingDataParser } from "util/utils";
 
@@ -42,9 +42,10 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
 
         try {
           let count = 0;
-          const parsingTarGetList: ["musinsa", "okmall"] = [
+          const parsingTarGetList: targetSiteType[] = [
             "musinsa",
             "okmall",
+            "premiummultishop",
           ];
 
           for (const item of getList) {
