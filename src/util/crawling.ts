@@ -67,7 +67,7 @@ const getTargetImages = async (
             responseUrl.includes(item),
           );
 
-          if (!isBlackList) {
+          if (!isBlackList && !responseUrl.includes("w=390")) {
             imgSrcList.push(responseUrl);
           }
         }
