@@ -54,6 +54,12 @@ const getTargetImages = async (
         if (
           (responseUrl.includes(".jpg") || responseUrl.includes(".jpeg")) &&
           (responseUrl.includes("image.msscdn.net/images/prd_img") ||
+            responseUrl.includes(
+              "image.msscdn.net/thumbnails/images/goods_img",
+            ) ||
+            responseUrl.includes(
+              "image.msscdn.net/thumbnails/images/prd_img",
+            ) ||
             responseUrl.includes("image.musinsa.com/images/prd_img")) &&
           !responseUrl.includes("cdn-images.buyma.com")
         ) {
@@ -121,7 +127,6 @@ const searchAndGrapHrefs = async (
             .map((item) => item.href);
         });
 
-        // fileGenerator("getLinks.json", [getLinks]);
         for (const item of getLinks) {
           try {
             const url = new URL(item);
@@ -134,8 +139,6 @@ const searchAndGrapHrefs = async (
             if (includeWhiteList) {
               finalFilterImagesHost.push(item);
             }
-            // if (whiteList.includes(url.hostname)) {
-            // }
           } catch (error) {}
         }
 

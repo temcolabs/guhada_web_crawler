@@ -101,11 +101,11 @@ const Rows = ({
           </Link>
         </div>
       </div>
-      <div className="w-[11%] border-r-[1px] border-solid border-black">
-        <div className="flex h-[100%] items-start justify-evenly gap-3 pl-[2px] pt-2 text-blue-300">
+      <div className="w-[10.9%] border-r-[1px] border-solid border-black p-2">
+        <div className="flex h-[100%] items-start justify-evenly gap-1 text-blue-300">
           <div className="w-[45%] break-words text-[14px]">
             <Link
-              className="w-max-[45% break-words text-[14px]"
+              className="break-words text-[14px]"
               href={`https://www.google.co.kr/search?q=${crawlingData.productInfo.modalName}&sca_esv=48a32a8a53a0fe13&sxsrf=ADLYWIJ3uYJX1CanmgT2nB9VAMPFiLO34w%3A1734423586966&source=hp&ei=IjRhZ6LVN6LS1e8Pi5GRgQw&iflsig=AL9hbdgAAAAAZ2FCMvyWWlfooNP991xDXeoTk_7av4-K&ved=0ahUKEwii7qaur66KAxUiafUHHYtIJMAQ4dUDCBo&uact=5&oq=XFPPU8554-21&gs_lp=Egdnd3Mtd2l6IgxYRlBQVTg1NTQtMjEyCBAAGIAEGKIESMEEUHxYfHABeACQAQCYAYwBoAGMAaoBAzAuMbgBA8gBAPgBAvgBAZgCAqAClgGoAgrCAgcQIxgnGOoCmAMJ8QV9IkCVHGMs2ZIHAzEuMaAHcg&sclient=gws-wiz`}
               target="_blank"
             >
@@ -152,8 +152,8 @@ const Rows = ({
           </div>
         </div>
       </div>
-      <div className="w-[5%] border-r-[1px] border-solid border-black">
-        <div className="flex h-[100%] items-start justify-evenly gap-3 pl-[2px] pt-2 text-blue-300">
+      <div className="w-[5%] border-r-[1px] border-solid border-black p-2">
+        <div className="flex h-[100%] items-start justify-evenly gap-3 text-blue-300">
           <Link
             className="w-[100%] break-words text-center text-[14px]"
             href={`https://www.google.co.kr/search?q=${crawlingData.productInfo.name}&sca_esv=48a32a8a53a0fe13&sxsrf=ADLYWIJ3uYJX1CanmgT2nB9VAMPFiLO34w%3A1734423586966&source=hp&ei=IjRhZ6LVN6LS1e8Pi5GRgQw&iflsig=AL9hbdgAAAAAZ2FCMvyWWlfooNP991xDXeoTk_7av4-K&ved=0ahUKEwii7qaur66KAxUiafUHHYtIJMAQ4dUDCBo&uact=5&oq=XFPPU8554-21&gs_lp=Egdnd3Mtd2l6IgxYRlBQVTg1NTQtMjEyCBAAGIAEGKIESMEEUHxYfHABeACQAQCYAYwBoAGMAaoBAzAuMbgBA8gBAPgBAvgBAZgCAqAClgGoAgrCAgcQIxgnGOoCmAMJ8QV9IkCVHGMs2ZIHAzEuMaAHcg&sclient=gws-wiz`}

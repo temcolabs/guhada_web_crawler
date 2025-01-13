@@ -189,5 +189,6 @@ const whiteUrlList = [
   "karenwalker",
   "guhada",
   "ysl",
+  "apcstore",
 ];
 export default whiteUrlList;
