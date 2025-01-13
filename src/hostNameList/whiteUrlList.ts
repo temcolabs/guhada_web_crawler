@@ -190,5 +190,6 @@ const whiteUrlList = [
   "guhada",
   "ysl",
   "apcstore",
+  "bieyangapp",
 ];
 export default whiteUrlList;
