@@ -75,9 +75,9 @@ const getTargetImages = async (
 
       await page?.goto(data.링크, {
         waitUntil: "networkidle",
-        timeout: 4000,
+        timeout: 7000,
       });
-      await page.waitForTimeout(4000);
+      await page.waitForTimeout(5000);
     }
     if (target === "premiummultishop") {
       page.on("response", async (response) => {
