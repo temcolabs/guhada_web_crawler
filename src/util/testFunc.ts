@@ -3,7 +3,7 @@ import { chromium } from "@playwright/test";
 
 import imageBlackList from "hostNameList/imageBlackList";
 import { NextRequest, NextResponse } from "next/server";
-import { Page } from "playwright";
+import { Browser, Page } from "playwright";
 import { imagUrlType, whiteListType } from "type/type";
 import { parsingExcelToJSON } from "./ExcelToJson";
 import { crawlingDataToFile, fileGenerator } from "./utils";
@@ -121,29 +121,35 @@ export const whiteListParsing = async (req: NextRequest) => {
   }
 };
 
-export const getOnPage = async (url: string, page: Page) => {
+export const getOnPage = async (url: string, page: Page, browser: Browser) => {
   const image: string[] = [];
   try {
-    await page?.goto(url, { waitUntil: "domcontentloaded" });
+    page.on("response", (response) => {
+      const url = response.url();
+      const headers = response.headers(); // 응답 헤더 가져오기
+      const contentType = headers["content-type"]; // content-type 헤더 확인
+      const contentLength = Number(headers["content-length"]); // content-type 헤더 확인
 
-    await page.mouse.wheel(0, 1500);
-    await page.waitForTimeout(2000);
-    await page.waitForSelector(".lazyloading");
-    const srcList = await page.$$eval(
-      ".lazyloading",
-      (elements) =>
-        elements
-          .map((element) => element.getAttribute("src")) // 각 엘리먼트의 src 추출
-          .filter((src) => src !== null), // null인 src 제거
-    );
+      if (
+        contentType &&
+        contentType.includes("image/jpeg") &&
+        contentLength &&
+        contentLength > 5000 &&
+        !url.includes("reversible-images-prod") &&
+        !url.includes("image.reversible.com")
+      ) {
+        image.push(url);
+      }
+    });
 
-    console.log(srcList);
-    return srcList;
+    await page?.goto(url, { waitUntil: "networkidle", timeout: 2000 });
   } catch (error) {
     console.log("에러남?", error);
+    await browser.close();
     return image;
   } finally {
-    await page.close();
+    await browser.close();
+    return image;
   }
 };
 

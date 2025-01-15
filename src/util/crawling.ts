@@ -199,7 +199,32 @@ const parsingImageSrc = async (hrefs: (string | undefined)[], page: Page) => {
     const image: string[] = [];
     if (url) {
       try {
-        if (url.includes("thebs.com")) {
+        if (url.includes("reversible")) {
+          //reversible 도 따로 긁어오자
+          page.on("response", (response) => {
+            const url = response.url();
+            const isBlackList = imageBlackList.some((item) =>
+              url.includes(item),
+            );
+            const headers = response.headers(); // 응답 헤더 가져오기
+            const contentType = headers["content-type"]; // content-type 헤더 확인
+            const contentLength = Number(headers["content-length"]); // content-type 헤더 확인
+
+            if (
+              contentType &&
+              contentType.includes("image/jpeg") &&
+              contentLength &&
+              !url.includes("reversible-images-prod") &&
+              !url.includes("image.reversible.com")
+            ) {
+              image.push(url);
+            }
+          });
+
+          try {
+            await page.goto(url, { waitUntil: "networkidle", timeout: 5000 });
+          } catch (error) {}
+        } else if (url.includes("thebs.com")) {
           // 더베이스는 따로 이미지를 긁어오자
           await page?.goto(url, { waitUntil: "domcontentloaded" });
 
@@ -220,27 +245,25 @@ const parsingImageSrc = async (hrefs: (string | undefined)[], page: Page) => {
         } else {
           page.on("response", async (response) => {
             const responseUrl = response.url();
-
+            const headers = response.headers(); // 응답 헤더 가져오기
+            const contentType = headers["content-type"]; // content-type 헤더 확인
+            const contentLength = Number(headers["content-length"]); // content-type 헤더 확인
             if (
-              responseUrl.includes(".jpg") ||
-              responseUrl.includes(".png") ||
-              responseUrl.includes(".webp") ||
-              responseUrl.includes(".jpeg") ||
-              responseUrl.includes(".gif") ||
-              responseUrl.includes(".avif")
+              contentType &&
+              (contentType.includes("image/jpg") ||
+                contentType.includes("image/png") ||
+                contentType.includes("image/webp") ||
+                contentType.includes("image/jpeg") ||
+                contentType.includes("image/gif") ||
+                contentType.includes("image/avif"))
             ) {
               const isBlackList = imageBlackList.some((item) =>
                 responseUrl.includes(item),
               );
               // Add an event listener to get dimensions when the image loads
-              const contentsSize = response.headers()["content-length"];
 
-              if (!isNaN(Number(contentsSize))) {
-                if (Number(contentsSize) > 6000) {
-                  if (!isBlackList) {
-                    image.push(responseUrl);
-                  }
-                }
+              if (contentLength && contentLength > 6000 && !isBlackList) {
+                image.push(responseUrl);
               }
             }
           });
@@ -276,7 +299,7 @@ const parsingImageSrc = async (hrefs: (string | undefined)[], page: Page) => {
 
         allImageSrc.push({ imageUrls: result, searchlinks: url });
       } catch (error) {
-        console.log({ error });
+        console.log({ error }, "에러??");
         continue;
       }
     }
@@ -291,7 +314,7 @@ const getSearchImagesUrl = async (
   whiteListBrand: string[],
 ) => {
   const searchlinks = await searchAndGrapHrefs(
-    `${getData.브랜드} ${getData["모델명(추정)"]}`,
+    `${getData.브랜드} "${getData["모델명(추정)"]}"`,
     "search",
     page,
     whiteListBrand,

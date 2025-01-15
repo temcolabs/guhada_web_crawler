@@ -10,12 +10,13 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
   const getUrl = req.url || "";
   const { searchParams } = new URL(getUrl);
   const author = searchParams.get("author"); // Get specific parameter
+  const currentCount = Number(searchParams.get("currentCount")); // Get specific parameter
   const isChromium = searchParams.get("isChromium") === "true"; // Get specific parameter
   let getList: excelType[] = [];
   if (author) {
     const getData = await getFindItem(undefined, author);
     if (getData) {
-      getList = getData;
+      getList = getData.slice(currentCount, getData.length);
     }
   }
 
@@ -41,7 +42,7 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
         );
 
         try {
-          let count = 0;
+          let count = currentCount;
           const parsingTarGetList: targetSiteType[] = [
             "musinsa",
             "okmall",
@@ -61,15 +62,34 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
               whiteList,
             );
 
-            count++;
-            controller.enqueue(
-              streamingDataParser({
-                status: "ing",
-                data: getData,
-                currentPage: count,
-                maxPage: getList.length,
-              }),
-            );
+            if (!browser.isConnected() || page.isClosed()) {
+              controller?.enqueue(
+                streamingDataParser({
+                  status: "cut",
+                  currentPage: count,
+                  maxPage: getList.length + currentCount,
+                }),
+              );
+              context?.close();
+              browser?.close();
+              controller?.close();
+              break;
+            } else {
+              count++;
+              if (controller.desiredSize !== null) {
+                controller?.enqueue(
+                  streamingDataParser({
+                    status: "ing",
+                    data: getData,
+                    currentPage: count,
+                    maxPage: getList.length + currentCount,
+                  }),
+                );
+              } else {
+                console.warn("Controller is already closed, skipping enqueue.");
+                break;
+              }
+            }
           }
         } catch (error) {
           console.log(error);
@@ -77,8 +97,10 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
           controller.close();
           controller.error(error);
         } finally {
-          controller.enqueue(streamingDataParser({ status: "end" }));
-          controller.close();
+          if (controller.desiredSize !== null) {
+            controller.enqueue(streamingDataParser({ status: "end" }));
+          }
+          controller?.close();
           browser.close();
         }
       },
@@ -92,7 +114,14 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
       },
     });
   } catch (error) {
-    console.log(error);
+    return NextResponse.json(
+      {
+        status: "error",
+        message: "Failed to process file",
+        error,
+      },
+      { status: 500 },
+    );
   } finally {
   }
 }

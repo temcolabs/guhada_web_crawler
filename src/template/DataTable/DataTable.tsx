@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { FormEvent, useEffect, useState } from "react";
 import { exportExcelData, selectImageTableType } from "type/type";
@@ -14,9 +15,9 @@ const DataTable = () => {
     maxPage: number;
     currentPage: number;
   }>({ currentPage: 0, maxPage: 0 });
-  const [streamState, setStreamState] = useState<"ready" | "ing" | "end">(
-    "ready",
-  );
+  const [streamState, setStreamState] = useState<
+    "ready" | "ing" | "end" | "cut"
+  >("ready");
   const [classificationCount, setClassificationCount] = useState(0);
 
   const progressPer =
@@ -27,16 +28,13 @@ const DataTable = () => {
     ? (classificationCount / progress.maxPage) * 100
     : 0;
 
-  const streamStart = () => {
-    if (progress.currentPage > 0 && progress.currentPage === progress.maxPage) {
-      alert("이미 완료되었습니다!");
-      return;
-    }
+  const streamFunc = (currentCount: number = 0) => {
+    setStreamState("ing");
     const urlSearch = new URLSearchParams(location.search);
     const authorName = urlSearch.get("author");
     const isChromium = urlSearch.get("isChromium");
     const eventSource = new EventSource(
-      `/api/streaming?author=${authorName}&isChromium=${isChromium}`,
+      `/api/streaming?author=${authorName}&isChromium=${isChromium}&currentCount=${currentCount}`,
     );
 
     eventSource.onmessage = (event) => {
@@ -57,13 +55,35 @@ const DataTable = () => {
         setData((prev) => {
           return prev.concat(data.data);
         });
+      } else if (data.status === "cut") {
+        setStreamState("cut");
+        alert("크롤링 브라우저가 꺼졌습니다!");
+        eventSource.close();
       }
     };
 
-    eventSource.onerror = () => {
+    eventSource.onerror = (err: any) => {
+      console.log(err);
       alert("에러!");
+
       eventSource.close();
     };
+  };
+
+  const streamContinue = () => {
+    streamFunc(progress.currentPage);
+  };
+
+  const streamStart = () => {
+    if (streamState === "cut") {
+      alert("크롤링 재개를 눌러주세요!");
+      return;
+    }
+    if (progress.currentPage > 0 && progress.currentPage === progress.maxPage) {
+      alert("이미 완료되었습니다!");
+      return;
+    }
+    streamFunc();
   };
 
   const removeAllList = () => {
@@ -203,10 +223,12 @@ const DataTable = () => {
 
     const uniqueBlackList = [...new Set(blackList)];
 
-    exportJsonToExcel<{ unselectedUrl: string }>(
-      uniqueBlackList.map((item) => ({ unselectedUrl: item })),
-      "blackList.xlsx",
-    );
+    if (uniqueBlackList.length) {
+      exportJsonToExcel<{ unselectedUrl: string }>(
+        uniqueBlackList.map((item) => ({ unselectedUrl: item })),
+        "blackList.xlsx",
+      );
+    }
 
     exportJsonToExcel<exportExcelData>(excelData, "selectedList.xlsx");
   };
@@ -217,6 +239,17 @@ const DataTable = () => {
       localStorage.setItem("progress", JSON.stringify(progress));
     }
   }, [data, streamState, progress, progressPer]);
+
+  useEffect(() => {
+    if (
+      streamState === "ready" &&
+      progress.currentPage &&
+      progress.maxPage &&
+      progress.currentPage !== progress.maxPage
+    ) {
+      setStreamState("cut");
+    }
+  }, [progress.currentPage, progress.maxPage, streamState]);
 
   useEffect(() => {
     if (progressPer === 100) {
@@ -241,62 +274,76 @@ const DataTable = () => {
 
   return (
     <div className="flex flex-col gap-[12px] pb-10">
-      <div className="flex w-[100%]">
-        <button
-          className="h-[50px] flex-[8] bg-blue-400 text-white"
-          onClick={streamStart}
-        >
-          크롤링 스트림 시작
-        </button>
-        <button
-          className="h-[50px] flex-[2] bg-stone-300 text-black"
-          onClick={removeAllList}
-        >
-          모두지우기
-        </button>
-      </div>
-      <div className="sticky top-[0px] z-[100] bg-white">
-        <div className="flex gap-2 pl-2">
-          <div className="mr-2 flex-shrink-0">
-            {progress.currentPage === progress.maxPage ? (
-              <div>
-                크롤링 완료 {progress.currentPage} / {progress.maxPage}
-              </div>
-            ) : (
-              <div>
-                크롤링중....
-                {progress.currentPage} / {progress.maxPage}
-              </div>
-            )}
-          </div>
-          <div className="w-[100%] bg-white">
+      <div className="sticky top-[0px] z-50">
+        <div className="flex w-[100%]">
+          <button
+            className="relative h-[40px] flex-[8] bg-blue-400"
+            onClick={() => {
+              streamStart();
+            }}
+          >
+            <div className="relative z-10 text-[16px] font-bold text-white">
+              {streamState === "end" ||
+              (progress.maxPage &&
+                progress.currentPage &&
+                progress.currentPage === progress.maxPage) ? (
+                <div>
+                  크롤링 완료 {Math.floor(progressPer)}% ({progress.currentPage}{" "}
+                  / {progress.maxPage})
+                </div>
+              ) : streamState === "ing" ? (
+                <div>
+                  크롤링중.... {Math.floor(progressPer)}% (
+                  {progress.currentPage} / {progress.maxPage})
+                </div>
+              ) : streamState === "ready" ? (
+                <div>크롤링 스트림 시작</div>
+              ) : (
+                streamState === "cut" && (
+                  <div>
+                    스트림이 끊겼습니다! {Math.floor(progressPer)}% (
+                    {progress.currentPage} / {progress.maxPage})
+                  </div>
+                )
+              )}
+            </div>
             <div
-              className="bg-yellow-400"
+              className="absolute top-0 z-0 h-[100%] bg-yellow-400"
               style={{
                 width: `${progressPer}%`,
               }}
+            />
+          </button>
+          {streamState === "cut" && (
+            <button
+              onClick={streamContinue}
+              className="h-[40px] flex-[2] bg-[#A8E6CF] text-blue-800"
             >
-              {Math.floor(progressPer)}%
-            </div>
-          </div>
+              클롤링 재개
+            </button>
+          )}
+          <button
+            className="h-[40px] flex-[2] bg-stone-300 text-black"
+            onClick={removeAllList}
+          >
+            모두지우기
+          </button>
         </div>
-        <div className="flex gap-2 pl-2">
-          <div className="flex flex-shrink-0 gap-2">
-            <div>분류 진행중</div>
-            {classificationCount} / {progress.maxPage}
-          </div>
-          <div className="w-[100%] bg-white">
+        <div className="debg z-[100] bg-white">
+          <div className="relative flex">
+            <div className="relative z-20 w-[100%] text-stone-900">
+              진척도 {Math.floor(classificationPer)}% ({classificationCount} /{" "}
+              {progress.maxPage})
+            </div>
             <div
-              className="bg-yellow-400"
+              className="absolute z-10 flex h-[100%] justify-center gap-2 bg-blue-400"
               style={{
                 width: `${classificationPer}%`,
               }}
-            >
-              {Math.floor(classificationPer)}%
-            </div>
+            ></div>
           </div>
+          <Header />
         </div>
-        <Header />
       </div>
       {data?.map((crawlingData, index) => (
         <Rows
