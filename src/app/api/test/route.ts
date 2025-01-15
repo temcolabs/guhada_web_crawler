@@ -15,8 +15,9 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
   try {
     const getData = await getOnPage(
-      "https://www.thebs.com/en/wide-herringbone-blazer-maison-mihara-yasuhiro-332276",
+      "https://www.reversible.com/my/shopping/men/item/gucci-document-holder-gg-shoulder-strap-509582541",
       page,
+      browser,
     );
     return NextResponse.json({ data: getData }, { status: 200 });
   } catch (error) {

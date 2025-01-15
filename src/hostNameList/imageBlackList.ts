@@ -347,6 +347,13 @@ const imageBlackList = [
   "https://cdn11.bigcommerce.com/s-a2bj8/images/stencil/original/products/348/2823/PTF223-HBWT-TD__54644.1654563081.jpg?c=2",
   "https://cdn11.bigcommerce.com/s-a2bj8/images/stencil/original/products/345/2742/PT223MOU-PNS-TD__94325.1610585460.jpg?c=2",
   "https://cdn11.bigcommerce.com/s-a2bj8/images/stencil/original/products/346/2976/PT205BS-BS16-TD__25649.1657050013.jpg?c=2",
+  "https://reversible-images-prod.s3.us-west-2.amazonaws.com/spotlights/men-accessories-Home%20collection+_+bottegaveneta.jpg",
+  "https://reversible-images-prod.s3.us-west-2.amazonaws.com/spotlights/men-clothing-VLOGO%20SIGNATURE+_+valentino.jpg",
+  "https://reversible-images-prod.s3.us-west-2.amazonaws.com/spotlights/men-clothing-THE%20VERSACE%20VACANZA+_+versace.jpg",
+  "https://reversible-images-prod.s3.us-west-2.amazonaws.com/spotlights/men-accessories-DOLCE%20&%20GABBANA+_+dolcegabbana.jpg",
+  "https://reversible-images-prod.s3.us-west-2.amazonaws.com/spotlights/men-clothing-FATHER%20&%20SON+_+vilebrequin.jpg",
+  "https://reversible-images-prod.s3.us-west-2.amazonaws.com/spotlights/men-clothing-LA%20MEDUSA+_+versace.jpg",
+  "https://reversible-images-prod.s3.us-west-2.amazonaws.com/spotlights/men-shoes-Versace%20Mercury+_+versace.jpg",
 ];
 
 export default imageBlackList;
