@@ -2,10 +2,6 @@
 REM 현재 디렉토리로 이동
 cd /d "%~dp0"
 
-REM npm run init 실행
-echo Running "npm run init"...
-npm run init
-
 REM npm run dev 실행
 echo Running "npm run dev"...
 npm run dev
