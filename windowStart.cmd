@@ -1,20 +1,6 @@
 @echo off
 cd /d "%~dp0"
 
-REM 3000번 포트 사용 여부 확인 및 종료 (강제 종료)
-echo Checking for processes using port 3000...
-
-set "PORT_IN_USE=0"
-for /f "tokens=5" %%a in ('netstat -ano ^| findstr :3000') do (
-    echo Port 3000 is in use. Killing process (PID: %%a)...
-    taskkill /PID %%a /F
-    echo Process %%a has been terminated.
-    set "PORT_IN_USE=1"
-)
-
-if %PORT_IN_USE%==0 (
-    echo Port 3000 is not in use. Proceeding...
-)
 
 REM npm 경로 확인
 where npm >nul 2>&1
