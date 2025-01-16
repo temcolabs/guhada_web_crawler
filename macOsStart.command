@@ -18,7 +18,7 @@ npm run init
 
 # 백그라운드에서 서버 실행
 echo "Starting npm run devMacOs..."
-npm run devMacOs > server.log 2>&1 &
+npm run MacOs > server.log 2>&1 &
 
 # 서버 준비 대기
 echo "Waiting for the server to be ready at http://localhost:3000..."
