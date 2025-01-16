@@ -49,12 +49,8 @@ REM ===============================
 set "NEXT_DIR=.next"
 set "NEXT_VERSION_FILE=%NEXT_DIR%\version.txt"
 
-REM Get version from package.json using PowerShell
-for /f "delims=" %%a in ('powershell -command "(Get-Content package.json -Raw | ConvertFrom-Json).version"') do set "PACKAGE_VERSION=%%a"
-
-REM Trim package version (remove leading/trailing spaces)
-for /f "delims=" %%b in ("%PACKAGE_VERSION%") do set "PACKAGE_VERSION=%%b"
-
+REM Get version from package.json using PowerShell and trim()
+for /f "delims=" %%a in ('powershell -command "(Get-Content package.json -Raw | ConvertFrom-Json).version.Trim()"') do set "PACKAGE_VERSION=%%a"
 REM Check if .next folder exists, if not, run build
 if not exist "%NEXT_DIR%" (
     echo ".next folder does not exist. Running build..."
