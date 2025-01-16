@@ -48,15 +48,9 @@ if exist "%NEXT_VERSION_FILE%" (
     call npm run build
     echo %PACKAGE_VERSION% > "%NEXT_VERSION_FILE%"
 )
-
 exit /b
-
-:END
-echo.
-echo Script execution finished.
-echo.
-pause
+echo "Starting npm run dev..."
+npm run start
 
 REM 새로운 터미널 창에서 npm run dev 실행
-echo "Starting npm run dev..."
-start cmd /k "npm run devWindow"
+@REM start cmd /k "npm run devWindow"
