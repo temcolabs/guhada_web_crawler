@@ -1,132 +1,42 @@
 
-> free-pass@0.1.0 devMacOs
-> concurrently "git checkout main -f && (git branch | grep -q 'test' && git branch -D test || true) && git branch test && git checkout test && (git branch | grp -q 'main' && git branch -D main || true) && git checkout main && git pull origin main && npm install -f && next dev --turbopack" "wait-on http://localhost:3000 && open http://localhost:3000"
+> free-pass@0.98 MacOs
+> next build && next start
 
-[0] 이미 'main'에 있습니다
-[0] 브랜치가 'origin/main'보다 11개 커밋만큼 앞에 있습니다.
-[0]   (로컬에 있는 커밋을 제출하려면 "git push"를 사용하십시오)
-[0] test 브랜치 삭제 (과거 ddaca01).
-[0] 'test' 브랜치로 전환합니다
-[0] /bin/sh: grp: command not found
-[0] 'main' 브랜치로 전환합니다
-[0] 브랜치가 'origin/main'보다 11개 커밋만큼 앞에 있습니다.
-[0]   (로컬에 있는 커밋을 제출하려면 "git push"를 사용하십시오)
-[0] https://github.com/temcolabs/guhada_web_crawler URL에서
-[0]  * branch            main       -> FETCH_HEAD
-[0] 이미 업데이트 상태입니다.
-[0] npm warn using --force Recommended protections disabled.
-[0] npm warn ERESOLVE overriding peer dependency
-[0] npm warn While resolving: react-lazy-load@4.0.1
-[0] npm warn Found: react@19.0.0
-[0] npm warn node_modules/react
-[0] npm warn   react@"^19.0.0" from the root project
-[0] npm warn   4 more (next, react-dom, react-icons, styled-jsx)
-[0] npm warn
-[0] npm warn Could not resolve dependency:
-[0] npm warn peer react@"^17.0.0 || ^18.0.0" from react-lazy-load@4.0.1
-[0] npm warn node_modules/react-lazy-load
-[0] npm warn   react-lazy-load@"^4.0.1" from the root project
-[0] npm warn
-[0] npm warn Conflicting peer dependency: react@18.3.1
-[0] npm warn node_modules/react
-[0] npm warn   peer react@"^17.0.0 || ^18.0.0" from react-lazy-load@4.0.1
-[0] npm warn   node_modules/react-lazy-load
-[0] npm warn     react-lazy-load@"^4.0.1" from the root project
-[0] npm warn ERESOLVE overriding peer dependency
-[0] npm warn While resolving: react-lazy-load@4.0.1
-[0] npm warn Found: react-dom@19.0.0
-[0] npm warn node_modules/react-dom
-[0] npm warn   react-dom@"^19.0.0" from the root project
-[0] npm warn   1 more (next)
-[0] npm warn
-[0] npm warn Could not resolve dependency:
-[0] npm warn peer react-dom@"^17.0.0 || ^18.0.0" from react-lazy-load@4.0.1
-[0] npm warn node_modules/react-lazy-load
-[0] npm warn   react-lazy-load@"^4.0.1" from the root project
-[0] npm warn
-[0] npm warn Conflicting peer dependency: react-dom@18.3.1
-[0] npm warn node_modules/react-dom
-[0] npm warn   peer react-dom@"^17.0.0 || ^18.0.0" from react-lazy-load@4.0.1
-[0] npm warn   node_modules/react-lazy-load
-[0] npm warn     react-lazy-load@"^4.0.1" from the root project
-[0] 
-[0] up to date, audited 431 packages in 2s
-[0] 
-[0] 145 packages are looking for funding
-[0]   run `npm fund` for details
-[0] 
-[0] 2 vulnerabilities (1 moderate, 1 high)
-[0] 
-[0] To address all issues possible, run:
-[0]   npm audit fix --force
-[0] 
-[0] Some issues need review, and may require choosing
-[0] a different dependency.
-[0] 
-[0] Run `npm audit` for details.
-[0]    ▲ Next.js 15.1.0 (Turbopack)
-[0]    - Local:        http://localhost:3000
-[0]    - Network:      http://172.30.1.84:3000
-[0] 
-[0]  ✓ Starting...
-[0]  ✓ Ready in 1572ms
-[0]  ○ Compiling / ...
-[0]  ✓ Compiled / in 4.3s
-[0]  HEAD / 200 in 6232ms
-[0]  HEAD / 200 in 4773ms
-[0]  HEAD / 200 in 5277ms
-[0]  HEAD / 200 in 3526ms
-[0]  HEAD / 200 in 6245ms
-[0]  HEAD / 200 in 6247ms
-[0]  HEAD / 200 in 3283ms
-[0]  HEAD / 200 in 3536ms
-[0]  HEAD / 200 in 3034ms
-[0]  HEAD / 200 in 5545ms
-[0]  HEAD / 200 in 5298ms
-[0]  HEAD / 200 in 3296ms
-[0]  HEAD / 200 in 2553ms
-[0]  HEAD / 200 in 2805ms
-[0]  HEAD / 200 in 4556ms
-[0]  HEAD / 200 in 5061ms
-[0]  HEAD / 200 in 4060ms
-[0]  HEAD / 200 in 4310ms
-[0]  HEAD / 200 in 5819ms
-[0]  HEAD / 200 in 3818ms
-[0]  HEAD / 200 in 5825ms
-[0]  HEAD / 200 in 3073ms
-[0]  HEAD / 200 in 6290ms
-[0]  HEAD / 200 in 5582ms
-[0]  HEAD / 200 in 4082ms
-[0]  HEAD / 200 in 6128ms
-[0]  HEAD / 200 in 6364ms
-[0]  HEAD / 200 in 6382ms
-[0]  HEAD / 200 in 4498ms
-[0]  HEAD / 200 in 5255ms
-[0]  HEAD / 200 in 6477ms
-[0]  HEAD / 200 in 4015ms
-[0]  HEAD / 200 in 4767ms
-[0]  HEAD / 200 in 6484ms
-[0]  HEAD / 200 in 5024ms
-[1] wait-on http://localhost:3000 && open http://localhost:3000 exited with code 0
-[0]  HEAD / 200 in 6517ms
-[0]  HEAD / 200 in 6524ms
-[0]  HEAD / 200 in 6528ms
-[0]  HEAD / 200 in 6315ms
-[0]  HEAD / 200 in 3061ms
-[0]  HEAD / 200 in 2814ms
-[0]  HEAD / 200 in 6545ms
-[0]  HEAD / 200 in 2582ms
-[0]  HEAD / 200 in 2334ms
-[0]  HEAD / 200 in 2588ms
-[0]  HEAD / 200 in 2343ms
-[0]  GET / 200 in 341ms
-[0]  GET / 200 in 160ms
-[0]  ✓ Compiled /favicon.ico in 297ms
-[0]  GET /favicon.ico?favicon.45db1c09.ico 200 in 388ms
-[0]  GET / 200 in 103ms
-[0]  GET /favicon.ico?favicon.45db1c09.ico 200 in 71ms
-[0]  ✓ Compiled in 361ms
-[0]  ✓ Compiled / in 33ms
-[0]  GET / 200 in 77ms
-[0]  GET / 200 in 155ms
-[0] git checkout main -f && (git branch | grep -q 'test' && git branch -D test || true) && git branch test && git checkout test && (git branch | grp -q 'main' && git branch -D main || true) && git checkout main && git pull origin main && npm install -f && next dev --turbopack exited with code SIGHUP
+   ▲ Next.js 15.1.0
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Skipping validation of types
+   Skipping linting
+   Collecting page data ...
+   Generating static pages (0/10) ...
+   Generating static pages (2/10) 
+   Generating static pages (4/10) 
+   Generating static pages (7/10) 
+ ✓ Generating static pages (10/10)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+┌ ○ /                                    22.1 kB         272 kB
+├ ○ /_not-found                          979 B           106 kB
+├ ƒ /api/crawling                        144 B           105 kB
+├ ƒ /api/streaming                       144 B           105 kB
+├ ƒ /api/test                            144 B           105 kB
+├ ƒ /api/uploadExcel                     144 B           105 kB
+└ ○ /DataTable                           13.4 kB         263 kB
++ First Load JS shared by all            105 kB
+  ├ chunks/4bd1b696-0bddfae3ef2868a5.js  52.9 kB
+  ├ chunks/517-4b49dba6e960455b.js       50.5 kB
+  └ other shared chunks (total)          1.91 kB
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+   ▲ Next.js 15.1.0
+   - Local:        http://localhost:3000
+   - Network:      http://172.30.1.84:3000
+
+ ✓ Starting...
+ ✓ Ready in 553ms
