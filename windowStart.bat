@@ -1,6 +1,6 @@
 @echo off
 chcp 65001 >nul  REM UTF-8 Encoding
-cd /d "%~dp0"  REM Move to current directory
+@REM cd /d "%~dp0"  REM Move to current directory
 :: 관리자 권한 확인 및 자동 실행
 net session >nul 2>&1
 if %errorLevel% neq 0 (
