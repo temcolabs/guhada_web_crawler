@@ -47,43 +47,44 @@ REM Check and build Next.js
 REM ===============================
 
 :CheckAndBuild
-set "SCRIPT_DIR=%~dp0"
-set "NEXT_DIR=%SCRIPT_DIR%.next"
-echo "%NEXT_DIR% .next root"
+set "NEXT_DIR=%CD%\.next"
 set "NEXT_VERSION_FILE=%NEXT_DIR%\version.txt"
-echo "%NEXT_VERSION_FILE% version file root"
 
-
-REM Get version from package.json using PowerShell and trim()
+REM Get package.json version using PowerShell (trimmed)
 for /f "delims=" %%a in ('powershell -command "(Get-Content package.json -Raw | ConvertFrom-Json).version.Trim()"') do set "PACKAGE_VERSION=%%a"
 
-
-
-
-
-REM Check if .next folder exists, if not, run build
+REM Check if .next folder exists
 if not exist "%NEXT_DIR%" (
     echo ".next folder does not exist. Running build..."
     call npm run build
+    echo %PACKAGE_VERSION% > "%NEXT_VERSION_FILE%"
     exit /b
 )
 
-set /p NEXT_VERSION=<"%NEXT_VERSION_FILE%"
-echo "package version : %PACKAGE_VERSION% > build version : %NEXT_VERSION%"
+REM Check if version.txt exists
+if not exist "%NEXT_VERSION_FILE%" (
+    echo "No version file found in .next folder. Running build..."
+    call npm run build
+    echo %PACKAGE_VERSION% > "%NEXT_VERSION_FILE%"
+    exit /b
+)
 
-REM Read stored version from version.txt
-
+REM Read stored version from version.txt and trim spaces
+set /p STORED_VERSION=<"%NEXT_VERSION_FILE%"
+for /f "delims=" %%b in ("%STORED_VERSION%") do set "STORED_VERSION=%%b"
 
 REM Compare stored version with package.json version
-if "%PACKAGE_VERSION%" neq "%NEXT_VERSION%" (
-    echo "Version mismatch detected: .next(%NEXT_VERSION%) vs package.json(%PACKAGE_VERSION%). Running build..."
+if "%STORED_VERSION%" neq "%PACKAGE_VERSION%" (
+    echo "Version mismatch detected: .next (%STORED_VERSION%) vs package.json (%PACKAGE_VERSION%). Running build..."
     call npm run build
-    echo %PACKAGE_VERSION% > "%NEXT_VERSION%"
+    echo %PACKAGE_VERSION% > "%NEXT_VERSION_FILE%"
 ) else (
     echo "Version matches. Skipping build."
 )
 
 exit /b
+
+
 
 REM ===============================
 REM Start Next.js server
