@@ -27,9 +27,9 @@ PACKAGE_VERSION=$(grep '"version"' package.json | sed -E 's/.*"version": "([^"]+
 NEXT_VERSION_FILE="$NEXT_DIR/version.txt"
 
 if [ ! -d "$NEXT_DIR" ]; then
-  echo ".next folder not found. Running next build..."
+  echo ".next 폴더가 없습니다."
   npm run build
-  echo "$PACKAGE_VERSION" > "$NEXT_VERSION_FILE"
+  echo "package.json version : $PACKAGE_VERSION"  nextBuild version "$NEXT_VERSION_FILE"
 elif [ -f "$NEXT_VERSION_FILE" ]; then
   STORED_VERSION=$(cat "$NEXT_VERSION_FILE")
   if [ "$STORED_VERSION" != "$PACKAGE_VERSION" ]; then
