@@ -114,7 +114,7 @@ while true; do
       echo "서버끄는중"
       pkill -f "next dev" # Next.js 서버 종료
       echo "프로그램을 종료합니다."
-      exit 0
+      exit
       kill -9 $$
       ;;
     *)
