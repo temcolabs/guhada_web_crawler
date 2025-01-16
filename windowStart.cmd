@@ -10,7 +10,7 @@ if errorlevel 1 (
 )
 
 REM npm install 실행
-echo "Installing dependencies..."
+echo "패키지 인스톨"
 call npm run init
 
 REM 새로운 터미널 창에서 npm run dev 실행
