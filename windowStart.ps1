@@ -1,5 +1,5 @@
 @echo off
-chcp 65001 >nul  REM UTF-8 인코딩 설정
+
 cd /d "%~dp0"  REM 현재 디렉토리로 이동
 
 :: 포트 확인 및 종료 함수
