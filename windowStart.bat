@@ -4,4 +4,5 @@ cd /d "%~dp0"
 
 REM start.sh 실행
 @REM bash start.sh
+npm run init
 npm run dev
