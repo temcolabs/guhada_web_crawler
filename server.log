@@ -1,20 +1,11 @@
 
 > free-pass@0.98 MacOs
-> concurrently "next build && next start" "wait-on http://localhost:3000 && open http://localhost:3000"
+> concurrently "next start" "wait-on http://localhost:3000 && open http://localhost:3000"
 
 [0]    ▲ Next.js 15.1.0
+[0]    - Local:        http://localhost:3000
+[0]    - Network:      http://172.30.1.84:3000
 [0] 
-[0]    Creating an optimized production build ...
-[0]  ✓ Compiled successfully
-[0]    Skipping validation of types
-[0]    Skipping linting
-[0]    Collecting page data ...
-[0]    Generating static pages (0/10) ...
-[0]    Generating static pages (2/10) 
-[0]    Generating static pages (4/10) 
-[0]    Generating static pages (7/10) 
-[0]  ✓ Generating static pages (10/10)
-[0]    Finalizing page optimization ...
-[0]    Collecting build traces ...
-[1] wait-on http://localhost:3000 && open http://localhost:3000 exited with code SIGHUP
-[0] next build && next start exited with code SIGHUP
+[0]  ✓ Starting...
+[0] [Error: Could not find a production build in the '.next' directory. Try building your app with 'next build' before starting the production server. https://nextjs.org/docs/messages/production-start-no-build-id]
+[0] next start exited with code 1

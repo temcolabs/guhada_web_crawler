@@ -48,12 +48,12 @@ fi
 
 # 백그라운드에서 서버 실행
 echo "Starting npm run MacOs..."
-npm run MacOs > server.log 2>&1 &
+next start > server.log 2>&1 &
 
 # 서버 준비 대기
 echo "Waiting for the server to be ready at http://localhost:3000..."
 npx wait-on http://localhost:3000
-
+open http://localhost:3000
 
 
 # 프로그램 관리 메뉴 표시
