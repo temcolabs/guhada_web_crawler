@@ -55,7 +55,7 @@ for /f "delims=" %%a in ("%NEXT_VERSION_FILE%") do set "NEXT_VERSION_FILE=%%a"
 REM Get version from package.json using PowerShell and trim()
 for /f "delims=" %%a in ('powershell -command "(Get-Content package.json -Raw | ConvertFrom-Json).version.Trim()"') do set "PACKAGE_VERSION=%%a"
 
-echo %PACKAGE_VERSION% %NEXT_VERSION_FILE%
+echo %PACKAGE_VERSION% > "%NEXT_VERSION_FILE%"
 REM Check if .next folder exists, if not, run build
 if not exist "%NEXT_DIR%" (
     echo ".next folder does not exist. Running build..."
