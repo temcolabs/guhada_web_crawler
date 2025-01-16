@@ -12,9 +12,14 @@ else
   echo "Port 3000 is not in use."
 fi
 
+
+# 최신코드 받아오기
+echo "pull new Code"
+npm run getLastVersionMacOs
+
 # 의존성 설치
-# echo "Installing dependencies..."
-# npm run init
+echo "Installing dependencies..."
+npm install -f
 
 # 백그라운드에서 서버 실행
 echo "Starting npm run MacOs..."
@@ -23,7 +28,7 @@ npm run MacOs > server.log 2>&1 &
 # 서버 준비 대기
 echo "Waiting for the server to be ready at http://localhost:3000..."
 npx wait-on http://localhost:3000
-
+open http://localhost:3000
 
 # 프로그램 관리 메뉴 표시
 while true; do
