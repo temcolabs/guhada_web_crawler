@@ -14,6 +14,6 @@ call npm install -f
 pause
 REM npm run dev 실행
 echo "Starting npm run dev..."
-@REM call npm run dev
+call npm run dev
 
 pause
