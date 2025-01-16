@@ -21,6 +21,31 @@ npm run getLastVersionMacOs
 echo "Installing dependencies..."
 npm install -f
 
+# .next 폴더 확인 및 빌드 조건 로직
+NEXT_DIR=".next"
+PACKAGE_VERSION=$(grep '"version"' package.json | sed -E 's/.*"version": "([^"]+)".*/\1/')
+NEXT_VERSION_FILE="$NEXT_DIR/version.txt"
+
+if [ ! -d "$NEXT_DIR" ]; then
+  echo ".next folder not found. Running next build..."
+  next build
+  echo "$PACKAGE_VERSION" > "$NEXT_VERSION_FILE"
+elif [ -f "$NEXT_VERSION_FILE" ]; then
+  STORED_VERSION=$(cat "$NEXT_VERSION_FILE")
+  if [ "$STORED_VERSION" != "$PACKAGE_VERSION" ]; then
+    echo "Version mismatch: .next ($STORED_VERSION) vs package.json ($PACKAGE_VERSION). Running next build..."
+    next build
+    echo "$PACKAGE_VERSION" > "$NEXT_VERSION_FILE"
+  else
+    echo "Versions match. Skipping build."
+  fi
+else
+  echo "No version file found in .next. Running next build..."
+  next build
+  echo "$PACKAGE_VERSION" > "$NEXT_VERSION_FILE"
+fi
+
+
 # 백그라운드에서 서버 실행
 echo "Starting npm run MacOs..."
 npm run MacOs > server.log 2>&1 &
