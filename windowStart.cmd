@@ -48,9 +48,10 @@ REM ===============================
 
 :CheckAndBuild
 set "SCRIPT_DIR=%~dp0"
-set "NEXT_DIR=%SCRIPT_DIR%\.next"
-echo "%NEXT_DIR% .next 루트..?"
+set "NEXT_DIR=%SCRIPT_DIR%.next"
+echo "%NEXT_DIR% .next root"
 set "NEXT_VERSION_FILE=%NEXT_DIR%\version.txt"
+echo "%NEXT_VERSION_FILE% version file root"
 
 
 REM Get version from package.json using PowerShell and trim()
