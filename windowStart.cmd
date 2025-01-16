@@ -65,7 +65,7 @@ if not exist "%NEXT_DIR%" (
 )
 
 set /p NEXT_VERSION=<"%NEXT_VERSION_FILE%"
-echo "패키지 버전 : %PACKAGE_VERSION% > 빌드폴더 버전 : %NEXT_VERSION%"
+echo "package version : %PACKAGE_VERSION% > build version : %NEXT_VERSION%"
 
 REM Read stored version from version.txt
 
