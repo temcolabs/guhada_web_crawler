@@ -14,6 +14,22 @@ REM npm install 실행
 echo "Installing dependencies..."
 call npm run init
 
+REM 3000번 포트 사용 여부 확인 및 종료 (강제 종료)
+echo Checking for processes using port 3000...
+
+set "PORT_IN_USE=0"
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr :3000') do (
+    echo Port 3000 is in use. Killing process (PID: %%a)...
+    taskkill /PID %%a /F
+    echo Process %%a has been terminated.
+    set "PORT_IN_USE=1"
+)
+
+if %PORT_IN_USE%==0 (
+    echo Port 3000 is not in use. Proceeding...
+)
+
+
 REM 새로운 터미널 창에서 npm run dev 실행
 echo "Starting npm run dev..."
 start cmd /k "npm run devWindow"
