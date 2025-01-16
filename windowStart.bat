@@ -15,7 +15,7 @@ if %errorLevel% neq 0 (
 echo 포트 3000이 사용 중인지 확인하는 중...
 for /f "tokens=5" %%a in ('netstat -ano ^| findstr :3000') do (
     echo 포트 3000이 PID %%a에 의해 사용 중입니다. 프로세스를 종료합니다...
-    taskkill /PID %%a /F
+    wmic process where ProcessId=%%a delete
     echo 프로세스 %%a가 종료되었습니다.
 )
 goto :eof
