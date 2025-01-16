@@ -2,24 +2,24 @@
 setlocal enabledelayedexpansion
 cd /d "%~dp0"
 
-REM npm 경로 확인
+REM Check if npm is installed
 where npm >nul 2>&1
 if errorlevel 1 (
-    echo "npm 명령어를 찾을 수 없습니다. Node.js가 설치되어 있는지 확인하세요."
+    echo "npm command not found. Please ensure Node.js is installed."
     pause
     exit /b 1
 )
 
-REM 최신 코드 가져오기
+REM Fetch the latest code
 call :GetLatestCode
 
-REM npm install 실행
+REM Install dependencies
 call :InstallDependencies
 
-REM Next.js 빌드 검사 및 실행
+REM Check and build Next.js
 call :CheckAndBuild
 
-REM Next.js 서버 시작
+REM Start Next.js server
 call :StartServer
 
 pause
@@ -27,15 +27,15 @@ exit /b
 
 
 REM ===============================
-REM 최신 코드 가져오는 함수
+REM Fetch the latest code
 REM ===============================
 :GetLatestCode
-echo "Git에서 최신 코드를 가져오는 중..."
+echo "Fetching the latest code from Git..."
 call npm run getLastVersionWindow
 exit /b
 
 REM ===============================
-REM npm install 실행하는 함수
+REM Install npm dependencies
 REM ===============================
 :InstallDependencies
 echo "Installing dependencies..."
@@ -43,44 +43,49 @@ call npm install -f
 exit /b
 
 REM ===============================
-REM Next.js 빌드 검사 함수
+REM Check and build Next.js
 REM ===============================
 :CheckAndBuild
 set "NEXT_DIR=.next"
 set "NEXT_VERSION_FILE=%NEXT_DIR%\version.txt"
 
-REM package.json에서 version 값 가져오기 (PowerShell 사용)
+REM Get version from package.json using PowerShell
 for /f "delims=" %%a in ('powershell -command "(Get-Content package.json -Raw | ConvertFrom-Json).version"') do set "PACKAGE_VERSION=%%a"
 
-REM .next 폴더 확인
+REM Check if .next folder exists, if not, run build
 if not exist "%NEXT_DIR%" (
-    echo ".next 폴더가 존재하지 않습니다. 빌드를 실행합니다..."
+    echo ".next folder does not exist. Running build..."
     call npm run build
     echo %PACKAGE_VERSION% > "%NEXT_VERSION_FILE%"
     exit /b
 )
 
-REM version.txt 파일이 있는지 확인
-if exist "%NEXT_VERSION_FILE%" (
-    set /p STORED_VERSION=<"%NEXT_VERSION_FILE%"
-    if "%STORED_VERSION%" neq "%PACKAGE_VERSION%" (
-        echo "버전 불일치: .next (%STORED_VERSION%) vs package.json (%PACKAGE_VERSION%). 빌드를 실행합니다..."
-        call npm run build
-        echo %PACKAGE_VERSION% > "%NEXT_VERSION_FILE%"
-    ) else (
-        echo "버전이 일치합니다. 빌드를 건너뜁니다."
-    )
-) else (
-    echo ".next 폴더에 버전 파일이 없습니다. 빌드를 실행합니다..."
+REM Check if version.txt exists, if not, run build
+if not exist "%NEXT_VERSION_FILE%" (
+    echo "No version file found in .next folder. Running build..."
     call npm run build
     echo %PACKAGE_VERSION% > "%NEXT_VERSION_FILE%"
+    exit /b
 )
+
+REM Read stored version from version.txt
+set /p STORED_VERSION=<"%NEXT_VERSION_FILE%"
+
+REM Compare stored version with package.json version
+if "%STORED_VERSION%" neq "%PACKAGE_VERSION%" (
+    echo "Version mismatch detected: .next (%STORED_VERSION%) vs package.json (%PACKAGE_VERSION%). Running build..."
+    call npm run build
+    echo %PACKAGE_VERSION% > "%NEXT_VERSION_FILE%"
+) else (
+    echo "Version matches. Skipping build."
+)
+
 exit /b
 
 REM ===============================
-REM Next.js 서버 시작 함수
+REM Start Next.js server
 REM ===============================
 :StartServer
-echo "Starting npm run start..."
+echo "Starting Next.js server..."
 call npm run start
 exit /b
