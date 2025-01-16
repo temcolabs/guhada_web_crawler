@@ -1,6 +1,9 @@
 @echo off
 echo current directory : %cd%
 
+REM Node.js 경로를 수동으로 추가
+set PATH=C:\Program Files\nodejs;%PATH%
+
 REM 현재 디렉토리로 이동
 cd /d "%~dp0"
 
