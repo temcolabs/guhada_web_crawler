@@ -57,7 +57,7 @@ REM Check if .next folder exists
 if not exist "%NEXT_DIR%" (
     echo ".next folder does not exist. Running build..."
     call npm run build
-    echo %PACKAGE_VERSION% > "%NEXT_VERSION_FILE%"
+    echo|set /p=%PACKAGE_VERSION%>"%NEXT_VERSION_FILE%"
     exit /b
 )
 
@@ -65,7 +65,8 @@ REM Check if version.txt exists
 if not exist "%NEXT_VERSION_FILE%" (
     echo "No version file found in .next folder. Running build..."
     call npm run build
-    echo %PACKAGE_VERSION% > "%NEXT_VERSION_FILE%"
+    
+    echo|set /p=%PACKAGE_VERSION%>"%NEXT_VERSION_FILE%"
     exit /b
 )
 
@@ -73,12 +74,14 @@ REM Read stored version from version.txt and trim spaces
 set /p STORED_VERSION=<"%NEXT_VERSION_FILE%"
 @REM for /f "delims=" %%b in ("%STORED_VERSION%") do set "STORED_VERSION=%%b"
 for /f "tokens=* delims=" %%b in ('type "%NEXT_VERSION_FILE%"') do set "STORED_VERSION=%%b"
+
 echo "%STORED_VERSION% %PACKAGE_VERSION%"
+
 REM Compare stored version with package.json version
 if "%STORED_VERSION%" neq "%PACKAGE_VERSION%" (
     echo "Version mismatch detected: .next (%STORED_VERSION%) vs package.json (%PACKAGE_VERSION%). Running build..."
     call npm run build
-    echo %PACKAGE_VERSION% > "%NEXT_VERSION_FILE%"
+    echo|set /p=%PACKAGE_VERSION%>"%NEXT_VERSION_FILE%"
 ) else (
     echo "Version matches. Skipping build."
 )
