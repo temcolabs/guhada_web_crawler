@@ -11,9 +11,9 @@ if errorlevel 1 (
 REM npm install 실행
 echo "Installing dependencies..."
 npm install -f
-
+pause
 REM npm run dev 실행
 echo "Starting npm run dev..."
-call npm run dev
+@REM call npm run dev
 
 pause
