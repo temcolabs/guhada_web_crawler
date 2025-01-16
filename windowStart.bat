@@ -9,15 +9,15 @@ if %errorLevel% neq 0 (
     exit /b
 )
 :: Function to check and terminate port 3000
-:DetectAndKillPort
-echo Checking if port 3000 is in use...
-for /f "tokens=5" %%a in ('netstat -ano ^| findstr :3000') do (
-    echo Port 3000 is in use by PID %%a. Terminating process...
-    wmic process where ProcessId=%%a delete
-    echo Process %%a has been terminated.
-    goto :eof
-)
-goto :eof
+@REM :DetectAndKillPort
+@REM echo Checking if port 3000 is in use...
+@REM for /f "tokens=5" %%a in ('netstat -ano ^| findstr :3000') do (
+@REM     echo Port 3000 is in use by PID %%a. Terminating process...
+@REM     wmic process where ProcessId=%%a delete
+@REM     echo Process %%a has been terminated.
+@REM     goto :eof
+@REM )
+@REM goto :eof
 
 :: Function to fetch the latest code
 :UpdateCode
@@ -68,7 +68,7 @@ start http://localhost:3000
 goto :eof
 
 :: Execution flow
-call :DetectAndKillPort
+@REM call :DetectAndKillPort
 call :UpdateCode
 call :InstallDependencies
 call :CheckAndBuild
