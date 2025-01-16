@@ -11,13 +11,41 @@ if errorlevel 1 (
 )
 
 REM 최신 코드 가져오기
-echo "Git에서 최신 코드를 가져오는 중..."
-call npm run getLastVersionWindow
+call :GetLatestCode
 
 REM npm install 실행
+call :InstallDependencies
+
+REM Next.js 빌드 검사 및 실행
+call :CheckAndBuild
+
+REM Next.js 서버 시작
+call :StartServer
+
+pause
+exit /b
+
+
+REM ===============================
+REM 최신 코드 가져오는 함수
+REM ===============================
+:GetLatestCode
+echo "Git에서 최신 코드를 가져오는 중..."
+call npm run getLastVersionWindow
+exit /b
+
+REM ===============================
+REM npm install 실행하는 함수
+REM ===============================
+:InstallDependencies
 echo "Installing dependencies..."
 call npm install -f
+exit /b
 
+REM ===============================
+REM Next.js 빌드 검사 함수
+REM ===============================
+:CheckAndBuild
 set "NEXT_DIR=.next"
 set "NEXT_VERSION_FILE=%NEXT_DIR%\version.txt"
 
@@ -29,7 +57,7 @@ if not exist "%NEXT_DIR%" (
     echo ".next 폴더가 존재하지 않습니다. 빌드를 실행합니다..."
     call npm run build
     echo %PACKAGE_VERSION% > "%NEXT_VERSION_FILE%"
-    goto :START_SERVER
+    exit /b
 )
 
 REM version.txt 파일이 있는지 확인
@@ -47,10 +75,12 @@ if exist "%NEXT_VERSION_FILE%" (
     call npm run build
     echo %PACKAGE_VERSION% > "%NEXT_VERSION_FILE%"
 )
+exit /b
 
-:START_SERVER
+REM ===============================
+REM Next.js 서버 시작 함수
+REM ===============================
+:StartServer
 echo "Starting npm run start..."
 call npm run start
-
-REM CMD 창이 자동으로 닫히지 않도록 유지
-pause
+exit /b
