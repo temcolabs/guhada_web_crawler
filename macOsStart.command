@@ -13,8 +13,8 @@ else
 fi
 
 # 의존성 설치
-echo "Installing dependencies..."
-npm run init
+# echo "Installing dependencies..."
+# npm run init
 
 # 백그라운드에서 서버 실행
 echo "Starting npm run MacOs..."
