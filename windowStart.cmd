@@ -46,7 +46,7 @@ REM ===============================
 REM Check and build Next.js
 REM ===============================
 :CheckAndBuild
-set "NEXT_DIR=.next"
+set "NEXT_DIR=%CD%\.next"
 set "NEXT_VERSION_FILE=%NEXT_DIR%\version.txt"
 
 
