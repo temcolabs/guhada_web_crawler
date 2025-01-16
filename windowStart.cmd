@@ -56,6 +56,10 @@ REM Get version from package.json using PowerShell and trim()
 for /f "delims=" %%a in ('powershell -command "(Get-Content package.json -Raw | ConvertFrom-Json).version.Trim()"') do set "PACKAGE_VERSION=%%a"
 
 
+
+
+echo "패키지 버전 : %PACKAGE_VERSION% > 빌드폴더 버전 : %NEXT_VERSION_FILE%"
+
 REM Check if .next folder exists, if not, run build
 if not exist "%NEXT_DIR%" (
     echo ".next folder does not exist. Running build..."
@@ -66,7 +70,7 @@ if not exist "%NEXT_DIR%" (
 
 
 REM Read stored version from version.txt
-@REM set /p STORED_VERSION=<"%NEXT_VERSION_FILE%"
+set /p STORED_VERSION=<"%NEXT_VERSION_FILE%"
 
 REM Compare stored version with package.json version
 if "%STORED_VERSION%" neq "%PACKAGE_VERSION%" (
