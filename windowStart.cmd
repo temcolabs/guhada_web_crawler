@@ -14,7 +14,7 @@ REM Fetch the latest code
 call :GetLatestCode
 
 REM Install dependencies
-call :InstallDependencies
+@REM call :InstallDependencies
 
 REM Check and build Next.js
 call :CheckAndBuild
@@ -45,10 +45,12 @@ exit /b
 REM ===============================
 REM Check and build Next.js
 REM ===============================
-:CheckAndBuild
-set "NEXT_DIR=%CD%\.next"
-set "NEXT_VERSION_FILE=%NEXT_DIR%\version.txt"
 
+:CheckAndBuild
+set "SCRIPT_DIR=%~dp0"
+set "NEXT_DIR=%SCRIPT_DIR%.next"
+set "NEXT_VERSION_FILE=%NEXT_DIR%\version.txt"
+echo "%SCRIPT_DIR% 루트뭐냐"
 
 REM Get version from package.json using PowerShell and trim()
 for /f "delims=" %%a in ('powershell -command "(Get-Content package.json -Raw | ConvertFrom-Json).version.Trim()"') do set "PACKAGE_VERSION=%%a"
