@@ -1,6 +1,6 @@
 
 > free-pass@0.98 MacOs
-> next build && next start
+> next build && next start "wait-on http://localhost:3000 && open http://localhost:3000"
 
    ▲ Next.js 15.1.0
 
@@ -9,34 +9,3 @@
    Skipping validation of types
    Skipping linting
    Collecting page data ...
-   Generating static pages (0/10) ...
-   Generating static pages (2/10) 
-   Generating static pages (4/10) 
-   Generating static pages (7/10) 
- ✓ Generating static pages (10/10)
-   Finalizing page optimization ...
-   Collecting build traces ...
-
-Route (app)                              Size     First Load JS
-┌ ○ /                                    22.1 kB         272 kB
-├ ○ /_not-found                          979 B           106 kB
-├ ƒ /api/crawling                        144 B           105 kB
-├ ƒ /api/streaming                       144 B           105 kB
-├ ƒ /api/test                            144 B           105 kB
-├ ƒ /api/uploadExcel                     144 B           105 kB
-└ ○ /DataTable                           13.4 kB         263 kB
-+ First Load JS shared by all            105 kB
-  ├ chunks/4bd1b696-0bddfae3ef2868a5.js  52.9 kB
-  ├ chunks/517-4b49dba6e960455b.js       50.5 kB
-  └ other shared chunks (total)          1.91 kB
-
-
-○  (Static)   prerendered as static content
-ƒ  (Dynamic)  server-rendered on demand
-
-   ▲ Next.js 15.1.0
-   - Local:        http://localhost:3000
-   - Network:      http://172.30.1.84:3000
-
- ✓ Starting...
- ✓ Ready in 553ms
