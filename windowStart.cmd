@@ -47,8 +47,8 @@ REM Check and build Next.js
 REM ===============================
 :CheckAndBuild
 set "NEXT_DIR=.next"
-set "NEXT_VERSION_FILE=%NEXT_DIR%\version.txt"
-set /p NEXT_VERSION=<"%NEXT_VERSION_FILE%"
+set "NEXT_VERSION=%NEXT_DIR%\version.txt"
+
 
 REM Get version from package.json using PowerShell and trim()
 for /f "delims=" %%a in ('powershell -command "(Get-Content package.json -Raw | ConvertFrom-Json).version.Trim()"') do set "PACKAGE_VERSION=%%a"
