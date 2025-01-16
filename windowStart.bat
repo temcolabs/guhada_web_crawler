@@ -1,4 +1,7 @@
+
 @echo off
+echo Current directory: %cd%
+pause
 REM npm install 실행
 npm -v || echo "npm 명령어를 찾을 수 없습니다."
 pause
