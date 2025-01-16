@@ -1,18 +1,10 @@
 @echo off
-echo current directory : %cd%
-
-REM Node.js 경로를 수동으로 추가
-set PATH=C:\Program Files\nodejs;%PATH%
-
-REM 현재 디렉토리로 이동
-cd /d "%~dp0"
-
-REM npm 설치 확인
-
 REM npm install 실행
 npm -v || echo "npm 명령어를 찾을 수 없습니다."
+pause
 npm install -f || echo "npm install 실패"
+pause
 call npm run dev || echo "npm run dev 실패"
-
+pause
 REM 종료 방지
 pause
