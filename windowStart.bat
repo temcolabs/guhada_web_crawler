@@ -1,6 +1,7 @@
 @echo off
 echo current directory :  %cd%
 
+pause
 @REM REM npm 설치 확인
 npm -v 
 
@@ -14,4 +15,3 @@ npm -v
 @REM call npm run dev || echo "npm run dev 실패"
 
 REM 종료 방지
-pause
