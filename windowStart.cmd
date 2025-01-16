@@ -20,7 +20,7 @@ echo Checking for processes using port 3000...
 set "PORT_KILLED=0"
 for /f "tokens=5" %%a in ('netstat -ano ^| findstr :3000') do (
     echo Port 3000 is in use. Killing process (PID: %%a)...
-    taskkill /PID %%a /F >nul 2>&1
+    @REM taskkill /PID %%a /F >nul 2>&1
     if not errorlevel 1 (
         echo Process %%a has been terminated.
         set "PORT_KILLED=1"
