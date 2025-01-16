@@ -22,14 +22,12 @@ for /f "tokens=5" %%a in ('netstat -ano ^| findstr :3000') do (
     echo Port 3000 is in use. Killing process (PID: %%a)...
     taskkill /PID %%a /F
     echo Process %%a has been terminated.
-    set "PORT_IN_USE=1"
-)
-
-if %PORT_IN_USE%==0 (
-    echo Port 3000 is not in use. Proceeding...
+    goto :NEXT
 )
 
 
+
+:NEXT
 REM 새로운 터미널 창에서 npm run dev 실행
 echo "Starting npm run dev..."
 start cmd /k "npm run devWindow"
