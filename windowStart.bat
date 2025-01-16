@@ -2,7 +2,7 @@
 echo current directory :  %cd%
 
 @REM REM npm 설치 확인
-npm -v || echo "npm undefined"
+npm -v 
 
 @REM REM 현재 디렉토리로 이동
 @REM cd /d "%~dp0"
