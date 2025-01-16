@@ -1,5 +1,4 @@
 @echo off
-setlocal enabledelayedexpansion
 cd /d "%~dp0"
 
 REM npm 경로 확인
@@ -18,9 +17,6 @@ npm run getLastVersionWindow
 REM npm install 실행
 echo "Installing dependencies..."
 call npm install -f
-
-@echo off
-setlocal enabledelayedexpansion
 
 set "NEXT_DIR=.next"
 set "NEXT_VERSION_FILE=%NEXT_DIR%\version.txt"
