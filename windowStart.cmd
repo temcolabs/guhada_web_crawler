@@ -59,13 +59,6 @@ if not exist "%NEXT_DIR%" (
     exit /b
 )
 
-REM Check if version.txt exists, if not, run build
-if not exist "%NEXT_VERSION_FILE%" (
-    echo "No version file found in .next folder. Running build..."
-    call npm run build
-    echo %PACKAGE_VERSION% > "%NEXT_VERSION_FILE%"
-    exit /b
-)
 
 REM Read stored version from version.txt
 set /p STORED_VERSION=<"%NEXT_VERSION_FILE%"
