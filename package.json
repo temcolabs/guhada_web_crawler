@@ -7,11 +7,12 @@
     "start": "next start",
     "lint": "next lint",
     "demo": "npx playwright codegen demo.playwright.dev/todomvc",
-    "dev": "git checkout main -f && (git branch | grep -q 'test' && git branch -D test || true) && git branch test && git checkout test && (git branch | grp -q 'main' && git branch -D main || true) && git checkout main && git pull origin main && npm install -f && next dev --turbopack"
+    "dev": "concurrently \" git checkout main -f && (git branch | grep -q 'test' && git branch -D test || true) && git branch test && git checkout test && (git branch | grp -q 'main' && git branch -D main || true) && git checkout main && git pull origin main && npm install -f && next dev --turbopack\" \"wait-on http://localhost:3000 && open http://localhost:3000\""
   },
   "dependencies": {
     "@playwright/test": "^1.49.1",
     "axios": "^1.7.9",
+    "concurrently": "^9.1.2",
     "image-size": "^1.1.1",
     "lodash": "^4.17.21",
     "next": "15.1.0",
@@ -19,6 +20,7 @@
     "react-dom": "^19.0.0",
     "react-icons": "^5.4.0",
     "react-lazy-load": "^4.0.1",
+    "wait-on": "^8.0.2",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
