@@ -27,7 +27,7 @@ npm run MacOs > server.log 2>&1 &
 
 # 서버 준비 대기
 echo "Waiting for the server to be ready at http://localhost:3000..."
-# npx wait-on http://localhost:3000
+npx wait-on http://localhost:3000
 
 
 
