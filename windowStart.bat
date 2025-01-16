@@ -1,13 +1,19 @@
-
 @echo off
-echo Current directory: %cd%
-pause
+cd /d "%~dp0"
+
+where npm >nul 2>&1
+if errorlevel 1 (
+    echo "npm 명령어를 찾을 수 없습니다. Node.js가 설치되어 있는지 확인하세요."
+    pause
+    exit /b 1
+)
+
 REM npm install 실행
-npm -v || echo "npm 명령어를 찾을 수 없습니다."
-pause
-npm install -f || echo "npm install 실패"
-pause
-call npm run dev || echo "npm run dev 실패"
-pause
-REM 종료 방지
+echo "Installing dependencies..."
+npm install -f
+
+REM npm run dev 실행
+echo "Starting npm run dev..."
+call npm run dev
+
 pause
