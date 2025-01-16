@@ -8,5 +8,3 @@ npm install -f
 REM npm run dev 실행
 call npm run dev
 
-REM 종료 방지
-pause
