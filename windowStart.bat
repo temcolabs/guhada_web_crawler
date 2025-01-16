@@ -1,6 +1,12 @@
 @echo off
 REM 현재 디렉토리로 이동
 cd /d "%~dp0"
+
+REM npm install 실행
 npm install -f
-npm run dev
+
+REM npm run dev 실행
+call npm run dev
+
+REM 종료 방지
 pause
