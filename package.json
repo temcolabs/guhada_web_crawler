@@ -10,7 +10,8 @@
     "init": "npm install -f",
     "dev": "next dev --turbopack",
     "devMacOs": "concurrently \"git checkout main -f && (git branch | grep -q 'test' && git branch -D test || true) && git branch test && git checkout test && (git branch | grp -q 'main' && git branch -D main || true) && git checkout main && git pull origin main && npm install -f && next dev --turbopack\" \"wait-on http://localhost:3000 && open http://localhost:3000\"",
-    "devWindow": "concurrently \"git checkout main -f && (git branch | findstr test && git branch -D test || echo No test branch) && git branch test && git checkout test && git pull origin main && npm install -f && next dev --turbopack\" \"wait-on http://localhost:3000 && start http://localhost:3000\""
+    "devWindow": "concurrently \"git checkout main -f && (git branch | findstr test && git branch -D test || echo No test branch) && git branch test && git checkout test && git pull origin main && npm install -f && next dev --turbopack\" \"wait-on http://localhost:3000 && start http://localhost:3000\"",
+    "logs": "tail -f server.log"
   },
   "dependencies": {
     "@playwright/test": "^1.49.1",
