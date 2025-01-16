@@ -47,7 +47,7 @@ REM Check and build Next.js
 REM ===============================
 :CheckAndBuild
 set "NEXT_DIR=.next"
-set "NEXT_VERSION=%NEXT_DIR%\version.txt"
+set "NEXT_VERSION=<%NEXT_DIR%\version.txt"
 
 
 REM Get version from package.json using PowerShell and trim()
@@ -56,16 +56,16 @@ for /f "delims=" %%a in ('powershell -command "(Get-Content package.json -Raw | 
 
 
 
-echo "패키지 버전 : %PACKAGE_VERSION% > 빌드폴더 버전 : %NEXT_VERSION%"
 
 REM Check if .next folder exists, if not, run build
 if not exist "%NEXT_DIR%" (
     echo ".next folder does not exist. Running build..."
     call npm run build
-    echo %PACKAGE_VERSION% > "%NEXT_VERSION%"
     exit /b
 )
+set /p NEXT_VERSION=<"%NEXT_VERSION_FILE%"
 
+echo "패키지 버전 : %PACKAGE_VERSION% > 빌드폴더 버전 : %NEXT_VERSION%"
 
 REM Read stored version from version.txt
 
