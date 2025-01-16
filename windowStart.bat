@@ -2,12 +2,20 @@
 chcp 65001 >nul  REM UTF-8 설정
 cd /d "%~dp0"  REM 현재 디렉토리로 이동
 
+:: 관리자 권한 확인 및 재실행
+net session >nul 2>&1
+if %errorLevel% neq 0 (
+    echo 관리자 권한이 필요합니다. 관리자 모드로 다시 실행합니다...
+    powershell start -verb runAs cmd /c "%~f0"
+    exit /b
+)
+
 :: 포트 확인 및 종료 함수
 :DetectAndKillPort
 echo 포트 3000이 사용 중인지 확인하는 중...
 for /f "tokens=5" %%a in ('netstat -ano ^| findstr :3000') do (
     echo 포트 3000이 PID %%a에 의해 사용 중입니다. 프로세스를 종료합니다...
-    taskkill /PID %%a /F
+    wmic process where ProcessId=%%a delete
     echo 프로세스 %%a가 종료되었습니다.
 )
 goto :eof
@@ -99,7 +107,7 @@ if "%choice%"=="2" (
 )
 if "%choice%"=="3" (
     echo 서버를 종료하는 중...
-    taskkill /IM node.exe /F
+    wmic process where name="node.exe" delete
     echo 서버가 종료되었습니다.
     goto Menu
 )
@@ -110,7 +118,7 @@ if "%choice%"=="4" (
 )
 if "%choice%"=="5" (
     echo 서버 및 터미널을 종료하는 중...
-    taskkill /IM node.exe /F
+    wmic process where name="node.exe" delete
     echo 프로그램과 터미널을 종료합니다.
     exit
 )
