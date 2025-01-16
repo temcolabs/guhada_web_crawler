@@ -1,10 +1,19 @@
 @echo off
 cd /d "%~dp0"
 
-REM 3000번 포트 사용 여부 확인 및 종료
+REM 3000번 포트 사용 여부 확인 및 종료 (강제 종료)
 for /f "tokens=5" %%a in ('netstat -ano ^| findstr :3000') do (
-    echo "Port 3000 is in use. Terminating process..."
-    taskkill /PID %%a /F
+    echo "Port 3000 is in use. Trying to terminate process..."
+    
+    REM 프로세스 이름 확인
+    for /f "tokens=2 delims=," %%b in ('wmic process where "ProcessId=%%a" get Name /format:csv ^| findstr /v "Node"') do (
+        echo "Found process: %%b (PID: %%a)"
+        
+        REM 프로세스 종료 (강제 종료)
+        wmic process where "ProcessId=%%a" delete
+        echo "Process %%b (PID: %%a) has been terminated."
+    )
+    
     timeout /t 2 /nobreak >nul
 )
 
