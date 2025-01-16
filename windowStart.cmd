@@ -17,17 +17,22 @@ call npm run init
 REM 3000번 포트 사용 여부 확인 및 종료 (강제 종료)
 echo Checking for processes using port 3000...
 
-set "PORT_IN_USE=0"
+set "PORT_KILLED=0"
 for /f "tokens=5" %%a in ('netstat -ano ^| findstr :3000') do (
     echo Port 3000 is in use. Killing process (PID: %%a)...
-    taskkill /PID %%a /F
-    echo Process %%a has been terminated.
-    goto :NEXT
+    taskkill /PID %%a /F >nul 2>&1
+    if not errorlevel 1 (
+        echo Process %%a has been terminated.
+        set "PORT_KILLED=1"
+    )
+)
+
+if %PORT_KILLED%==0 (
+    echo Port 3000 is not in use. Proceeding...
 )
 
 
 
-:NEXT
 REM 새로운 터미널 창에서 npm run dev 실행
 echo "Starting npm run dev..."
 start cmd /k "npm run devWindow"
