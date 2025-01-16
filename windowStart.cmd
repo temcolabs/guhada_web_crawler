@@ -48,9 +48,7 @@ REM ===============================
 :CheckAndBuild
 set "NEXT_DIR=.next"
 set "NEXT_VERSION_FILE=%NEXT_DIR%\version.txt"
-
-REM trim()
-for /f "delims=" %%a in ("%NEXT_VERSION_FILE%") do set "NEXT_VERSION_FILE=%%a"
+set /p NEXT_VERSION=<"%NEXT_VERSION_FILE%"
 
 REM Get version from package.json using PowerShell and trim()
 for /f "delims=" %%a in ('powershell -command "(Get-Content package.json -Raw | ConvertFrom-Json).version.Trim()"') do set "PACKAGE_VERSION=%%a"
@@ -58,25 +56,25 @@ for /f "delims=" %%a in ('powershell -command "(Get-Content package.json -Raw | 
 
 
 
-echo "패키지 버전 : %PACKAGE_VERSION% > 빌드폴더 버전 : %NEXT_VERSION_FILE%"
+echo "패키지 버전 : %PACKAGE_VERSION% > 빌드폴더 버전 : %NEXT_VERSION%"
 
 REM Check if .next folder exists, if not, run build
 if not exist "%NEXT_DIR%" (
     echo ".next folder does not exist. Running build..."
     call npm run build
-    echo %PACKAGE_VERSION% > "%NEXT_VERSION_FILE%"
+    echo %PACKAGE_VERSION% > "%NEXT_VERSION%"
     exit /b
 )
 
 
 REM Read stored version from version.txt
-set /p STORED_VERSION=<"%NEXT_VERSION_FILE%"
+
 
 REM Compare stored version with package.json version
-if "%STORED_VERSION%" neq "%PACKAGE_VERSION%" (
-    echo "Version mismatch detected: .next(%STORED_VERSION%) vs package.json(%PACKAGE_VERSION%). Running build..."
+if "%PACKAGE_VERSION%" neq "%NEXT_VERSION%" (
+    echo "Version mismatch detected: .next(%NEXT_VERSION%) vs package.json(%PACKAGE_VERSION%). Running build..."
     call npm run build
-    echo %PACKAGE_VERSION% > "%NEXT_VERSION_FILE%"
+    echo %PACKAGE_VERSION% > "%NEXT_VERSION%"
 ) else (
     echo "Version matches. Skipping build."
 )
