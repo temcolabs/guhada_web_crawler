@@ -1,4 +1,5 @@
 @echo off
+setlocal enabledelayedexpansion
 cd /d "%~dp0"
 
 REM npm 경로 확인
@@ -50,7 +51,11 @@ if exist "%NEXT_VERSION_FILE%" (
 
 exit /b
 
-
+:END
+echo.
+echo Script execution finished.
+echo.
+pause
 
 REM 새로운 터미널 창에서 npm run dev 실행
 echo "Starting npm run dev..."
