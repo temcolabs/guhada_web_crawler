@@ -33,14 +33,16 @@ if [ ! -d "$NEXT_DIR" ]; then
 elif [ -f "$NEXT_VERSION_FILE" ]; then
   STORED_VERSION=$(cat "$NEXT_VERSION_FILE")
   if [ "$STORED_VERSION" != "$PACKAGE_VERSION" ]; then
-    echo "Version mismatch: .next ($STORED_VERSION) vs package.json ($PACKAGE_VERSION). Running next build..."
+  # 이미 .next 폴더가있고 해당 폴더의 version과 새로 pull 받은 내용의 package.json 버전이 다를때
+    echo "버전이 다름니다! : .next ($STORED_VERSION) vs package.json ($PACKAGE_VERSION). 빌드를 시작합니다."
    npm run build
     echo "$PACKAGE_VERSION" > "$NEXT_VERSION_FILE"
   else
-    echo "Versions match. Skipping build."
+  # .next 폴더도 있고 package.json의 버전도 같을떄 build 스킵
+    echo "버전이 같습니다 build를 스킵합니다."
   fi
 else
-  echo "No version file found in .next. Running next build..."
+  echo ".next 파일에 버전 파일이 없습니다."
   npm run build
   echo "$PACKAGE_VERSION" > "$NEXT_VERSION_FILE"
 fi
