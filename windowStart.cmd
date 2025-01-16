@@ -14,6 +14,6 @@ call npm run init
 
 REM npm run dev 실행
 echo "Starting npm run dev..."
-call npm run devWindow
+call npm run dev
 
 pause
