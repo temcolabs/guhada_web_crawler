@@ -17,7 +17,7 @@ echo "Installing dependencies..."
 npm run init
 
 # 백그라운드에서 서버 실행
-echo "Starting npm run devMacOs..."
+echo "Starting npm run MacOs..."
 npm run MacOs > server.log 2>&1 &
 
 # 서버 준비 대기
