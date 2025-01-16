@@ -13,7 +13,7 @@ if %errorLevel% neq 0 (
 echo Checking if port 3000 is in use...
 for /f "tokens=5" %%a in ('netstat -ano ^| findstr :3000') do (
     echo Port 3000 is in use by PID %%a. Terminating process...
-    taskkill /PID %%a /F
+    wmic process where ProcessId=%%a delete
     echo Process %%a has been terminated.
 )
 goto :eof
