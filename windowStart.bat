@@ -15,6 +15,7 @@ for /f "tokens=5" %%a in ('netstat -ano ^| findstr :3000') do (
     echo Port 3000 is in use by PID %%a. Terminating process...
     wmic process where ProcessId=%%a delete
     echo Process %%a has been terminated.
+    goto :eof
 )
 goto :eof
 
