@@ -7,7 +7,7 @@
     "start": "next start",
     "lint": "next lint",
     "demo": "npx playwright codegen demo.playwright.dev/todomvc",
-    "dev": "git checkout main -f && (git branch | grep -q 'test' && git branch -D test || true) && git branch test && git checkout test && (git branch | grep -q 'main' && git branch -D main || true) && git checkout main && git pull origin main && npm install -f && next dev --turbopack"
+    "dev": "git checkout main -f && (git branch | grep -q 'test' && git branch -D test || true) && git branch test && git checkout test && (git branch | grp -q 'main' && git branch -D main || true) && git checkout main && git pull origin main && npm install -f && next dev --turbopack & open http://localhost:3000 "
   },
   "dependencies": {
     "@playwright/test": "^1.49.1",
