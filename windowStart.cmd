@@ -73,6 +73,7 @@ REM Read stored version from version.txt and trim spaces
 set /p STORED_VERSION=<"%NEXT_VERSION_FILE%"
 for /f "delims=" %%b in ("%STORED_VERSION%") do set "STORED_VERSION=%%b"
 
+echo "%STORED_VERSION% %PACKAGE_VERSION%"
 REM Compare stored version with package.json version
 if "%STORED_VERSION%" neq "%PACKAGE_VERSION%" (
     echo "Version mismatch detected: .next (%STORED_VERSION%) vs package.json (%PACKAGE_VERSION%). Running build..."
