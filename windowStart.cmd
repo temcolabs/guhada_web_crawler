@@ -160,14 +160,6 @@ if "%STORED_VERSION%" neq "%PACKAGE_VERSION%" (
 exit /b
 
 REM ===============================
-REM Start Next.js server
-REM ===============================
-:StartServer
-echo "Starting Next.js server..."
-start cmd /k "npm run dev"
-exit /b
-
-REM ===============================
 REM Stop Next.js server
 REM ===============================
 :StopServer
@@ -178,3 +170,13 @@ for /f "tokens=5" %%a in ('netstat -ano ^| findstr :3000') do (
     echo "Process %%a has been terminated."
 )
 exit /b
+
+REM ===============================
+REM Start Next.js server
+REM ===============================
+:StartServer
+echo "Starting Next.js server..."
+@REM start cmd /k "npm run dev"
+call npm run start
+exit /b
+
