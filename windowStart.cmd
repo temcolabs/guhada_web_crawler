@@ -176,7 +176,7 @@ REM ===============================
 :StartServer
 echo "Starting Next.js server..."
 @REM start cmd /k "npm run dev"
-powershell -WindowStyle Hidden -Command "Start-Process cmd -ArgumentList '/c npm run start > server.log 2>&1' -NoNewWindow"
+powershell -WindowStyle Hidden -Command "Start-Process cmd -ArgumentList '/c npm run start > server.log 2>&1' -NoNewWindow -PassThru"
 
 REM Wait for the server to become available
 echo Waiting for server at http://localhost:3000...
