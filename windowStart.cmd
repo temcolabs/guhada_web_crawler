@@ -45,10 +45,10 @@ REM Install Playwright if missing
 REM ===============================
 :InstallPlaywright
 echo "Checking if Playwright is installed..."
-npx playwright --version >nul 2>&1
+call npx playwright --version >nul 2>&1
 if errorlevel 1 (
     echo "Playwright is not installed. Installing Playwright..."
-    npx playwright install
+    call npx playwright install
     echo "Playwright installation complete."
 ) else (
     echo "Playwright is already installed. Skipping installation."
