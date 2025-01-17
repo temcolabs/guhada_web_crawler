@@ -175,14 +175,16 @@ REM Start Next.js server
 REM ===============================
 :StartServer
 echo "Starting Next.js server..."
-start "Next.js Server" cmd /k "npm run start > server.log 2>&1"
+
+REM 기존 CMD에서 서버 실행 & 로그 저장
+npm run start > server.log 2>&1 &
 
 REM Wait for the server to become available
-echo Waiting for server at http://localhost:3000...
+echo "Waiting for server at http://localhost:3000..."
 wait-on http://localhost:3000
 
-REM Once the server is ready, open browser
-echo Server is ready! Opening browser...
+REM Open the browser once the server is ready
+echo "Server is ready! Opening browser..."
 start http://localhost:3000
 
 REM Return to menu
