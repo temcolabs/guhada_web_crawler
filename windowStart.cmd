@@ -46,9 +46,13 @@ REM ===============================
 :InstallPlaywright
 echo "Checking if Playwright is installed..."
 npx playwright --version >nul 2>&1
-if errorlevel 1 (
-    echo "Playwright is not installed. Installing Playwright..."
+if %errorlevel% neq 0 (
+    echo "Playwright is not installed or an error occurred. Installing Playwright..."
     npx playwright install
+    if %errorlevel% neq 0 (
+        echo "Failed to install Playwright. Exiting..."
+        exit /b 1
+    )
     echo "Playwright installation complete."
 ) else (
     echo "Playwright is already installed. Skipping installation."
