@@ -176,7 +176,7 @@ REM ===============================
 :StartServer
 echo "Starting Next.js server..."
 @REM start cmd /k "npm run dev"
-start /b npm run start
+start "Next.js Server" cmd /c "npm run start > server.log 2>&1"
 
 REM Wait for the server to become available
 echo Waiting for server at http://localhost:3000...
