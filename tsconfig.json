@@ -32,7 +32,8 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     ".next/types/**/*.ts",
-    "src/**/*"
+    "src/**/*",
+    "public"
   ],
   "exclude": ["node_modules"]
 }
