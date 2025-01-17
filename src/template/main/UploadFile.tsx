@@ -123,11 +123,17 @@ const UploadFile = () => {
         className="flex w-[100%] flex-col gap-[20px]"
         onSubmit={(e) => e.preventDefault()}
       >
-        {testData.map((item) => {
+        {/* {testData.map((item) => {
           return (
             <Image key={item} src={item} width={200} height={200} alt="" />
           );
         })}
+        <button
+          onClick={test}
+          className="h-[56px] rounded-[8px] border-[1px] border-black disabled:bg-slate-400"
+        >
+          테스트
+        </button> */}
         <div
           className={`drop-zone relative h-[500px] cursor-pointer`}
           onDragOver={handleDragOver}
@@ -167,12 +173,6 @@ const UploadFile = () => {
           />
         </div>
 
-        <button
-          onClick={test}
-          className="h-[56px] rounded-[8px] border-[1px] border-black disabled:bg-slate-400"
-        >
-          테스트
-        </button>
         <button
           onClick={fileUpload}
           disabled={!file}
