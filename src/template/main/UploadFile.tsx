@@ -14,7 +14,7 @@ const UploadFile = () => {
   const fileInput = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const [isChromium, setIsChromium] = useState(true);
-  // const [testData, setTestData] = useState([]);
+
   const allowedTypes = [
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
     "application/vnd.ms-excel", // .xls
@@ -111,23 +111,23 @@ const UploadFile = () => {
       alert(error?.message);
     }
   };
+  const [testData, setTestData] = useState([]);
+  const test = async () => {
+    const data = await API.post("/api/test");
 
-  // const test = async () => {
-  //   const data = await API.post("/api/test");
-
-  //   setTestData(data.data.data);
-  // };
+    setTestData(data.data.data);
+  };
   return (
     <div className="absolute left-[50%] flex h-[100%] w-[600px] translate-x-[-50%] flex-col justify-between">
       <form
         className="flex w-[100%] flex-col gap-[20px]"
         onSubmit={(e) => e.preventDefault()}
       >
-        {/* {testData.map((item) => {
+        {testData.map((item) => {
           return (
             <Image key={item} src={item} width={200} height={200} alt="" />
           );
-        })} */}
+        })}
         <div
           className={`drop-zone relative h-[500px] cursor-pointer`}
           onDragOver={handleDragOver}
@@ -167,12 +167,12 @@ const UploadFile = () => {
           />
         </div>
 
-        {/* <button
+        <button
           onClick={test}
           className="h-[56px] rounded-[8px] border-[1px] border-black disabled:bg-slate-400"
         >
           테스트
-        </button> */}
+        </button>
         <button
           onClick={fileUpload}
           disabled={!file}

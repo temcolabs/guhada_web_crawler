@@ -15,7 +15,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
   try {
     const getData = await getOnPage(
-      "https://www.reversible.com/my/shopping/men/item/gucci-document-holder-gg-shoulder-strap-509582541",
+      "https://premiummultishop.com/product/detail.html?product_no=77235&cate_no=903&display_group=1",
       page,
       browser,
     );

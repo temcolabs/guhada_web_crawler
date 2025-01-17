@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Page } from "@playwright/test";
+import { Page, Response } from "@playwright/test";
 import imageBlackList from "hostNameList/imageBlackList";
 import whiteUrlList from "hostNameList/whiteUrlList";
 import {
@@ -32,6 +32,7 @@ const getTargetImages = async (
         }
       }
     }
+
     if (target === "musinsa") {
       await page.route("**/*", (route) => {
         const url = route.request().url();
@@ -49,7 +50,7 @@ const getTargetImages = async (
           route.continue();
         }
       });
-      page.on("response", async (response) => {
+      const responseHandler = (response: Response) => {
         const responseUrl = response.url();
         if (
           (responseUrl.includes(".jpg") || responseUrl.includes(".jpeg")) &&
@@ -71,30 +72,62 @@ const getTargetImages = async (
             imgSrcList.push(responseUrl);
           }
         }
-      });
+      };
+      page.on("response", responseHandler);
 
       await page?.goto(data.링크, {
         waitUntil: "networkidle",
         timeout: 7000,
       });
       await page.waitForTimeout(5000);
+      page.off("response", responseHandler);
     }
+
     if (target === "premiummultishop") {
-      page.on("response", async (response) => {
-        const responseUrl = response.url();
+      const responseHandler = (response: Response) => {
+        const url = response.url();
+        const headers = response.headers(); // 응답 헤더 가져오기
+        const contentType = headers["content-type"]; // content-type 헤더 확인
+        const contentLength = Number(headers["content-length"]); // content-type 헤더 확인
+
         if (
-          responseUrl.endsWith(".jpg") &&
-          responseUrl.includes("https://blue3200.openhost.cafe24.com/") &&
-          !imageBlackList.includes(responseUrl)
+          contentType &&
+          contentType.includes("image/jpeg") &&
+          contentLength &&
+          contentLength > 15000 &&
+          !url.includes(
+            "https://blue3200.openhost.cafe24.com/web/upload/NNEditor/BLU/9.jpg",
+          ) &&
+          !url.includes(
+            "https://blue3200.openhost.cafe24.com/web/upload/NNEditor/BLU/1.jpg",
+          ) &&
+          !url.includes(
+            "https://blue3200.openhost.cafe24.com/web/upload/NNEditor/MNMSLT03WHM/9.jpg",
+          ) &&
+          !url.includes(
+            "https://blue3200.openhost.cafe24.com/web/upload/NNEditor/MNMSCD02IVM/4.jpg",
+          ) &&
+          !url.includes(
+            "https://blue3200.openhost.cafe24.com/web/upload/NNEditor/BLU/1_A.jpg",
+          ) &&
+          !url.includes(
+            "https://blue3200.openhost.cafe24.com/web/upload/NNEditor/MNNSTS05BK/%E2%98%85%EC%83%81%EC%9D%98size.jpg",
+          ) &&
+          !url.includes(
+            "https://blue3200.openhost.cafe24.com/web/upload/NNEditor/BLU/3_A.jpg",
+          )
         ) {
-          imgSrcList.push(responseUrl);
+          imgSrcList.push(url);
         }
-      });
-      await page?.goto(data.링크, {
-        waitUntil: "networkidle",
-        timeout: 3000,
-      });
-      await page.waitForTimeout(3000);
+      };
+      page.on("response", responseHandler);
+
+      await page?.goto(data.링크, { waitUntil: "networkidle", timeout: 4000 });
+      await page.mouse.wheel(0, 1000);
+      await page.waitForTimeout(2000);
+      await page.mouse.wheel(0, 2000);
+      await page.waitForTimeout(2000);
+      page.off("response", responseHandler);
     }
 
     return imgSrcList;
@@ -196,12 +229,12 @@ const searchAndGrapHrefs = async (
 const parsingImageSrc = async (hrefs: (string | undefined)[], page: Page) => {
   const allImageSrc: searchImageObject[] = [];
   for (const url of hrefs) {
-    const image: string[] = [];
+    const crawlingImages: string[] = [];
     if (url) {
       try {
         if (url.includes("reversible")) {
           //reversible 도 따로 긁어오자
-          page.on("response", (response) => {
+          const responseHandler = (response: Response) => {
             const url = response.url();
             const isBlackList = imageBlackList.some((item) =>
               url.includes(item),
@@ -217,12 +250,14 @@ const parsingImageSrc = async (hrefs: (string | undefined)[], page: Page) => {
               !url.includes("reversible-images-prod") &&
               !url.includes("image.reversible.com")
             ) {
-              image.push(url);
+              crawlingImages.push(url);
             }
-          });
+          };
+          page.on("response", responseHandler);
 
           try {
             await page.goto(url, { waitUntil: "networkidle", timeout: 5000 });
+            page.off("response", responseHandler);
           } catch (error) {}
         } else if (url.includes("thebs.com")) {
           // 더베이스는 따로 이미지를 긁어오자
@@ -240,10 +275,10 @@ const parsingImageSrc = async (hrefs: (string | undefined)[], page: Page) => {
           );
 
           srcList.forEach((item) => {
-            image.push(item);
+            crawlingImages.push(item);
           });
         } else {
-          page.on("response", async (response) => {
+          const responseHandler = (response: Response) => {
             const responseUrl = response.url();
             const headers = response.headers(); // 응답 헤더 가져오기
             const contentType = headers["content-type"]; // content-type 헤더 확인
@@ -263,10 +298,11 @@ const parsingImageSrc = async (hrefs: (string | undefined)[], page: Page) => {
               // Add an event listener to get dimensions when the image loads
 
               if (contentLength && contentLength > 6000 && !isBlackList) {
-                image.push(responseUrl);
+                crawlingImages.push(responseUrl);
               }
             }
-          });
+          };
+          page.on("response", responseHandler);
 
           await page
             ?.goto(url, {
@@ -276,10 +312,11 @@ const parsingImageSrc = async (hrefs: (string | undefined)[], page: Page) => {
             .catch((error) => {});
 
           await page.waitForTimeout(4000);
+          page.off("response", responseHandler);
         }
         const parsedUrl = new URL(url);
 
-        const result: imagUrlType[] = image.map((item) => {
+        const result: imagUrlType[] = crawlingImages.map((item) => {
           let newUrl = "";
           if (parsedUrl.hostname === "balaan.com") {
             newUrl = `https:${item}`;

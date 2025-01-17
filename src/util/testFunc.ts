@@ -134,15 +134,24 @@ export const getOnPage = async (url: string, page: Page, browser: Browser) => {
         contentType &&
         contentType.includes("image/jpeg") &&
         contentLength &&
-        contentLength > 5000 &&
-        !url.includes("reversible-images-prod") &&
-        !url.includes("image.reversible.com")
+        contentLength > 15000 &&
+        !url.includes(
+          "https://blue3200.openhost.cafe24.com/web/upload/NNEditor/BLU/9.jpg",
+        ) &&
+        !url.includes(
+          "https://blue3200.openhost.cafe24.com/web/upload/NNEditor/BLU/1.jpg",
+        ) &&
+        !url.includes(
+          "https://blue3200.openhost.cafe24.com/web/upload/NNEditor/MNMSLT03WHM/9.jpg",
+        )
       ) {
         image.push(url);
       }
     });
 
-    await page?.goto(url, { waitUntil: "networkidle", timeout: 2000 });
+    await page?.goto(url, { waitUntil: "networkidle", timeout: 4000 });
+    await page.mouse.wheel(0, 1500);
+    await page.waitForTimeout(3000);
   } catch (error) {
     console.log("에러남?", error);
     await browser.close();

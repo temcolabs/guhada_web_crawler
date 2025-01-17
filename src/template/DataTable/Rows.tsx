@@ -191,6 +191,7 @@ const Rows = ({
               {crawlingData.productImageUrl.map((item, index) => {
                 return (
                   <div
+                    key={item + index + "image"}
                     className="cursor-pointer"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -201,7 +202,6 @@ const Rows = ({
                       width: "24.2%",
                       height: "100px",
                     }}
-                    key={item + index + "image"}
                   >
                     <Image
                       fill
