@@ -13,6 +13,7 @@ if errorlevel 1 (
 REM Start the server initially
 call :GetLatestCode 
 call :InstallDependencies 
+call :InstallPlaywright
 call :CheckAndBuild
 call :StartServer
 
@@ -37,6 +38,22 @@ if errorlevel 2 goto LIVE_UPDATE
 if errorlevel 1 goto OPEN_BROWSER
 
 goto MENU_LOOP
+
+
+REM ===============================
+REM Install Playwright if missing
+REM ===============================
+:InstallPlaywright
+echo "Checking if Playwright is installed..."
+npx playwright --version >nul 2>&1
+if errorlevel 1 (
+    echo "Playwright is not installed. Installing Playwright..."
+    npx playwright install
+    echo "Playwright installation complete."
+) else (
+    echo "Playwright is already installed. Skipping installation."
+)
+exit /b
 
 REM ===============================
 REM Option 1: Open Browser
