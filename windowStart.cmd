@@ -178,9 +178,9 @@ echo "Starting Next.js server..."
 @REM start cmd /k "npm run dev"
 call npm run start
 
-REM Wait for the server to become available
-echo Waiting for server at http://localhost:3000...
-wait-on http://localhost:3000
+@REM REM Wait for the server to become available
+@REM echo Waiting for server at http://localhost:3000...
+@REM wait-on http://localhost:3000
 
 REM Once the server is ready, open browser
 echo Server is ready! Opening browser...
