@@ -110,8 +110,9 @@ REM ===============================
 REM Install npm dependencies
 REM ===============================
 :InstallDependencies
+echo "Installing playWright..."
+call npx playwright install
 echo "Installing dependencies..."
-npx playwright install
 call npm install -f
 exit /b
 
