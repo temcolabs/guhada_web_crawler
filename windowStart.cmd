@@ -91,6 +91,7 @@ REM ===============================
 echo "Stopping server before exiting..."
 call :StopServer
 echo "Exiting program..."
+taskkill /f /im cmd.exe
 timeout /t 2 >nul
 exit /b
 
