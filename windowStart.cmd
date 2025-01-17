@@ -177,7 +177,7 @@ REM ===============================
 echo "Starting Next.js server..."
 
 REM 기존 CMD에서 서버 실행 & 로그 저장
-npm run start > server.log 2>&1 &
+start /b cmd /c "npm run start > server.log 2>&1"
 
 REM Wait for the server to become available
 echo "Waiting for server at http://localhost:3000..."
