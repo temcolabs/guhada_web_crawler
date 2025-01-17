@@ -7,14 +7,4 @@
    - Network:      http://172.30.1.84:3000
 
  ✓ Starting...
- ✓ Ready in 540ms
-퓨즈걸림?
-퓨즈끝
-퓨즈걸림?
-퓨즈끝
-TypeError: Invalid state: Controller is already closed
-    at Object.start (.next/server/app/api/streaming/route.js:1:2372) {
-  code: 'ERR_INVALID_STATE'
-}
-퓨즈걸림?
-퓨즈끝
+ ✓ Ready in 982ms
