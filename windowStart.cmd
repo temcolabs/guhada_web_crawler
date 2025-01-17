@@ -15,7 +15,6 @@ call :GetLatestCode
 call :InstallDependencies 
 call :CheckAndBuild
 call :StartServer
-call :MENU_LOOP
 
 REM Main menu loop
 :MENU_LOOP
@@ -94,7 +93,6 @@ call :StopServer
 echo "Exiting program..."
 timeout /t 2 >nul
 exit /b
-
 
 REM ===============================
 REM Fetch the latest code
@@ -179,6 +177,7 @@ REM ===============================
 echo "Starting Next.js server..."
 @REM start cmd /k "npm run dev"
 call npm run start
+
 REM Wait for the server to become available
 echo Waiting for server at http://localhost:3000...
 wait-on http://localhost:3000
@@ -186,5 +185,6 @@ wait-on http://localhost:3000
 REM Once the server is ready, open browser
 echo Server is ready! Opening browser...
 start http://localhost:3000
-exit /b
 
+REM Return to menu
+goto MENU_LOOP
