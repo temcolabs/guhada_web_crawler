@@ -177,6 +177,8 @@ REM ===============================
 :StartServer
 echo "Starting Next.js server..."
 @REM start cmd /k "npm run dev"
-call npm run startWindow
+call npm run start
+call npx wait-on http://localhost:3000
+call start http://localhost:3000
 exit /b
 
