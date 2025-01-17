@@ -12,6 +12,7 @@ if errorlevel 1 (
 
 REM Start the server initially
 call :GetLatestCode 
+call :InstallDependencies 
 call :CheckAndBuild
 call :StartServer
 
