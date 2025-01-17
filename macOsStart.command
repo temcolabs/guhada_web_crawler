@@ -1,6 +1,19 @@
 #!/bin/bash
 cd "$(dirname "$0")" # 현재 디렉토리로 이동
 
+
+
+# Playwright 설치 확인 및 설치
+install_playwright(){
+  if ! npx playwright --version &> /dev/null; then
+    echo "================ Playwright가 설치되지 않았습니다. 설치를 시작합니다... ================"
+    npx playwright install
+    echo "================ Playwright 설치 완료 ================"
+  else
+    echo "================ Playwright가 이미 설치되어 있습니다. 설치를 건너뜁니다. ================"
+  fi
+}
+
 # 3000번 포트 확인 및 종료
 detect_and_kill_port(){
   echo "================포트 3000이 사용 중인지 확인하는 중...================"
@@ -69,6 +82,7 @@ start_server(){
 # 실행 흐름
 detect_and_kill_port
 update_code
+install_playwright
 install_dependencies
 check_and_build
 start_server
