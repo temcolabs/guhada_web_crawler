@@ -1,6 +1,6 @@
 {
   "name": "free-pass",
-  "version": "0.992",
+  "version": "0.993",
   "private": true,
   "scripts": {
     "build": "next build",
