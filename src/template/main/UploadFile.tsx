@@ -138,17 +138,17 @@ const UploadFile = () => {
           {error ? (
             <div>
               <p className="text-red-500">{error}</p>
-              <Image alt="upload" fill src={"/upload.png"} />
+              <Image alt="upload" fill src={"/upLoad.png"} />
             </div>
           ) : file?.name ? (
             <div className="flex h-[100%] gap-1 p-3">
               <div>파일명 :</div>
               <div>{file?.name}</div>
-              <Image alt="upload" fill src={"/upload.png"} />
+              <Image alt="upload" fill src={"/upLoad.png"} />
             </div>
           ) : (
             <div className="relative h-[100%]">
-              <Image alt="upload" fill src={"/upload.png"} />
+              <Image alt="upload" fill src={"/upLoad.png"} />
               <div className="absolute bottom-4 left-[50%] flex translate-x-[-50%] flex-col items-center whitespace-pre-wrap break-words">
                 <div>클릭해서 엑셀 파일을 등록하거나</div>
                 <div>파일을 드래그 드롭 해주세요</div>
