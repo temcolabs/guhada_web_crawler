@@ -15,6 +15,7 @@ call :GetLatestCode
 call :InstallDependencies 
 call :CheckAndBuild
 call :StartServer
+call :MENU_LOOP
 
 REM Main menu loop
 :MENU_LOOP
