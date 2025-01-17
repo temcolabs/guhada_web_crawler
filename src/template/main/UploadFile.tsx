@@ -195,7 +195,7 @@ const UploadFile = () => {
           크로니움 {isChromium ? "on" : "off"}
         </button>
       </form>
-      <div className="text-end font-bold">0.991ver</div>
+      <div className="text-end font-bold">0.992ver</div>
     </div>
   );
 };
