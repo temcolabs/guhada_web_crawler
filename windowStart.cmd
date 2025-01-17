@@ -181,7 +181,7 @@ npm run start > server.log 2>&1 &
 
 REM Wait for the server to become available
 echo "Waiting for server at http://localhost:3000..."
-wait-on http://localhost:3000
+@REM wait-on http://localhost:3000
 
 REM Open the browser once the server is ready
 echo "Server is ready! Opening browser..."
